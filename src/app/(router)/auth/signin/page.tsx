@@ -5,9 +5,19 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { signInSchema, SignInFormData } from "@/app/lib/schemas/authSchemas";
+import { useRouter, useSearchParams } from "next/navigation";
+import api from "@/app/lib/axios";
+import { useAppDispatch } from "@/app/hooks/hooks";
+import { setUser } from "@/app/redux/features/auth/authSlice";
 
 const SignInPage = () => {
   const [isLoading, setIsLoading] = useState(false);
+
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirect = searchParams.get("redirect") || "/"; // fallback
+
+  const dispatch = useAppDispatch();
 
   const {
     register,
@@ -20,11 +30,23 @@ const SignInPage = () => {
 
   const onSubmit = async (data: SignInFormData) => {
     setIsLoading(true);
+
     try {
-      // TODO: Implement actual signin logic
-      console.log("Sign in data:", data);
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const response = await api.post(
+        "/user/login",
+        {
+          email: data.email,
+          password: data.password,
+        },
+        { headers: { "Content-Type": "application/json" } }
+      );
+
+      console.log("response", response);
+
+      if (response.status === 200) {
+        router.push(redirect);
+        localStorage.setItem("user", JSON.stringify(response?.data?.user));
+      }
     } catch {
       setError("root", {
         message: "Invalid email or password",

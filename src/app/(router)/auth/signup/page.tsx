@@ -5,9 +5,12 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { signUpSchema, SignUpFormData } from "@/app/lib/schemas/authSchemas";
+import api from "@/app/lib/axios";
+import { useRouter } from "next/navigation";
 
 const SignUpPage = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
 
   const {
     register,
@@ -24,10 +27,21 @@ const SignUpPage = () => {
   const onSubmit = async (data: SignUpFormData) => {
     setIsLoading(true);
     try {
-      // TODO: Implement actual signup logic
-      console.log("Sign up data:", data);
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const response = await api.post(
+        "/user/register",
+        {
+          name: data.name,
+          email: data.email,
+          password: data.password,
+        },
+        {
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+
+      if (response.status === 201) {
+        router.push("/auth/signin");
+      }
     } catch {
       setError("root", {
         message: "Failed to create account. Please try again.",
