@@ -14,7 +14,6 @@ export function middleware(req: NextRequest) {
 
   // Read token from cookies
   const token = req.cookies.get("authToken")?.value;
-  console.log("token", token);
 
   // If user not logged in and tries private route → redirect to login with `redirect` param
   if (!isPublicPath(pathname) && !token) {

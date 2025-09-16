@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { User, AuthState } from "@/app/types/auth";
 
 const initialState: AuthState = {
@@ -7,22 +7,29 @@ const initialState: AuthState = {
   error: null,
 };
 
-export const signOut = createAsyncThunk("auth/signOut", async () => {
-  // localStorage.removeItem("token");
-});
-
 const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    clearError: (state) => {
-      state.error = null;
-    },
     setUser: (state, action: PayloadAction<User>) => {
       state.user = action.payload;
+      state.error = null;
+    },
+
+    clearUser: (state) => {
+      state.user = null;
+      state.error = null;
+    },
+
+    setError: (state, action: PayloadAction<string>) => {
+      state.error = action.payload;
+    },
+
+    clearError: (state) => {
+      state.error = null;
     },
   },
 });
 
-export const { clearError, setUser } = authSlice.actions;
+export const { setUser, clearUser, setError, clearError } = authSlice.actions;
 export default authSlice.reducer;

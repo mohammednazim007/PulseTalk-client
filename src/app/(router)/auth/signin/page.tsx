@@ -45,7 +45,8 @@ const SignInPage = () => {
 
       if (response.status === 200) {
         router.push(redirect);
-        localStorage.setItem("user", JSON.stringify(response?.data?.user));
+        // localStorage.setItem("user", JSON.stringify(response?.data?.user));
+        dispatch(setUser(response?.data?.user));
       }
     } catch {
       setError("root", {
