@@ -33,7 +33,7 @@ const Sidebar = () => {
         {activeFriendUsers?.length ? (
           activeFriendUsers.map((friend) => (
             <div
-              key={friend._id} // better to use unique id instead of index
+              key={friend.id} // better to use unique id instead of index
               className="flex items-center gap-3 p-3 hover:bg-[#334155] cursor-pointer"
             >
               {/* Avatar */}
