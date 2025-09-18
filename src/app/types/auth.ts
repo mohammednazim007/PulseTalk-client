@@ -3,6 +3,8 @@ export interface User {
   name: string;
   email: string;
   image?: string | null;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface IFriendUser {
