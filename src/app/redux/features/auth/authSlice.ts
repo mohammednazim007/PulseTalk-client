@@ -24,6 +24,7 @@ const authSlice = createSlice({
 
     clearUser: (state) => {
       state.user = null;
+      state.activeUser = null;
       state.error = null;
     },
 

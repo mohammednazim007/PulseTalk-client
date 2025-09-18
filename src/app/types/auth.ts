@@ -5,6 +5,15 @@ export interface User {
   image?: string | null;
 }
 
+export interface IFriendUser {
+  _id: string;
+  name: string;
+  email: string;
+  image?: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface AuthState {
   user: User | null;
   activeUser: User | null;

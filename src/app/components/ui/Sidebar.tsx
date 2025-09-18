@@ -3,10 +3,12 @@ import { useAppSelector } from "@/app/hooks/hooks";
 import { RootState } from "@/app/redux/store";
 import SignOutButton from "./Sign-out";
 import UserProfile from "../ui/User-profile";
+import useFriendListUser from "@/app/hooks/useActiveUser";
 
 const Sidebar = () => {
   const user = useAppSelector((state: RootState) => state.auth);
-  console.log(user);
+  const { activeFriendUsers } = useFriendListUser(user?.user?.id || "");
+  console.log(activeFriendUsers);
 
   return (
     <div className="w-80 bg-[#1e293b] border-r border-gray-700 flex flex-col">
@@ -28,7 +30,36 @@ const Sidebar = () => {
 
       {/* Chat Users */}
       <div className="flex-1 overflow-y-auto">
-        {["Mical Clark", "Collin Nathan", "Nathan John", "Semi Dee"].map(
+        {activeFriendUsers?.length ? (
+          activeFriendUsers.map((friend) => (
+            <div
+              key={friend._id} // better to use unique id instead of index
+              className="flex items-center gap-3 p-3 hover:bg-[#334155] cursor-pointer"
+            >
+              {/* Avatar */}
+              <div className="w-10 h-10 bg-gray-500 rounded-full flex items-center justify-center text-white">
+                {friend?.name?.charAt(0) || "U"}
+              </div>
+
+              {/* User Info */}
+              <div className="flex-1">
+                <p className="text-sm font-semibold">
+                  {friend?.name || "Unknown User"}
+                </p>
+                <p className="text-xs text-gray-400">
+                  {friend?.email || "No email available"}
+                </p>
+              </div>
+
+              {/* Time (placeholder for now) */}
+              <span className="text-xs text-gray-400">10:00pm</span>
+            </div>
+          ))
+        ) : (
+          <p className="text-center text-gray-400 p-4">No friends found</p>
+        )}
+
+        {/* {["Mical Clark", "Collin Nathan", "Nathan John", "Semi Dee"].map(
           (user, idx) => (
             <div
               key={idx}
@@ -44,7 +75,7 @@ const Sidebar = () => {
               <span className="text-xs text-gray-400">10:00pm</span>
             </div>
           )
-        )}
+        )} */}
       </div>
 
       {/* Profile + Sign Out */}
