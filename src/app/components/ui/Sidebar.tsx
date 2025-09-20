@@ -7,10 +7,11 @@ import useFriendListUser from "@/app/hooks/useActiveUser";
 import { setActiveUser } from "@/app/redux/features/friend-slice/friendSlice";
 
 const Sidebar = () => {
-  const user = useAppSelector((state: RootState) => state.auth);
-  const { activeFriendUsers } = useFriendListUser(user?.user?.id || "");
+  const currentUser = useAppSelector((state: RootState) => state.auth);
+  const { activeFriendUsers } = useFriendListUser(currentUser?.user?.id || "");
   const dispatch = useAppDispatch();
-  console.log("user ", user);
+  console.log("user x ", currentUser);
+  console.log("active user", activeFriendUsers);
 
   return (
     <div className="w-80 bg-[#1e293b] border-r border-gray-700 flex flex-col">
@@ -33,24 +34,24 @@ const Sidebar = () => {
       {/* Chat Users */}
       <div className="flex-1 overflow-y-auto">
         {activeFriendUsers?.length ? (
-          activeFriendUsers.map((friend) => (
+          activeFriendUsers.map((activeFriend) => (
             <div
-              onClick={() => dispatch(setActiveUser(friend))}
-              key={friend._id} // better to use unique id instead of index
+              onClick={() => dispatch(setActiveUser(activeFriend))}
+              key={activeFriend._id} // better to use unique id instead of index
               className="flex items-center gap-3 p-3 hover:bg-[#334155] cursor-pointer"
             >
               {/* Avatar */}
               <div className="w-10 h-10 bg-gray-500 rounded-full flex items-center justify-center text-white">
-                {friend?.name?.charAt(0) || "U"}
+                {activeFriend?.name?.charAt(0) || "U"}
               </div>
 
               {/* User Info */}
               <div className="flex-1">
                 <p className="text-sm font-semibold">
-                  {friend?.name || "Unknown User"}
+                  {activeFriend?.name || "Unknown User"}
                 </p>
                 <p className="text-xs text-gray-400">
-                  {friend?.email || "No email available"}
+                  {activeFriend?.email || "No email available"}
                 </p>
               </div>
 
@@ -82,10 +83,10 @@ const Sidebar = () => {
       </div>
 
       {/* Profile + Sign Out */}
-      {user?.user && (
+      {currentUser?.user && (
         <div className="p-2 border-t border-gray-700 flex items-center justify-between gap-2">
           {/* Profile (Avatar Button) */}
-          <UserProfile currentUser={user.user} isDisable={false} />
+          <UserProfile currentUser={currentUser.user} isDisable={false} />
 
           {/* Sign Out (Circle Icon Button) */}
           <SignOutButton />

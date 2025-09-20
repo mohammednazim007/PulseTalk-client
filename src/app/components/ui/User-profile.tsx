@@ -1,14 +1,21 @@
 import Image from "next/image";
 import avatar from "@/app/assets/profile.png";
-import { User } from "@/app/types/auth";
 import { useRouter } from "next/navigation";
 
-interface UserProfileProps {
-  currentUser: User | null;
+interface BaseUser {
+  name?: string | null;
+  image?: string | null;
+}
+
+interface UserProfileProps<T extends BaseUser> {
+  currentUser: T | null;
   isDisable?: boolean;
 }
 
-const UserProfile = ({ currentUser, isDisable }: UserProfileProps) => {
+const UserProfile = <T extends BaseUser>({
+  currentUser,
+  isDisable,
+}: UserProfileProps<T>) => {
   const router = useRouter();
 
   return (

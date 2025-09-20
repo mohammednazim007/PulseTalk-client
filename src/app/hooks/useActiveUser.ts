@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import api from "../lib/axios";
-import { User } from "../types/auth";
 import { IFriend } from "../types/friend.types";
 
 const useFriendListUser = (userId: string) => {
