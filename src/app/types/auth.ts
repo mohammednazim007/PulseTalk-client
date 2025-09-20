@@ -7,18 +7,8 @@ export interface User {
   updatedAt?: string;
 }
 
-export interface IFriendUser {
-  _id: string;
-  name: string;
-  email: string;
-  image?: string | null;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export interface AuthState {
+export interface IUserState {
   user: User | null;
-  activeUser: User | null;
   loading: boolean;
   error: string | null;
 }

@@ -1,9 +1,8 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { User, AuthState } from "@/app/types/auth";
+import { User, IUserState } from "@/app/types/auth";
 
-const initialState: AuthState = {
+const initialState: IUserState = {
   user: null,
-  activeUser: null,
   loading: false,
   error: null,
 };
@@ -17,14 +16,8 @@ const authSlice = createSlice({
       state.error = null;
     },
 
-    setActiveUser: (state, action: PayloadAction<User>) => {
-      state.activeUser = action.payload;
-      state.error = null;
-    },
-
     clearUser: (state) => {
       state.user = null;
-      state.activeUser = null;
       state.error = null;
     },
 

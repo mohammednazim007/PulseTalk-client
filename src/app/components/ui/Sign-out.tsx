@@ -1,7 +1,7 @@
 "use client";
 import { useAppDispatch } from "@/app/hooks/hooks";
 import api from "@/app/lib/axios";
-import { clearUser } from "@/app/redux/features/auth/authSlice";
+import { clearUser } from "@/app/redux/features/auth/userSlice";
 import { useRouter } from "next/navigation";
 import { IoMdLogOut } from "react-icons/io";
 

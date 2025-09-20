@@ -8,7 +8,7 @@ import avatar from "@/app/assets/profile.png";
 import { FaCamera, FaUser, FaEnvelope, FaLock } from "react-icons/fa";
 import api from "@/app/lib/axios";
 import { useAppDispatch } from "@/app/hooks/hooks";
-import { setUser } from "@/app/redux/features/auth/authSlice";
+import { setUser } from "@/app/redux/features/auth/userSlice";
 
 // Main Profile Page Component
 const Profile = () => {

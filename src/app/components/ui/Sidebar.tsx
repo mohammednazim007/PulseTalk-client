@@ -1,14 +1,15 @@
 "use client";
-import { useAppSelector } from "@/app/hooks/hooks";
+import { useAppDispatch, useAppSelector } from "@/app/hooks/hooks";
 import { RootState } from "@/app/redux/store";
 import SignOutButton from "./Sign-out";
 import UserProfile from "../ui/User-profile";
 import useFriendListUser from "@/app/hooks/useActiveUser";
+import { setActiveUser } from "@/app/redux/features/friend-slice/friendSlice";
 
 const Sidebar = () => {
   const user = useAppSelector((state: RootState) => state.auth);
   const { activeFriendUsers } = useFriendListUser(user?.user?.id || "");
-  console.log(activeFriendUsers);
+  const dispatch = useAppDispatch();
 
   return (
     <div className="w-80 bg-[#1e293b] border-r border-gray-700 flex flex-col">
@@ -33,7 +34,8 @@ const Sidebar = () => {
         {activeFriendUsers?.length ? (
           activeFriendUsers.map((friend) => (
             <div
-              key={friend.id} // better to use unique id instead of index
+              onClick={() => dispatch(setActiveUser(friend))}
+              key={friend._id} // better to use unique id instead of index
               className="flex items-center gap-3 p-3 hover:bg-[#334155] cursor-pointer"
             >
               {/* Avatar */}

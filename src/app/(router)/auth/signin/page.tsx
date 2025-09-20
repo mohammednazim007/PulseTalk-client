@@ -8,7 +8,7 @@ import { signInSchema, SignInFormData } from "@/app/lib/schemas/authSchemas";
 import { useRouter, useSearchParams } from "next/navigation";
 import api from "@/app/lib/axios";
 import { useAppDispatch } from "@/app/hooks/hooks";
-import { setUser } from "@/app/redux/features/auth/authSlice";
+import { setUser } from "@/app/redux/features/auth/userSlice";
 
 const SignInPage = () => {
   const [isLoading, setIsLoading] = useState(false);
