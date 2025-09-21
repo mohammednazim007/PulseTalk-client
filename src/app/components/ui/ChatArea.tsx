@@ -4,6 +4,7 @@ import { RootState } from "@/app/redux/store";
 import React from "react";
 import UserProfile from "./User-profile";
 import MessageArea from "./Message-area";
+import FriendsProfile from "./FriendsProfile";
 
 const ChatArea = () => {
   const friends = useAppSelector((state: RootState) => state.friend);
@@ -13,7 +14,10 @@ const ChatArea = () => {
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b border-gray-700 bg-[#1e293b]">
         <div className="flex items-center gap-x-2">
-          <UserProfile currentUser={friends?.activeUser} isDisable={true} />
+          <FriendsProfile
+            currentFriends={friends?.activeUser}
+            isDisable={true}
+          />
           <span>
             <p className="font-semibold">{friends?.activeUser?.name}</p>
             <p className="text-xs text-gray-400">Last seen 10:20pm</p>

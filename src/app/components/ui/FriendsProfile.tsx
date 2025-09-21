@@ -1,13 +1,14 @@
 import Image from "next/image";
 import avatar from "@/app/assets/profile.png";
 import { useRouter } from "next/navigation";
-import { User } from "@/app/types/auth";
+import { IFriend } from "@/app/types/friend.types";
+
 interface UserProfileProps {
-  currentUser: User | null;
+  currentFriends: IFriend | null;
   isDisable?: boolean;
 }
 
-const UserProfile = ({ currentUser, isDisable }: UserProfileProps) => {
+const FriendsProfile = ({ currentFriends, isDisable }: UserProfileProps) => {
   const router = useRouter();
 
   return (
@@ -24,12 +25,12 @@ const UserProfile = ({ currentUser, isDisable }: UserProfileProps) => {
       <Image
         width={40}
         height={40}
-        src={currentUser?.image || avatar.src}
-        alt={currentUser?.name || "User Avatar"}
+        src={currentFriends?.image || avatar.src}
+        alt={currentFriends?.name || "User Avatar"}
         className="w-full h-full object-cover"
       />
     </button>
   );
 };
 
-export default UserProfile;
+export default FriendsProfile;

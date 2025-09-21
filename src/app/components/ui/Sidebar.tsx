@@ -8,9 +8,10 @@ import { setActiveUser } from "@/app/redux/features/friend-slice/friendSlice";
 
 const Sidebar = () => {
   const currentUser = useAppSelector((state: RootState) => state.auth);
-  const { activeFriendUsers } = useFriendListUser(currentUser?.user?.id || "");
+  const { activeFriendUsers } = useFriendListUser(currentUser?.user?._id || "");
   const dispatch = useAppDispatch();
-  console.log("user x ", currentUser);
+
+  console.log("current user ", currentUser);
   console.log("active user", activeFriendUsers);
 
   return (
@@ -62,24 +63,6 @@ const Sidebar = () => {
         ) : (
           <p className="text-center text-gray-400 p-4">No friends found</p>
         )}
-
-        {/* {["Mical Clark", "Collin Nathan", "Nathan John", "Semi Dee"].map(
-          (user, idx) => (
-            <div
-              key={idx}
-              className="flex items-center gap-3 p-3 hover:bg-[#334155] cursor-pointer"
-            >
-              <div className="w-10 h-10 bg-gray-500 rounded-full" />
-              <div className="flex-1">
-                <p className="text-sm font-semibold">{user}</p>
-                <p className="text-xs text-gray-400">
-                  Nullam facilisis velit...
-                </p>
-              </div>
-              <span className="text-xs text-gray-400">10:00pm</span>
-            </div>
-          )
-        )} */}
       </div>
 
       {/* Profile + Sign Out */}
