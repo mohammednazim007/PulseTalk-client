@@ -14,7 +14,7 @@ const ChatArea = ({ onToggleSidebar }: ChatAreaProps) => {
   const friends = useAppSelector((state: RootState) => state.friend);
 
   return (
-    <div className="flex-1 flex flex-col bg-[#0f172a] text-slate-100">
+    <div className="flex-1 flex flex-col bg-[#2a1a0f] text-slate-100">
       {/* Header */}
       <motion.div
         initial={{ y: -20, opacity: 0 }}
