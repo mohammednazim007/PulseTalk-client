@@ -201,93 +201,27 @@
 "use client";
 import { useAppSelector } from "@/app/hooks/hooks";
 import { RootState } from "@/app/redux/store";
-import React, { useEffect, useState, useRef } from "react";
+import React, { useRef } from "react";
 import MessageArea from "./Message-area";
 import FriendsProfile from "./FriendsProfile";
 import { motion } from "motion/react";
-import api from "@/app/lib/axios";
 import { useSocket } from "@/app/socket-io/useSocket";
+
 interface ChatAreaProps {
   onToggleSidebar: () => void;
 }
 
-export interface Message {
-  _id?: string;
-  senderId: string | null;
-  room: string;
-  content: string;
-  createdAt?: string;
-}
-
 const ChatArea = ({ onToggleSidebar }: ChatAreaProps) => {
   const selectedFriends = useAppSelector((state: RootState) => state.friend);
-  const currentUser = useAppSelector((state: RootState) => state.auth.user) ?? {
-    _id: "",
-  };
+  const currentUser = useAppSelector((state: RootState) => state.auth.user);
 
-  const [message, setMessage] = useState("");
-  const [messages, setMessages] = useState<Message[]>([]);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
-
   const socket = useSocket();
-  console.log("current user:", currentUser);
 
-  const activeFriend = selectedFriends?.activeUser;
-  const roomId =
-    currentUser && activeFriend
-      ? [currentUser._id, activeFriend._id].sort().join("_")
-      : "";
-
-  // 🔹 Fetch old messages from DB
-  useEffect(() => {
-    if (!roomId) return;
-    const fetchMessages = async () => {
-      const res = await api.get(`/messages/${roomId}`);
-      setMessages(res.data);
-    };
-    fetchMessages();
-  }, [roomId]);
-
-  // 🔹 Listen for new socket messages
-  useEffect(() => {
-    if (!socket || !roomId) return;
-
-    socket.emit("joinRoom", roomId);
-
-    socket.on("receiveMessage", (msg: Message) => {
-      setMessages((prev) => [...prev, msg]);
-    });
-
-    return () => {
-      socket.off("receiveMessage");
-    };
-  }, [socket, roomId]);
+  console.log("socket in chat area:", socket);
 
   // 🔹 Send message
-  const handleSend = async () => {
-    if (!message.trim() || !roomId) return;
-
-    const newMsg: Message = {
-      senderId: currentUser._id,
-      room: roomId,
-      content: message,
-    };
-
-    // Save to DB
-    const res = await api.post("/messages", newMsg);
-    const savedMsg = res.data;
-
-    // Emit via socket
-    socket?.emit("sendMessage", savedMsg);
-
-    setMessages((prev) => [...prev, savedMsg]);
-    setMessage("");
-  };
-
-  // 🔹 Auto-scroll
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
+  const handleSend = async () => {};
 
   return (
     <div className="flex-1 flex flex-col bg-[#0f172a] text-slate-100">
@@ -312,7 +246,7 @@ const ChatArea = ({ onToggleSidebar }: ChatAreaProps) => {
           />
           <div>
             <p className="font-semibold text-white">
-              {activeFriend?.name || "Select a chat"}
+              {selectedFriends?.activeUser?.name || "Select a chat"}
             </p>
             <p className="text-xs text-slate-400">Last seen 10:20pm</p>
           </div>
@@ -324,7 +258,7 @@ const ChatArea = ({ onToggleSidebar }: ChatAreaProps) => {
 
       {/* Message area */}
       <div className="flex-1 overflow-y-auto bg-slate-900">
-        <MessageArea messages={messages} currentUserId={currentUser._id} />
+        <MessageArea messages={[]} currentUserId={"currentUser._id"} />
         <div ref={messagesEndRef} />
       </div>
 
@@ -337,8 +271,8 @@ const ChatArea = ({ onToggleSidebar }: ChatAreaProps) => {
       >
         <input
           type="text"
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
+          value={"message"}
+          onChange={(e) => {}}
           placeholder="Type a message..."
           className="flex-1 px-4 py-2 rounded-lg bg-slate-900 text-slate-100 placeholder-slate-500 border border-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
           onKeyDown={(e) => e.key === "Enter" && handleSend()}

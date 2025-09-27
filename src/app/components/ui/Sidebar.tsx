@@ -16,6 +16,15 @@ const Sidebar = ({ onClose }: SidebarProps) => {
   const { activeFriendUsers } = useFriendListUser(currentUser?.user?._id || "");
   const dispatch = useAppDispatch();
 
+  const handleClick = (friend: any) => {
+    dispatch(setActiveUser(friend));
+
+    // Only close sidebar on mobile (width < 768px)
+    if (window.innerWidth < 768 && onClose) {
+      onClose();
+    }
+  };
+
   return (
     <AnimatePresence mode="wait">
       <motion.div
@@ -63,7 +72,7 @@ const Sidebar = ({ onClose }: SidebarProps) => {
             activeFriendUsers.map((friend) => (
               <motion.div
                 key={friend._id}
-                onClick={() => dispatch(setActiveUser(friend))}
+                onClick={() => handleClick(friend)}
                 className="flex items-center gap-3 p-3 hover:bg-slate-700 cursor-pointer transition rounded-lg mx-2 my-1"
                 whileHover={{ scale: 1.02 }}
               >

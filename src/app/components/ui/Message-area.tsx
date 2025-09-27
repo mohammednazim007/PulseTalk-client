@@ -51,7 +51,7 @@ interface Props {
   currentUserId: string;
 }
 
-const MessageArea = ({ messages, currentUserId }: Props) => {
+const MessageArea = ({ messages = [], currentUserId }: Props) => {
   return (
     <div className="flex-1 p-4 space-y-4 overflow-y-auto">
       {messages.map((msg) => {
