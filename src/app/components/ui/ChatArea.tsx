@@ -201,12 +201,11 @@
 "use client";
 import { useAppSelector } from "@/app/hooks/hooks";
 import { RootState } from "@/app/redux/store";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import MessageArea from "./Message-area";
 import FriendsProfile from "./FriendsProfile";
 import { motion } from "motion/react";
 import { useSocket } from "@/app/socket-io/useSocket";
-import { io } from "socket.io-client";
 
 interface ChatAreaProps {
   onToggleSidebar: () => void;
@@ -215,21 +214,53 @@ interface ChatAreaProps {
 const ChatArea = ({ onToggleSidebar }: ChatAreaProps) => {
   const selectedFriends = useAppSelector((state: RootState) => state.friend);
   const currentUser = useAppSelector((state: RootState) => state.auth.user);
+  const selectedFriend = selectedFriends?.activeUser; // ✅ alias for easier use
+  const [messages, setMessages] = useState<any[]>([]); // Replace 'any' with your message type
+
+  const [message, setMessage] = useState("");
 
   const socket = useSocket();
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const room = selectedFriends?.activeUser?._id; // each friend = separate room
 
+  // Only build roomId if both users exist
+  const roomId =
+    currentUser && selectedFriend
+      ? currentUser._id < selectedFriend._id
+        ? `${currentUser._id}_${selectedFriend._id}`
+        : `${selectedFriend._id}_${currentUser._id}`
+      : null;
+
+  // Join the room
   useEffect(() => {
-    if (socket?.connected && room) {
-      socket.emit("join_room", room);
+    if (socket?.connected && roomId) {
+      socket.emit("join_room", roomId);
     }
-  }, [socket, room]);
+  }, [socket, roomId]);
 
-  // 🔹 Send message
-  const handleSend = async () => {};
+  useEffect(() => {
+    if (!socket) return;
 
+    // Listen for incoming messages
+    socket.on("receive_message", (data) => {
+      setMessages((prev) => [...prev, data]);
+      // Here you would typically update your message list state
+    });
+  }, [roomId]);
+
+  // Send message
+  const handleSend = () => {
+    if (!message.trim() || !currentUser || !selectedFriend) return;
+
+    socket?.emit("send_message", {
+      senderId: currentUser._id,
+      receiverId: selectedFriend._id,
+      content: message,
+    });
+    setMessage("");
+  };
+  console.log("Message received:", messages);
   return (
     <div className="flex-1 flex flex-col bg-[#0f172a] text-slate-100">
       {/* Header */}
@@ -278,8 +309,8 @@ const ChatArea = ({ onToggleSidebar }: ChatAreaProps) => {
       >
         <input
           type="text"
-          value={"message"}
-          onChange={(e) => {}}
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
           placeholder="Type a message..."
           className="flex-1 px-4 py-2 rounded-lg bg-slate-900 text-slate-100 placeholder-slate-500 border border-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
           onKeyDown={(e) => e.key === "Enter" && handleSend()}
