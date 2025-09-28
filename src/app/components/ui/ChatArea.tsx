@@ -201,7 +201,7 @@
 "use client";
 import { useAppSelector } from "@/app/hooks/hooks";
 import { RootState } from "@/app/redux/store";
-import React, { useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import MessageArea from "./Message-area";
 import FriendsProfile from "./FriendsProfile";
 import { motion } from "motion/react";
@@ -217,8 +217,13 @@ const ChatArea = ({ onToggleSidebar }: ChatAreaProps) => {
 
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
   const socket = useSocket();
+  const room = selectedFriends?.activeUser?._id; // each friend = separate room
 
-  console.log("socket in chat area:", socket);
+  useEffect(() => {
+    if (socket && room) {
+      socket.emit("join_room", room);
+    }
+  }, [socket, room]);
 
   // 🔹 Send message
   const handleSend = async () => {};
