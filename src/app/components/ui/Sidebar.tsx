@@ -83,6 +83,7 @@ const Sidebar = ({ onClose }: SidebarProps) => {
                       width={40}
                       height={40}
                       src={friend.avatar}
+                      priority={true}
                       alt="Avatar"
                       className="w-10 h-10 rounded-full object-cover"
                     />

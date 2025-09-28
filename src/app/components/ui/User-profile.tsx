@@ -27,6 +27,7 @@ const UserProfile = ({ currentUser, isDisable }: UserProfileProps) => {
         <Image
           width={40}
           height={40}
+          priority={true}
           src={currentUser?.avatar || avatar.src}
           alt={currentUser?.name || "User Avatar"}
           className="w-full h-full object-cover"

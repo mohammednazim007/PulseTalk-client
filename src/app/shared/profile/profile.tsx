@@ -154,6 +154,7 @@ const Profile = () => {
                         width={500}
                         height={500}
                         src={profileImage}
+                        priority={true}
                         alt="Profile Preview"
                         className="rounded-full w-full h-full border-4 border-slate-700 shadow-md object-cover"
                       />
@@ -161,6 +162,7 @@ const Profile = () => {
                       <Image
                         width={500}
                         height={500}
+                        priority={true}
                         src={avatar.src}
                         alt="Profile"
                         className="rounded-full w-full h-full border-4 border-slate-700 shadow-md object-cover"
