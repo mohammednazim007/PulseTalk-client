@@ -3,9 +3,9 @@ import { useAppDispatch, useAppSelector } from "@/app/hooks/hooks";
 import { RootState } from "@/app/redux/store";
 import UserProfile from "../ui/User-profile";
 import useFriendListUser from "@/app/hooks/useActiveUser";
-import { setActiveUser } from "@/app/redux/features/friend-slice/friendSlice";
 import Image from "next/image";
 import { motion, AnimatePresence } from "motion/react";
+import { setActiveUser } from "@/app/redux/features/friend-slice/online-user-slice";
 
 interface SidebarProps {
   onClose?: () => void;
@@ -18,6 +18,7 @@ const Sidebar = ({ onClose }: SidebarProps) => {
 
   const handleClick = (friend: any) => {
     dispatch(setActiveUser(friend));
+    console.log("Clicked friend:", friend);
 
     // Only close sidebar on mobile (width < 768px)
     if (window.innerWidth < 768 && onClose) {
