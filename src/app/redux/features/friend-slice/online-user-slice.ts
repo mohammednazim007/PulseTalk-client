@@ -1,7 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { OnlineState } from "./interface";
 import api from "@/app/lib/axios";
-import { connectSocket } from "@/app/socket-io/socket-io";
 
 export const getUser = createAsyncThunk("get/user", async (_, thunkAPI) => {
   try {
