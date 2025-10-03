@@ -1,7 +1,8 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { IChatMessage } from "./interface";
+import { IChatMessage, IMessage } from "./interface";
 import api from "@/app/lib/axios";
 
+// ** Get message between logged-in user and selected friend
 export const getMessage = createAsyncThunk(
   "message/getMessage",
   async (userId: string | undefined, thunkAPI) => {
@@ -12,6 +13,27 @@ export const getMessage = createAsyncThunk(
       return response.data;
     } catch (error) {
       console.log("get message error", error);
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+
+// ** Send message to backend
+export const sendMessage = createAsyncThunk(
+  "message/addMessage",
+  async (data: any, thunkAPI) => {
+    const { formData, activeUser } = data;
+    if (!activeUser?._id)
+      return thunkAPI.rejectWithValue("Active user ID is undefined");
+
+    try {
+      const response = await api.post(
+        `/message/send/${activeUser._id}`,
+        formData
+      );
+      return response.data;
+    } catch (error) {
+      console.log("send message error", error);
       return thunkAPI.rejectWithValue(error);
     }
   }
@@ -43,6 +65,21 @@ const messageSlice = createSlice({
         state.error = null;
       })
       .addCase(getMessage.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+      .addCase(sendMessage.pending, (state, action) => {
+        state.loading = true;
+        state.error = null;
+      })
+      .addCase(sendMessage.fulfilled, (state, action) => {
+        state.chat.push(action.payload); // push the new message object
+        state.loading = false;
+        state.error = null;
+      })
+      .addCase(sendMessage.rejected, (state, action) => {
+        console.log("send message rejected", action.payload);
+
         state.loading = false;
         state.error = action.payload as string;
       });

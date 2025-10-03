@@ -29,7 +29,7 @@ export const store = configureStore({
   reducer: {
     auth: persistedReducer,
     friend: onlineSlice,
-    chat: chatReducer,
+    message: chatReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

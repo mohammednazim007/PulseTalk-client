@@ -7,6 +7,7 @@ import data from "@emoji-mart/data";
 import { useEmojiPicker } from "@/app/utility/useEmojiPicker";
 import { getSocket } from "@/app/socket-io/socket-io";
 import { useAppDispatch, useAppSelector } from "@/app/hooks/hooks";
+import { sendMessage } from "@/app/redux/features/message-slice/message-slice";
 
 const InputArea = () => {
   const [message, setMessage] = useState("");
@@ -39,6 +40,7 @@ const InputArea = () => {
 
     try {
       console.log("Sending message:", { message, image });
+      dispatch(sendMessage({ formData, activeUser }));
 
       // Reset input after successful send
       setMessage("");
@@ -60,7 +62,7 @@ const InputArea = () => {
         data.sender_id === activeUser?._id;
 
       if (isForActiveUser) {
-        dispatch({ type: "chat/addMessage", payload: data });
+        dispatch({ type: "message/addMessage", payload: data });
       }
     };
 
