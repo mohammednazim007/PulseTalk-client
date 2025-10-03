@@ -6,11 +6,15 @@ import Picker from "@emoji-mart/react";
 import data from "@emoji-mart/data";
 import { useEmojiPicker } from "@/app/utility/useEmojiPicker";
 import { getSocket } from "@/app/socket-io/socket-io";
+import { useAppDispatch, useAppSelector } from "@/app/hooks/hooks";
 
 const InputArea = () => {
   const [message, setMessage] = useState("");
   const [image, setImage] = useState<File | null>(null);
   const { pickerRef, setShowEmojiPicker, showEmojiPicker } = useEmojiPicker();
+
+  const { activeUser } = useAppSelector((state) => state.friend);
+  const dispatch = useAppDispatch();
 
   const isSendEnabled = message.trim().length > 0 || image !== null;
 
@@ -49,6 +53,20 @@ const InputArea = () => {
   useEffect(() => {
     const socket = getSocket();
     if (!socket) return;
+
+    const handNewMessage = (data: any) => {
+      const isForActiveUser =
+        data.receiver_id === activeUser?._id ||
+        data.sender_id === activeUser?._id;
+
+      if (isForActiveUser) {
+        dispatch({ type: "chat/addMessage", payload: data });
+      }
+    };
+
+    socket.on("newMessage", handNewMessage);
+
+    return () => socket.off("newMessage", handNewMessage);
   }, []);
 
   return (
