@@ -6,6 +6,7 @@ import MessageArea from "./Message-area";
 import InputArea from "./InputArea";
 import HeaderArea from "./HeaderArea";
 import { connectSocket } from "@/app/socket-io/socket-io";
+import NoChatSelected from "./NoChatSelected";
 
 interface ChatAreaProps {
   onToggleSidebar: () => void;
@@ -31,19 +32,27 @@ const ChatArea = ({ onToggleSidebar }: ChatAreaProps) => {
   return (
     <div className="flex flex-col h-full bg-[#0f172a] text-slate-100">
       {/* Header */}
-      <HeaderArea
-        onToggleSidebar={onToggleSidebar}
-        selectedFriends={activeUser}
-      />
+      {
+        <HeaderArea
+          onToggleSidebar={onToggleSidebar}
+          selectedFriends={activeUser}
+        />
+      }
 
       {/* Message area */}
       <div className="flex-1 overflow-y-auto bg-slate-900">
-        <MessageArea />
-        <div ref={messageEndRef} />
+        {!activeUser ? (
+          <NoChatSelected /> // 👈 Show placeholder when no user selected
+        ) : (
+          <>
+            <MessageArea />
+            <div ref={messageEndRef} />
+          </>
+        )}
       </div>
 
       {/* Input area */}
-      <InputArea />
+      {activeUser && <InputArea />}
     </div>
   );
 };

@@ -8,12 +8,10 @@ interface HeaderAreaProps {
 }
 
 const HeaderArea = ({ onToggleSidebar, selectedFriends }: HeaderAreaProps) => {
-  // console.log("Header selected friend:", selectedFriends);
-
   return (
     <motion.div
-      initial={{ y: -20, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
       transition={{ duration: 0.3 }}
       className="flex items-center justify-between p-2 pl-3 border-b border-slate-700 bg-slate-800 shadow-md"
     >

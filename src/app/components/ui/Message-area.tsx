@@ -12,7 +12,7 @@ const MessageArea = () => {
     (state: RootState) => state.friend
   );
   const currentUser = useAppSelector((state: RootState) => state.auth.user);
-  // connectSocket(currentUser?._id as string);
+  connectSocket(currentUser?._id as string);
 
   // ✅ Fetch chat on friend select
   useEffect(() => {
@@ -36,10 +36,14 @@ const MessageArea = () => {
       alert("New message received");
     });
 
+    socket.on("get_online_users", (users: any) => {
+      console.log("Online users:", users);
+    });
+
     return () => {
       socket.off("new_message");
     };
-  }, [dispatch]);
+  }, [dispatch, currentUser, activeUser]);
 
   return (
     <>

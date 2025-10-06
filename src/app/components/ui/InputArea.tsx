@@ -35,12 +35,6 @@ const InputArea = () => {
 
   const handleSend = async () => {
     if (!currentUser || !activeUser) return;
-    console.log("Sending message:", {
-      message,
-      image,
-      sender_id: currentUser._id,
-      receiver_id: activeUser._id,
-    });
 
     await dispatch(
       sendMessage({
@@ -57,8 +51,8 @@ const InputArea = () => {
 
   return (
     <motion.div
-      initial={{ y: 20, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
       transition={{ duration: 0.3 }}
       className="relative p-2 border-t border-slate-700 bg-slate-800 flex flex-col"
     >
