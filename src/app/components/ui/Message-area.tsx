@@ -1,7 +1,8 @@
+"use client";
 import { useAppDispatch, useAppSelector } from "@/app/hooks/hooks";
 import { addNewMessage } from "@/app/redux/features/friend-slice/message-user-slice";
 import { RootState } from "@/app/redux/store";
-import { getSocket } from "@/app/socket-io/socket-io";
+import { connectSocket, getSocket } from "@/app/socket-io/socket-io";
 import { fetchChatHistory } from "@/app/utility/fetchChatHistory";
 import React, { useEffect } from "react";
 
@@ -11,6 +12,7 @@ const MessageArea = () => {
     (state: RootState) => state.friend
   );
   const currentUser = useAppSelector((state: RootState) => state.auth.user);
+  // connectSocket(currentUser?._id as string);
 
   // ✅ Fetch chat on friend select
   useEffect(() => {
@@ -31,6 +33,7 @@ const MessageArea = () => {
 
     socket.on("new_message", (message: any) => {
       dispatch(addNewMessage(message));
+      alert("New message received");
     });
 
     return () => {
@@ -40,7 +43,7 @@ const MessageArea = () => {
 
   return (
     <>
-      <div className="flex-1 p-4 space-y-4 overflow-y-auto bg-slate-900">
+      <div className="flex flex-col gap-4 p-4 bg-slate-900">
         {chat?.map((msg, i) => {
           const isSender = msg.sender_id === currentUser?._id;
           return (

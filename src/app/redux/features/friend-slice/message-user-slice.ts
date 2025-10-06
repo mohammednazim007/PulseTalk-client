@@ -1,6 +1,5 @@
-import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { IChatMessage, OnlineState } from "./interface";
-import api from "@/app/lib/axios";
 import { IFriend } from "@/app/types/friend.types";
 import { fetchChatHistory } from "@/app/utility/fetchChatHistory";
 import { sendMessage } from "@/app/utility/sendMessage";

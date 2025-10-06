@@ -16,7 +16,11 @@ export const fetchChatHistory = createAsyncThunk<
   { sender_id: string; receiver_id: string }
 >("message/fetchChatHistory", async (data, { rejectWithValue }) => {
   try {
-    const res = await api.post(`/message/get_message`, data);
+    const res = await api.post(`/message/get_message`, data, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
     return res.data.data as IMessage[];
   } catch (error: any) {
     return rejectWithValue(
