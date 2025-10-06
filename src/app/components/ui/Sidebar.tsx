@@ -5,12 +5,7 @@ import UserProfile from "../ui/User-profile";
 import useFriendListUser from "@/app/hooks/useActiveUser";
 import Image from "next/image";
 import { motion, AnimatePresence } from "motion/react";
-import {
-  setActiveUser,
-  setOnlineUsers,
-} from "@/app/redux/features/friend-slice/message-user-slice";
-import { useEffect } from "react";
-import { connectSocket } from "@/app/socket-io/socket-io";
+import { setActiveUser } from "@/app/redux/features/friend-slice/message-user-slice";
 
 interface SidebarProps {
   onClose?: () => void;
@@ -21,20 +16,9 @@ const Sidebar = ({ onClose }: SidebarProps) => {
   const { activeFriendUsers } = useFriendListUser(currentUser?.user?._id || "");
   const dispatch = useAppDispatch();
 
-  // ** get active friend users
-  useEffect(() => {
-    const socket = connectSocket(currentUser?.user?._id || "");
-
-    socket.on("get_online_users", (users: any) => {
-      console.log("Online users:", users);
-      dispatch(setOnlineUsers(users));
-    });
-  }, [currentUser?.user?._id, dispatch]);
-
   // ** Handle friend to add active user
   const handleClick = (friend: any) => {
     dispatch(setActiveUser(friend));
-    console.log("Clicked friend:", friend);
 
     // Only close sidebar on mobile (width < 768px)
     if (window.innerWidth < 768 && onClose) {

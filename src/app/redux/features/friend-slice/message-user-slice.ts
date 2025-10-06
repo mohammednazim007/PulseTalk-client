@@ -1,6 +1,7 @@
-import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { OnlineState } from "./interface";
+import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { IChatMessage, OnlineState } from "./interface";
 import api from "@/app/lib/axios";
+import { IFriend } from "@/app/types/friend.types";
 
 const initialState: OnlineState = {
   onlineUsers: [],
@@ -16,11 +17,18 @@ const onlineSlice = createSlice({
       state.onlineUsers = action.payload;
     },
 
-    setActiveUser: (state, action) => {
+    setActiveUser: (state, action: PayloadAction<IFriend>) => {
       state.activeUser = action.payload;
+    },
+    addMessage: (state, action: PayloadAction<IChatMessage>) => {
+      state.chat.push(action.payload);
+    },
+    setChatHistory: (state, action: PayloadAction<IChatMessage[]>) => {
+      state.chat = action.payload;
     },
   },
 });
 
-export const { setOnlineUsers, setActiveUser } = onlineSlice.actions;
+export const { setOnlineUsers, setActiveUser, addMessage, setChatHistory } =
+  onlineSlice.actions;
 export default onlineSlice.reducer; // ✅ export reducer, not slice
