@@ -16,12 +16,12 @@ const InputArea = () => {
   const [image, setImage] = useState<File | null>(null);
 
   const { activeUser } = useAppSelector((state) => state.friend);
-  const { user } = useAppSelector((state) => state.auth);
   const dispatch = useAppDispatch();
   const currentUser = useAppSelector((state: RootState) => state.auth.user); // Assuming you store current user
 
   const { pickerRef, setShowEmojiPicker, showEmojiPicker } = useEmojiPicker();
   const isSendEnabled = message.trim().length > 0 || image !== null;
+  const socket = getSocket();
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -33,10 +33,10 @@ const InputArea = () => {
     setMessage((prev) => prev + emoji.native);
   };
 
-  const handleSend = async () => {
+  const handleSend = () => {
     if (!currentUser || !activeUser) return;
 
-    await dispatch(
+    dispatch(
       sendMessage({
         sender_id: currentUser._id,
         receiver_id: activeUser._id,
@@ -47,6 +47,28 @@ const InputArea = () => {
 
     setMessage("");
     setImage(null);
+  };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setMessage(value);
+
+    if (socket && activeUser && currentUser) {
+      socket.emit("typing", {
+        sender_id: currentUser._id,
+        receiver_id: activeUser._id,
+      });
+    }
+  };
+
+  // ** stop typing on blur
+  const handleBlur = () => {
+    if (socket && activeUser && currentUser) {
+      socket.emit("stop_typing", {
+        sender_id: currentUser._id,
+        receiver_id: activeUser._id,
+      });
+    }
   };
 
   return (
@@ -113,7 +135,8 @@ const InputArea = () => {
           type="text"
           placeholder="Type a message..."
           value={message}
-          onChange={(e) => setMessage(e.target.value)}
+          onChange={handleChange}
+          onBlur={handleBlur}
           className="flex-1 px-4 py-2 rounded-lg bg-slate-900 text-slate-100 placeholder-slate-500 border border-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
         />
 

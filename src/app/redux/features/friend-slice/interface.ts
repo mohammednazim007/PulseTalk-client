@@ -10,7 +10,7 @@ export interface IChatMessage {
 }
 
 export interface OnlineState {
-  onlineUsers: IFriend[];
+  onlineUsers: string[];
   activeUser: IFriend | null;
   chat: IChatMessage[];
   loading: boolean;

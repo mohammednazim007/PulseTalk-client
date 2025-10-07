@@ -3,9 +3,9 @@ import { useAppDispatch, useAppSelector } from "@/app/hooks/hooks";
 import { RootState } from "@/app/redux/store";
 import UserProfile from "../ui/User-profile";
 import useFriendListUser from "@/app/hooks/useActiveUser";
-import Image from "next/image";
 import { motion, AnimatePresence } from "motion/react";
 import { setActiveUser } from "@/app/redux/features/friend-slice/message-user-slice";
+import FriendList from "@/app/shared/Friend-List/FriendList";
 
 interface SidebarProps {
   onClose?: () => void;
@@ -14,6 +14,7 @@ interface SidebarProps {
 const Sidebar = ({ onClose }: SidebarProps) => {
   const currentUser = useAppSelector((state: RootState) => state.auth);
   const { activeFriendUsers } = useFriendListUser(currentUser?.user?._id || "");
+  const { onlineUsers } = useAppSelector((state: RootState) => state.friend);
   const dispatch = useAppDispatch();
 
   // ** Handle friend to add active user
@@ -67,48 +68,14 @@ const Sidebar = ({ onClose }: SidebarProps) => {
           />
         </div>
 
-        {/* Chat Users */}
+        {/* Online Users - Optional */}
         <div className="flex-1 overflow-y-auto">
           {activeFriendUsers?.length ? (
-            activeFriendUsers.map((friend) => (
-              <motion.div
-                key={friend._id}
-                onClick={() => handleClick(friend)}
-                className="flex items-center gap-3 p-3 hover:bg-slate-700 cursor-pointer transition rounded-lg mx-2 my-1"
-                whileHover={{ scale: 1.02 }}
-              >
-                {/* Avatar */}
-                <div className="w-10 h-10 rounded-full overflow-hidden">
-                  {friend?.avatar ? (
-                    <Image
-                      width={40}
-                      height={40}
-                      src={friend.avatar}
-                      priority={true}
-                      alt="Avatar"
-                      className="w-10 h-10 rounded-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-10 h-10 bg-slate-600 rounded-full flex items-center justify-center text-white">
-                      {friend?.name?.charAt(0) || "U"}
-                    </div>
-                  )}
-                </div>
-
-                {/* User Info */}
-                <div className="flex-1">
-                  <p className="text-sm font-semibold text-white">
-                    {friend?.name || "Unknown User"}
-                  </p>
-                  <p className="text-xs text-slate-400 transition-all">
-                    View chat
-                  </p>
-                </div>
-
-                {/* Time placeholder */}
-                <span className="text-xs text-slate-400">10:00pm</span>
-              </motion.div>
-            ))
+            <FriendList
+              friends={activeFriendUsers}
+              onlineUsers={onlineUsers}
+              onClick={handleClick}
+            />
           ) : (
             <p className="text-center text-slate-400 p-4">No friends found</p>
           )}
