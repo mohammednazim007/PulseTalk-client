@@ -1,25 +1,25 @@
 "use client";
 import { useAppDispatch, useAppSelector } from "@/app/hooks/hooks";
 import { useSocket } from "@/app/hooks/useChatSocket";
+import { useTypingIndicator } from "@/app/hooks/useTypingIndicator";
 import { TypingIndicator } from "@/app/shared/TypingIndicator/TypingIndicator";
-import { getSocket } from "@/app/socket-io/socket-io";
 import { fetchChatHistory } from "@/app/utility/fetchChatHistory";
 import Image from "next/image";
-import React, { useEffect, useRef, useState } from "react";
-
-// Fallback avatar path for safety
-const DEFAULT_AVATAR = "/default-avatar.png";
+import React, { useEffect, useRef } from "react";
+import DEFAULT_AVATAR from "@/app/assets/profile.png";
 
 const MessageArea = () => {
-  const [isTyping, setIsTyping] = useState(false);
   const dispatch = useAppDispatch();
   const { activeUser, chat } = useAppSelector((state) => state.friend);
   const currentUser = useAppSelector((state) => state.auth.user);
 
-  // ... (Hooks and useEffects remain the same) ...
   useSocket(currentUser?._id || "");
   const messageEndRef = useRef<HTMLDivElement | null>(null);
 
+  // 🚀 USE THE CUSTOM HOOK HERE
+  const [isTyping] = useTypingIndicator(currentUser?._id, activeUser);
+
+  // ** fetch the chat history
   useEffect(() => {
     if (currentUser && activeUser) {
       dispatch(
@@ -31,24 +31,7 @@ const MessageArea = () => {
     }
   }, [currentUser, activeUser, dispatch]);
 
-  useEffect(() => {
-    const socket = getSocket();
-    if (!socket || !currentUser || !activeUser) return;
-
-    socket.on("user_typing", (senderId: string) => {
-      if (senderId === activeUser._id) setIsTyping(true);
-    });
-
-    socket.on("user_stop_typing", (senderId: string) => {
-      if (senderId === activeUser._id) setIsTyping(false);
-    });
-
-    return () => {
-      socket.off("user_typing");
-      socket.off("user_stop_typing");
-    };
-  }, [activeUser, currentUser]);
-
+  // ** Scroll message
   useEffect(() => {
     messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [chat, isTyping]);
@@ -75,7 +58,7 @@ const MessageArea = () => {
                   <Image
                     width={36}
                     height={36}
-                    src={activeUser?.avatar || DEFAULT_AVATAR}
+                    src={activeUser?.avatar || DEFAULT_AVATAR.src}
                     alt="Receiver avatar"
                     className="object-cover w-full h-full"
                   />
@@ -124,7 +107,7 @@ const MessageArea = () => {
                   <Image
                     width={36}
                     height={36}
-                    src={currentUser?.avatar || DEFAULT_AVATAR}
+                    src={currentUser?.avatar || DEFAULT_AVATAR.src}
                     alt="Sender avatar"
                     className="object-cover w-full h-full"
                   />
