@@ -1,3 +1,4 @@
+//** socket.io
 import { io } from "socket.io-client";
 
 let socket: any = null;
@@ -7,6 +8,7 @@ export const connectSocket = (user_id: string) => {
   socket = io(process.env.NEXT_PUBLIC_SOCKET_URL as string, {
     query: { user_id },
     transports: ["websocket"],
+    autoConnect: true,
   });
 
   return socket;

@@ -2,7 +2,13 @@
 
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import Image from "next/image";
-import React, { useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { motion } from "motion/react";
 import { useRouter } from "next/navigation";
 import avatar from "@/app/assets/profile.png";
@@ -22,6 +28,7 @@ import { RootState } from "@/app/redux/store";
 import { profileSchema } from "./schema";
 import SignOutButton from "@/app/components/ui/Sign-out";
 import { toast } from "react-hot-toast";
+import { debounce } from "@/app/utility/debounce";
 
 interface ProfileFormValues {
   name: string;
@@ -76,42 +83,51 @@ const Profile = () => {
     }
   };
 
-  const handleSubmit = async (
-    values: ProfileFormValues,
-    { resetForm }: { resetForm: () => void }
-  ) => {
-    try {
-      const formData = new FormData();
-      formData.append("name", values.name);
+  // 1. Define the core, non-debounced submission logic using useCallback.
+  const submitLogic = useCallback(
+    async (
+      values: ProfileFormValues,
+      { resetForm }: { resetForm: () => void }
+    ) => {
+      try {
+        const formData = new FormData();
+        formData.append("name", values.name);
 
-      if (values.currentPassword && values.newPassword) {
-        formData.append("currentPassword", values.currentPassword);
-        formData.append("newPassword", values.newPassword);
+        if (values.currentPassword && values.newPassword) {
+          formData.append("currentPassword", values.currentPassword);
+          formData.append("newPassword", values.newPassword);
+        }
+
+        if (values.image) {
+          formData.append("image", values.image);
+        }
+
+        const response = await api.post("/user/profile", formData);
+
+        if (response.status === 200) {
+          toast.success("Profile updated successfully!");
+          dispatch(setUser(response.data.user));
+          resetForm();
+          window.location.reload(); // Reload to reflect changes
+          // Use router.refresh()
+        }
+      } catch (error: any) {
+        const errorMessage =
+          error.response?.data?.message ||
+          "Failed to update profile. Please try again.";
+        toast.error(errorMessage);
       }
+    },
+    [dispatch, router] // Dependencies
+  );
 
-      if (values.image) {
-        formData.append("image", values.image);
-      }
+  const debouncedSubmit = useMemo(
+    () => debounce(submitLogic, 5000),
+    [submitLogic]
+  );
 
-      const response = await api.post("/user/profile", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-        withCredentials: true,
-      });
-
-      if (response.status === 200) {
-        toast.success("Profile updated successfully!");
-        dispatch(setUser(response.data.user));
-        resetForm();
-        window.location.reload(); // Reload to reflect changes
-        // router.refresh();
-      }
-    } catch (error: any) {
-      console.error(
-        "❌ Error updating profile:",
-        error.response?.data || error.message
-      );
-    }
-  };
+  // 3. Cleanup: Ensure any pending submission is cancelled when the component unmounts.
+  useEffect(() => debouncedSubmit.cancel(), [debouncedSubmit]);
 
   return (
     <div className="bg-[#0f172a] flex items-center justify-center px-4 py-8 font-sans text-slate-100">
@@ -137,7 +153,7 @@ const Profile = () => {
           <Formik
             initialValues={initialValues}
             validationSchema={profileSchema}
-            onSubmit={handleSubmit}
+            onSubmit={debouncedSubmit}
           >
             {({ setFieldValue, isSubmitting }) => (
               <Form className="flex flex-col md:flex-row" noValidate>

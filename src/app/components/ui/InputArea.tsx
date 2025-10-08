@@ -1,23 +1,27 @@
 "use client";
-import React, { useEffect, useState } from "react";
 import { motion } from "motion/react";
-import { FiSend, FiImage, FiSmile, FiX } from "react-icons/fi";
+import { FiSend, FiImage, FiSmile, FiX, FiEdit3 } from "react-icons/fi";
 import Picker from "@emoji-mart/react";
 import data from "@emoji-mart/data";
-import { useEmojiPicker } from "@/app/utility/useEmojiPicker";
+import { useEmojiPicker } from "@/app/hooks/useEmojiPicker";
+import { useAppSelector, useAppDispatch } from "@/app/hooks/hooks";
+import api from "@/app/lib/axios";
+import { useState } from "react";
 import { getSocket } from "@/app/socket-io/socket-io";
-import { useAppDispatch, useAppSelector } from "@/app/hooks/hooks";
-import { sendMessage } from "@/app/redux/features/message-slice/message-slice";
+import { RootState } from "@/app/redux/store";
+import { sendMessage } from "@/app/utility/sendMessage";
 
 const InputArea = () => {
   const [message, setMessage] = useState("");
   const [image, setImage] = useState<File | null>(null);
-  const { pickerRef, setShowEmojiPicker, showEmojiPicker } = useEmojiPicker();
 
   const { activeUser } = useAppSelector((state) => state.friend);
   const dispatch = useAppDispatch();
+  const currentUser = useAppSelector((state: RootState) => state.auth.user); // Assuming you store current user
 
+  const { pickerRef, setShowEmojiPicker, showEmojiPicker } = useEmojiPicker();
   const isSendEnabled = message.trim().length > 0 || image !== null;
+  const socket = getSocket();
 
   // Add selected emoji into the message input
   const handleEmojiSelect = (emoji: any) => {
@@ -30,53 +34,55 @@ const InputArea = () => {
     }
   };
 
-  // Submit message and image to backend
-  const handleSubmitMessage = async () => {
-    if (!isSendEnabled) return;
+  // ** Handle Send Message
+  const handleSubmit = () => {
+    if (!currentUser || !activeUser) return;
 
-    const formData = new FormData();
-    formData.append("text", message);
-    if (image) formData.append("media", image);
+    console.log("data", message, image);
 
-    try {
-      console.log("Sending message:", { message, image });
-      dispatch(sendMessage({ formData, activeUser }));
+    dispatch(
+      sendMessage({
+        sender_id: currentUser._id,
+        receiver_id: activeUser._id,
+        text: message,
+        media: image || undefined,
+      })
+    );
 
-      // Reset input after successful send
-      setMessage("");
-      setImage(null);
-      setShowEmojiPicker(false);
-    } catch (error) {
-      console.error("Error sending message:", error);
+    setMessage("");
+    setImage(null);
+    handleBlur();
+  };
+
+  // ** typing indicator
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setMessage(value);
+
+    if (socket && activeUser && currentUser) {
+      socket.emit("typing", {
+        sender_id: currentUser._id,
+        receiver_id: activeUser._id,
+      });
     }
   };
 
-  // ** handle socket emit message to backend
-  useEffect(() => {
-    const socket = getSocket();
-    if (!socket) return;
-
-    const handNewMessage = (data: any) => {
-      const isForActiveUser =
-        data.receiver_id === activeUser?._id ||
-        data.sender_id === activeUser?._id;
-
-      if (isForActiveUser) {
-        dispatch({ type: "message/addMessage", payload: data });
-      }
-    };
-
-    socket.on("newMessage", handNewMessage);
-
-    return () => socket.off("newMessage", handNewMessage);
-  }, []);
+  // ** stop typing on blur
+  const handleBlur = () => {
+    if (socket && activeUser && currentUser) {
+      socket.emit("stop_typing", {
+        sender_id: currentUser._id,
+        receiver_id: activeUser._id,
+      });
+    }
+  };
 
   return (
     <motion.div
-      initial={{ y: 20, opacity: 0 }}
-      animate={{ y: 0, opacity: 1 }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
       transition={{ duration: 0.3 }}
-      className="relative p-2 border-t border-slate-700 bg-slate-800 flex flex-col"
+      className="relative p-[7px] px-3 border-t border-slate-700 bg-slate-800 flex flex-col"
     >
       {/* Preview Section - Floating */}
       {image && (
@@ -105,7 +111,7 @@ const InputArea = () => {
       )}
 
       {/* Input Controls */}
-      <div className="flex items-center gap-2 sm:gap-3">
+      <div className="flex items-center gap-2">
         {/* Emoji Button */}
         <button
           onClick={() => setShowEmojiPicker((prev) => !prev)}
@@ -130,20 +136,21 @@ const InputArea = () => {
           type="text"
           placeholder="Type a message..."
           value={message}
-          onChange={(e) => setMessage(e.target.value)}
+          onChange={handleChange}
+          onBlur={handleBlur}
           className="flex-1 px-4 py-2 rounded-lg bg-slate-900 text-slate-100 placeholder-slate-500 border border-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
         />
 
         {/* Send Button */}
         <button
           disabled={!isSendEnabled}
-          type="button"
-          onClick={handleSubmitMessage}
-          className={`p-3 rounded-lg transition shadow flex items-center justify-center ${
-            isSendEnabled
-              ? "bg-indigo-600 hover:bg-indigo-700 text-white"
-              : "bg-slate-700 text-slate-500 cursor-not-allowed"
-          }`}
+          onClick={handleSubmit}
+          className={`p-3 rounded-lg transition shadow flex items-center justify-center 
+            ${
+              isSendEnabled
+                ? "bg-indigo-600 hover:bg-indigo-700 text-white"
+                : "bg-slate-700 text-slate-500 cursor-not-allowed"
+            }`}
         >
           <FiSend size={18} />
         </button>
