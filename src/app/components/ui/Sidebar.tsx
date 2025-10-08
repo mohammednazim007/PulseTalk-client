@@ -6,6 +6,8 @@ import useFriendListUser from "@/app/hooks/useActiveUser";
 import { motion, AnimatePresence } from "motion/react";
 import { setActiveUser } from "@/app/redux/features/friend-slice/message-user-slice";
 import FriendList from "@/app/shared/Friend-List/FriendList";
+import { CiSettings } from "react-icons/ci";
+import { useRouter } from "next/navigation";
 
 interface SidebarProps {
   onClose?: () => void;
@@ -17,6 +19,8 @@ const Sidebar = ({ onClose }: SidebarProps) => {
   const { onlineUsers } = useAppSelector((state: RootState) => state.friend);
   const dispatch = useAppDispatch();
 
+  const route = useRouter();
+
   // ** Handle friend to add active user
   const handleClick = (friend: any) => {
     dispatch(setActiveUser(friend));
@@ -26,6 +30,9 @@ const Sidebar = ({ onClose }: SidebarProps) => {
       onClose();
     }
   };
+
+  // ** handle routes
+  const handleRouteClick = () => route.push("/profile");
 
   return (
     <AnimatePresence mode="wait">
@@ -83,10 +90,15 @@ const Sidebar = ({ onClose }: SidebarProps) => {
 
         {/* Profile + Sign Out */}
         {currentUser?.user && (
-          <div className="p-2 border-t border-slate-700 flex items-center justify-between gap-2 bg-slate-900">
+          <div className="p-2 border-t border-slate-700 flex items-center justify-between gap-2 bg-slate-900 ">
             <UserProfile
               currentUser={currentUser.user}
               isTimeAvailable={false}
+            />
+            <CiSettings
+              onClick={() => handleRouteClick()}
+              size={29}
+              className="hover:animate-spin"
             />
           </div>
         )}
