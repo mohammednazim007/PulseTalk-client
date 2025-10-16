@@ -15,7 +15,7 @@ const InputArea = () => {
   const [message, setMessage] = useState("");
   const [image, setImage] = useState<File | null>(null);
 
-  const { activeUser } = useAppSelector((state) => state.friend);
+  const { activeUser } = useAppSelector((state) => state.user);
   const dispatch = useAppDispatch();
   const currentUser = useAppSelector((state: RootState) => state.auth.user); // Assuming you store current user
 

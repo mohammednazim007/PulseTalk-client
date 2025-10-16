@@ -2,7 +2,16 @@ export interface User {
   _id: string;
   name: string;
   email: string;
-  avatar?: string | null;
+
+  password?: string;
+  avatar: string | null;
+  isFriend?: boolean;
+
+  friends?: string[]; // IDs of accepted friends
+  friendRequests?: string[]; // IDs of incoming friend requests
+  sentRequests?: string[]; // IDs of sent friend requests
+  blockedUsers?: string[]; // IDs of blocked users
+  lastActive?: Date; // Last online timestamp
   createdAt: string;
   updatedAt: string;
 }

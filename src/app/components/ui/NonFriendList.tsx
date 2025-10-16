@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+
 interface NonFriendListProps {
   currentUserId: string | undefined;
   onAddFriend: (user: any) => void;
@@ -7,7 +9,7 @@ interface NonFriendListProps {
 
 const dummyUsers = [
   {
-    _id: "68f0dcf875b5c41732fa20b5",
+    _id: "68f0dcf875b5c41732fa20b5f",
     name: "Mohammed Nazim",
     email: "mohammednazim3629@gmail.com",
     avatar:
@@ -25,20 +27,29 @@ const dummyUsers = [
 ];
 
 const NonFriendList = ({ currentUserId, onAddFriend }: NonFriendListProps) => {
+  const [selectId, setSelectedId] = useState<string>();
+
   const nonFriends = dummyUsers.filter((u) => u._id !== currentUserId);
+
+  // ** selected color
+  const handleSelected = (id: string) => setSelectedId(id);
 
   return (
     <div className="flex flex-col divide-y divide-slate-700">
       {nonFriends.map((user) => (
         <div
+          onClick={() => handleSelected(user._id)}
           key={user._id}
-          className="flex justify-between items-center p-3 rounded-md hover:bg-slate-700 active:bg-slate-600 transition-colors cursor-pointer"
+          className={`flex justify-between items-center p-2 mx-2 rounded-md cursor-pointer
+    transition-colors duration-200 hover:bg-slate-600
+    ${selectId === user._id ? "bg-slate-700 hover:bg-slate-600" : ""}
+  `}
         >
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-4">
             <img
               src={user.avatar}
               alt={user.name}
-              className="w-10 h-10 rounded-full object-cover"
+              className="w-12 h-12 rounded-full object-cover"
             />
             <div>
               <p className="font-medium">{user.name}</p>
@@ -48,8 +59,11 @@ const NonFriendList = ({ currentUserId, onAddFriend }: NonFriendListProps) => {
             </div>
           </div>
           <button
-            onClick={() => onAddFriend(user)}
-            className="text-sm bg-blue-600 px-3 py-1 rounded hover:bg-blue-500 active:bg-blue-700 transition-colors"
+            onClick={(e) => {
+              e.stopPropagation(); // prevent triggering selection
+              onAddFriend(user);
+            }}
+            className="text-sm bg-blue-600 px-4 py-2 rounded hover:bg-blue-500 active:bg-blue-700 transition-colors"
           >
             Add
           </button>

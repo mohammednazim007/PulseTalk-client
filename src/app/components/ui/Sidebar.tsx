@@ -4,7 +4,7 @@ import { RootState } from "@/app/redux/store";
 import UserProfile from "../ui/User-profile";
 import useFriendListUser from "@/app/hooks/useFriendList";
 import { motion, AnimatePresence } from "motion/react";
-import { setActiveUser } from "@/app/redux/features/friend-slice/message-user-slice";
+import { setActiveUser } from "@/app/redux/features/user-slice/message-user-slice";
 import FriendList from "@/app/shared/Friend-List/FriendList";
 import { CiSettings } from "react-icons/ci";
 import { useRouter } from "next/navigation";
@@ -23,7 +23,7 @@ const Sidebar = ({ onClose }: SidebarProps) => {
   const { activeFriendUsers, isLoading } = useFriendListUser(
     currentUser?.user?._id || ""
   );
-  const { onlineUsers } = useAppSelector((state: RootState) => state.friend);
+  const { onlineUsers } = useAppSelector((state: RootState) => state.user);
   const dispatch = useAppDispatch();
 
   const route = useRouter();
@@ -40,6 +40,7 @@ const Sidebar = ({ onClose }: SidebarProps) => {
 
   // ** handle routes
   const handleRouteClick = () => route.push("/profile");
+
   const handleAddFriend = (user: any) => {
     console.log("Add friend clicked:", user);
     // TODO: call your backend / dispatch Redux action

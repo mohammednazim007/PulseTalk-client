@@ -8,7 +8,7 @@ interface HeaderAreaProps {
 }
 
 const HeaderArea = ({ onToggleSidebar }: HeaderAreaProps) => {
-  const { activeUser } = useAppSelector((state) => state.friend);
+  const { activeUser } = useAppSelector((state) => state.user);
 
   return (
     <motion.div

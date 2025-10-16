@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import api from "../lib/axios";
-import { IFriend } from "../types/friend.types";
+import { User } from "../types/auth";
 
 const useFriendListUser = (userId: string) => {
-  const [activeFriendUsers, setActiveFriendUsers] = useState<IFriend[] | null>(
+  const [activeFriendUsers, setActiveFriendUsers] = useState<User[] | null>(
     null
   );
   const [isLoading, setIsLoading] = useState(true);

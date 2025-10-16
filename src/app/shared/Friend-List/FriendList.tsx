@@ -1,17 +1,14 @@
 "use client";
 import React, { useState, useCallback, memo } from "react";
 import Image from "next/image";
-import {
-  FriendListItemProps,
-  FriendListProps,
-  IFriend,
-} from "@/app/types/friend.types";
+import { User } from "@/app/types/auth";
+import { FriendListItemProps, FriendListProps } from "./interface";
 
 const FriendList = ({ friends, onlineUsers, onClick }: FriendListProps) => {
   const [selectedFriendId, setSelectedFriendId] = useState<string | null>(null);
 
   const handleFriendClick = useCallback(
-    (friend: IFriend) => {
+    (friend: User) => {
       setSelectedFriendId(friend._id);
       onClick?.(friend); // optional chaining is cleaner
     },

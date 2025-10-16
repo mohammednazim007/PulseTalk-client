@@ -10,7 +10,7 @@ interface ChatAreaProps {
 }
 
 const ChatArea = ({ onToggleSidebar }: ChatAreaProps) => {
-  const { activeUser } = useAppSelector((state) => state.friend);
+  const { activeUser } = useAppSelector((state) => state.user);
 
   return (
     // ✅ Full height flexible container

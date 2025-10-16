@@ -11,7 +11,7 @@ import NoChatSelected from "../../shared/NoChatSelected/NoChatSelected";
 
 const MessageArea = () => {
   const dispatch = useAppDispatch();
-  const { activeUser, chat } = useAppSelector((state) => state.friend);
+  const { activeUser, chat } = useAppSelector((state) => state.user);
   const currentUser = useAppSelector((state) => state.auth.user);
 
   useSocket(currentUser?._id || "");
