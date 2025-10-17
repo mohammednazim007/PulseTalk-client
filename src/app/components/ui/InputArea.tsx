@@ -37,8 +37,6 @@ const InputArea = () => {
   const handleSubmit = () => {
     if (!currentUser || !activeUser) return;
 
-    console.log("data", message, image);
-
     dispatch(
       sendMessage({
         sender_id: currentUser._id,
