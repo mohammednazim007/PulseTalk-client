@@ -51,8 +51,8 @@ const InputArea = () => {
     handleBlur();
   };
 
-  // ** typing indicator
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // ** typing indicator ==== HTMLInputElement
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const value = e.target.value;
     setMessage(value);
 
@@ -129,13 +129,27 @@ const InputArea = () => {
         </label>
 
         {/* Input Box */}
-        <input
+        {/* <input
           type="text"
           placeholder="Type a message..."
           value={message}
           onChange={handleChange}
           onBlur={handleBlur}
           className="flex-1 px-4 py-2 rounded-lg bg-slate-900 text-slate-100 placeholder-slate-500 border border-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+        /> */}
+        <textarea
+          rows={1}
+          placeholder="Type a message..."
+          value={message}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" && !e.shiftKey) {
+              e.preventDefault();
+              if (isSendEnabled) handleSubmit();
+            }
+          }}
+          className="flex-1 resize-none px-4 py-2 rounded-lg bg-slate-900 text-slate-100 placeholder-slate-500 border border-slate-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
         />
 
         {/* Send Button */}
