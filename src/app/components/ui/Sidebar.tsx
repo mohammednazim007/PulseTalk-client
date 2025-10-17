@@ -48,6 +48,9 @@ const Sidebar = ({ onClose }: SidebarProps) => {
   };
 
   // ** handle Search Friend
+  const handleUserSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
+    console.log(event.target.value);
+  };
 
   return (
     <AnimatePresence mode="wait">
@@ -97,7 +100,7 @@ const Sidebar = ({ onClose }: SidebarProps) => {
           <input
             type="text"
             placeholder="Search"
-            onChange={() => handleUserSearch()}
+            onChange={(e) => handleUserSearch(e)}
             className="w-full rounded-lg bg-slate-700 px-3 py-2 text-sm placeholder-slate-400 text-white outline-none focus:ring-2 focus:ring-indigo-500 transition"
           />
         </div>
