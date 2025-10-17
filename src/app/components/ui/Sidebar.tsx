@@ -41,10 +41,13 @@ const Sidebar = ({ onClose }: SidebarProps) => {
   // ** handle routes
   const handleRouteClick = () => route.push("/profile");
 
+  // ** handle Add Friend FN
   const handleAddFriend = (user: any) => {
     console.log("Add friend clicked:", user);
     // TODO: call your backend / dispatch Redux action
   };
+
+  // ** handle Search Friend
 
   return (
     <AnimatePresence mode="wait">
@@ -94,6 +97,7 @@ const Sidebar = ({ onClose }: SidebarProps) => {
           <input
             type="text"
             placeholder="Search"
+            onChange={() => handleUserSearch()}
             className="w-full rounded-lg bg-slate-700 px-3 py-2 text-sm placeholder-slate-400 text-white outline-none focus:ring-2 focus:ring-indigo-500 transition"
           />
         </div>
