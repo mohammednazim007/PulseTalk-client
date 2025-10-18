@@ -119,10 +119,7 @@ const Sidebar = ({ onClose }: SidebarProps) => {
               <p className="text-center text-slate-400 p-4">No friends found</p>
             )
           ) : (
-            <NonFriendList
-              currentUserId={currentUser?.user?._id}
-              onAddFriend={handleAddFriend}
-            />
+            <NonFriendList />
           )}
         </div>
 

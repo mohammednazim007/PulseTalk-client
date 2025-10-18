@@ -11,9 +11,9 @@ export interface User {
   friendRequests?: string[]; // IDs of incoming friend requests
   sentRequests?: string[]; // IDs of sent friend requests
   blockedUsers?: string[]; // IDs of blocked users
-  lastActive?: Date; // Last online timestamp
-  createdAt: string;
-  updatedAt: string;
+  lastActive?: string; // Last online timestamp
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface IUserState {
