@@ -1,13 +1,13 @@
+import { getCookie } from "@/app/utility/getCookie";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export const friendApi = createApi({
   reducerPath: "friendApi",
   baseQuery: fetchBaseQuery({
-    baseUrl: process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api", // your API base
-    prepareHeaders: (headers, { getState }) => {
-      // 🔐 Optional: attach JWT token from auth state if needed
-      const token = (getState() as any)?.auth?.user?.token;
-      if (token) headers.set("Authorization", `Bearer ${token}`);
+    baseUrl: process.env.NEXT_PUBLIC_BACKEND_URL,
+    credentials: "include", // send cookies automatically
+    prepareHeaders: (headers) => {
+      // No need to read cookie manually
       return headers;
     },
   }),

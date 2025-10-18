@@ -1,25 +1,18 @@
 "use client";
-import { useAppDispatch } from "@/app/hooks/hooks";
 import { useGetFriendsQuery } from "@/app/redux/features/friends/friendApi";
 import UserActionButtons from "@/app/shared/UserButtonCard/UserActionButtons";
 import { User } from "@/app/types/auth";
 import { formatLastSeenTime } from "@/app/utility/formatLastSeenTime";
-import { getFriends } from "@/app/utility/getFriends";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 const NonFriendList = () => {
   const [selectId, setSelectedId] = useState<string>();
 
   // Use the friends data from the Redux store
   const { data, isLoading } = useGetFriendsQuery();
-  const dispatch = useAppDispatch();
 
   const handleSelected = (id: string) => setSelectedId(id);
-
-  // useEffect(() => {
-  //   dispatch(getFriends());
-  // }, [dispatch]);
 
   // Handle loading state
   if (isLoading) {
@@ -27,17 +20,16 @@ const NonFriendList = () => {
   }
 
   // Handle empty state
-  if (!data || data.length === 0) {
+  if (!data.users || data?.users?.length === 0) {
     return (
       <div className="p-4 text-center text-gray-500">No friends found.</div>
     );
   }
-  console.log("data", data);
 
   return (
     <div className="flex flex-col divide-y divide-slate-700">
       {/* FIX: Map over the 'friends' state from Redux, not 'nonFriends' */}
-      {data?.map((user: User) => (
+      {data?.users?.map((user: User) => (
         <div
           onClick={() => handleSelected(user._id)}
           key={user._id}
