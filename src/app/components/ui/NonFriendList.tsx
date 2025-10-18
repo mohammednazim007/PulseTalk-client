@@ -15,16 +15,12 @@ const NonFriendList = () => {
   const handleSelected = (id: string) => setSelectedId(id);
 
   // Handle loading state
-  if (isLoading) {
-    return <div className="p-4 text-center text-white">Loading Friends...</div>;
-  }
+  if (isLoading)
+    <div className="p-4 text-center text-white">Loading Friends...</div>;
 
   // Handle empty state
-  if (!data.users || data?.users?.length === 0) {
-    return (
-      <div className="p-4 text-center text-gray-500">No friends found.</div>
-    );
-  }
+  if (!data.users || data?.users?.length === 0)
+    <div className="p-4 text-center text-gray-500">No friends found.</div>;
 
   return (
     <div className="flex flex-col divide-y divide-slate-700">

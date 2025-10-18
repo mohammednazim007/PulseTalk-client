@@ -1,4 +1,3 @@
-import { getCookie } from "@/app/utility/getCookie";
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export const friendApi = createApi({
@@ -12,7 +11,7 @@ export const friendApi = createApi({
     },
   }),
 
-  tagTypes: ["Friends"], // 🏷 used for cache invalidation
+  tagTypes: ["Friends"],
 
   endpoints: (builder) => ({
     // ✅ 1. Get all friends

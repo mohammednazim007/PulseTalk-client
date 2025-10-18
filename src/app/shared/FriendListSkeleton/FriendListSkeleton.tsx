@@ -9,11 +9,11 @@ const FriendListSkeleton = ({ count = 1 }: FriendListSkeletonProps) => {
   const skeletons = Array.from({ length: count });
 
   return (
-    <>
+    <div className="m-2 space-y-3">
       {skeletons.map((_, index) => (
         <div
           key={index}
-          className="flex items-center gap-3 rounded-lg animate-pulse m-3"
+          className="flex items-center gap-3 rounded-lg animate-pulse"
         >
           <div className="w-10 h-10 rounded-full bg-gray-700 flex-shrink-0" />
 
@@ -24,7 +24,7 @@ const FriendListSkeleton = ({ count = 1 }: FriendListSkeletonProps) => {
           </div>
         </div>
       ))}
-    </>
+    </div>
   );
 };
 

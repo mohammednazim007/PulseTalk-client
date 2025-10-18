@@ -15,7 +15,7 @@ const HeaderArea = ({ onToggleSidebar }: HeaderAreaProps) => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.3 }}
-      className="flex items-center justify-between p-2 pl-6 border-b border-slate-700 bg-slate-800 shadow-md"
+      className="flex items-center justify-between px-5 border-b border-slate-700 bg-slate-800 shadow-md"
     >
       <div className="flex items-center gap-3">
         {/* Mobile toggle button */}

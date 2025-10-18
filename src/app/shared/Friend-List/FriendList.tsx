@@ -38,7 +38,7 @@ const FriendList = ({ friends, onlineUsers, onClick }: FriendListProps) => {
 const FriendListItem = memo(
   ({ friend, isOnline, isSelected, onClick }: FriendListItemProps) => {
     const baseClasses =
-      "flex items-center gap-3 p-3 cursor-pointer transition rounded-lg mx-2 my-1";
+      "flex items-center gap-3 p-3 cursor-pointer transition rounded-lg mx-2 my-[3px]";
     const selectionClasses = isSelected ? "bg-slate-700" : "hover:bg-slate-700";
 
     return (

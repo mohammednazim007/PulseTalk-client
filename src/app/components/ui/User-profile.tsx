@@ -10,7 +10,7 @@ interface UserProfileProps {
 
 const UserProfile = ({ currentUser, isTimeAvailable }: UserProfileProps) => {
   return (
-    <div className="flex items-center gap-3 rounded-lg cursor-pointer">
+    <div className="flex items-center gap-3 rounded-lg cursor-pointer py-2">
       {/* Avatar Section */}
       <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-green-500/80 flex-shrink-0">
         <Image
