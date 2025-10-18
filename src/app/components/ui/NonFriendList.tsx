@@ -24,13 +24,12 @@ const NonFriendList = () => {
 
   return (
     <div className="flex flex-col divide-y divide-slate-700">
-      {/* FIX: Map over the 'friends' state from Redux, not 'nonFriends' */}
       {data?.users?.map((user: User) => (
         <div
           onClick={() => handleSelected(user._id)}
           key={user._id}
           className={`flex justify-between items-center p-3 
-            rounded-md cursor-pointer
+            rounded-md cursor-pointer mx-2
             transition-colors duration-200 hover:bg-slate-700/50
             ${selectId === user._id ? "bg-slate-700 hover:bg-slate-700/50" : ""}
           `}

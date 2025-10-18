@@ -20,16 +20,26 @@ export const friendApi = createApi({
       providesTags: ["Friends"],
     }),
 
-    // ✅ 2. Add a friend
+    // ✅ 2. Add a friend with mutation
     addFriend: builder.mutation({
-      query: (friendId: string) => ({
-        url: `/friend/add/${friendId}`,
-        method: "POST",
+      query: ({
+        senderId,
+        receiverId,
+      }: {
+        senderId: string;
+        receiverId: string;
+      }) => ({
+        url: `/friend/send-request`,
+        method: "PUT",
+        body: { senderId, receiverId },
+        headers: {
+          "Content-Type": "application/json",
+        },
       }),
       invalidatesTags: ["Friends"], // 👈 auto refetch list after add
     }),
 
-    // ✅ 3. Remove a friend
+    // ✅ 3. Remove a friend with mutation
     removeFriend: builder.mutation({
       query: (friendId: string) => ({
         url: `/friend/remove/${friendId}`,

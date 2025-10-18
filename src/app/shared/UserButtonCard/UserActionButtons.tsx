@@ -1,51 +1,77 @@
 import { User } from "@/app/types/auth";
+import CancelButton from "../CancelButton/CancelButton";
+import PendingButton from "../PendingButton/PendingButton";
+import AddButton from "../AddButton/AddButton";
+import { useAppSelector } from "@/app/hooks/hooks";
+import {
+  useAddFriendMutation,
+  useRemoveFriendMutation,
+} from "@/app/redux/features/friends/friendApi";
 
 interface UserAction {
   user: User;
 }
 
 const UserActionButtons = ({ user }: UserAction) => {
-  // 1. Define Common Button Classes (Smaller UI)
+  const { user: currentUser } = useAppSelector((state) => state.auth);
+
+  const [addFriend, { isLoading: isAdding }] = useAddFriendMutation();
+  const [removeFriend, { isLoading: isRemoving }] = useRemoveFriendMutation();
+
+  if (!currentUser) return null;
+
+  // --- RELATIONSHIP LOGIC ---
+  const isFriend = currentUser.friends?.includes(user._id) ?? false;
+  const isPending =
+    currentUser.sentRequests?.includes(user._id) ||
+    user.friendRequests?.includes(currentUser._id);
+
+  // --- BUTTON STYLES ---
   const baseClasses =
-    // p-1.5 for vertical padding, px-3 for horizontal
-    // text-xs for small text
-    "text-xs font-semibold py-1.5 px-3 rounded-md transition duration-200 ease-in-out";
+    "text-xs font-semibold py-1.5 px-3 rounded-lg shadow-sm transition duration-300 ease-in-out whitespace-nowrap";
 
-  // Dummy handlers for now
-  const onCancelFriendship = (userId: string) => {
-    console.log(`Canceling friendship with: ${userId}`);
-    // Actual API call/dispatch here
+  // --- HANDLERS ---
+  const handleAddFriend = async (receiverId: string) => {
+    try {
+      await addFriend({ senderId: currentUser._id, receiverId }).unwrap();
+      console.log("✅ Friend request sent");
+    } catch (err) {
+      console.error("❌ Failed to send request:", err);
+    }
   };
 
-  const onAddFriend = (userId: string) => {
-    console.log(`Adding friend: ${userId}`);
-    // Actual API call/dispatch here
+  const handleRemoveFriend = async (friendId: string) => {
+    try {
+      await removeFriend(friendId).unwrap();
+      console.log("🗑️ Friend removed");
+    } catch (err) {
+      console.error("❌ Failed to remove friend:", err);
+    }
   };
+
+  // --- CONDITIONAL RENDER ---
+  if (isFriend) {
+    return (
+      <CancelButton
+        userId={user._id}
+        baseClasses={baseClasses}
+        onClick={handleRemoveFriend}
+        isLoading={isRemoving}
+      />
+    );
+  }
+
+  if (isPending) {
+    return <PendingButton baseClasses={baseClasses} />;
+  }
 
   return (
-    <>
-      {user.isFriend ? (
-        // --- CANCEL/UNFRIEND BUTTON (Compact & Subtle) ---
-        <button
-          type="button"
-          onClick={() => onCancelFriendship(user._id)}
-          // Subtle, outline-style look: Gray background with a lighter border/focus ring
-          className={`${baseClasses} border border-gray-400 text-gray-400 hover:bg-gray-700/50 focus:ring-gray-400 focus:ring-1`}
-        >
-          Cancel
-        </button>
-      ) : (
-        // --- ADD BUTTON (Compact & Primary) ---
-        <button
-          type="button"
-          onClick={() => onAddFriend(user._id)}
-          // Primary color (Blue) but more compact. Subtle hover.
-          className={`${baseClasses} bg-blue-500 text-white hover:bg-blue-600 focus:ring-blue-500 focus:ring-1`}
-        >
-          Add
-        </button>
-      )}
-    </>
+    <AddButton
+      userId={user._id}
+      baseClasses={baseClasses}
+      onClick={handleAddFriend}
+      isLoading={isAdding}
+    />
   );
 };
 
