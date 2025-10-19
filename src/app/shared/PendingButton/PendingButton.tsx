@@ -2,11 +2,10 @@
 
 import { FaClock } from "react-icons/fa";
 
-interface PendingButtonProps {
-  baseClasses: string;
-}
+const PendingButton = () => {
+  const baseClasses =
+    "text-xs font-semibold py-2 px-3 rounded-md shadow-sm transition duration-300 ease-in-out whitespace-nowrap";
 
-const PendingButton = ({ baseClasses }: PendingButtonProps) => {
   return (
     <button
       type="button"

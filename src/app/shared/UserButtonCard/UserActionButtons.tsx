@@ -46,15 +46,12 @@ const UserActionButtons = ({ user }: UserAction) => {
   };
 
   // --- BUTTON STYLES ---
-  const baseClasses =
-    "text-xs font-semibold py-1.5 px-3 rounded-lg shadow-sm transition duration-300 ease-in-out whitespace-nowrap";
 
   // --- CONDITIONAL RENDER ---
   if (isFriend) {
     return (
       <CancelButton
         userId={user._id}
-        baseClasses={baseClasses}
         onClick={handleRemoveFriend}
         isLoading={isRemoving}
       />
@@ -62,13 +59,12 @@ const UserActionButtons = ({ user }: UserAction) => {
   }
 
   if (isPending) {
-    return <PendingButton baseClasses={baseClasses} />;
+    return <PendingButton />;
   }
 
   return (
     <AddButton
       userId={user._id}
-      baseClasses={baseClasses}
       onClick={handleAddFriend}
       isLoading={isAdding}
     />

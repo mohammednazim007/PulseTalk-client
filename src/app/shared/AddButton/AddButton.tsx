@@ -4,17 +4,14 @@ import { FaUserPlus, FaSpinner } from "react-icons/fa";
 
 interface AddButtonProps {
   userId: string;
-  baseClasses: string;
   onClick: (userId: string) => void;
   isLoading: boolean;
 }
 
-const AddButton = ({
-  userId,
-  baseClasses,
-  onClick,
-  isLoading,
-}: AddButtonProps) => {
+const AddButton = ({ userId, onClick, isLoading }: AddButtonProps) => {
+  const baseClasses =
+    "text-xs font-semibold py-2 px-3 rounded-md shadow-sm transition duration-300 ease-in-out whitespace-nowrap";
+
   return (
     <button
       type="button"
