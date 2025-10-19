@@ -26,11 +26,7 @@ const UserActionButtons = ({ user }: UserAction) => {
     currentUser.sentRequests?.includes(user._id) ||
     user.friendRequests?.includes(currentUser._id);
 
-  // --- BUTTON STYLES ---
-  const baseClasses =
-    "text-xs font-semibold py-1.5 px-3 rounded-lg shadow-sm transition duration-300 ease-in-out whitespace-nowrap";
-
-  // --- HANDLERS ---
+  // ---ADD FRIEND HANDLERS  ---
   const handleAddFriend = async (receiverId: string) => {
     try {
       await addFriend({ senderId: currentUser._id, receiverId }).unwrap();
@@ -48,6 +44,10 @@ const UserActionButtons = ({ user }: UserAction) => {
       console.error("❌ Failed to remove friend:", err);
     }
   };
+
+  // --- BUTTON STYLES ---
+  const baseClasses =
+    "text-xs font-semibold py-1.5 px-3 rounded-lg shadow-sm transition duration-300 ease-in-out whitespace-nowrap";
 
   // --- CONDITIONAL RENDER ---
   if (isFriend) {
