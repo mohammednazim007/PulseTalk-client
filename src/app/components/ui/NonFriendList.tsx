@@ -1,18 +1,25 @@
 "use client";
+import { useAppDispatch } from "@/app/hooks/hooks";
+import { refreshUser } from "@/app/redux/features/auth/refreshUser";
 import { useGetFriendsQuery } from "@/app/redux/features/friends/friendApi";
 import UserActionButtons from "@/app/shared/UserButtonCard/UserActionButtons";
 import { User } from "@/app/types/auth";
 import { formatLastSeenTime } from "@/app/utility/formatLastSeenTime";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 const NonFriendList = () => {
   const [selectId, setSelectedId] = useState<string>();
+  const dispatch = useAppDispatch();
 
   // Use the friends data from the Redux store
   const { data, isLoading } = useGetFriendsQuery();
 
   const handleSelected = (id: string) => setSelectedId(id);
+
+  useEffect(() => {
+    dispatch(refreshUser());
+  }, [dispatch]);
 
   // Handle loading state
   if (isLoading)
@@ -73,7 +80,7 @@ const NonFriendList = () => {
           </div>
 
           {/* UserActionButtons component */}
-          <UserActionButtons user={user} />
+          <UserActionButtons friendUser={user} />
         </div>
       ))}
     </div>

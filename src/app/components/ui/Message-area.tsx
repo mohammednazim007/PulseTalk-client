@@ -14,6 +14,7 @@ const MessageArea = () => {
   const { activeUser, chat } = useAppSelector((state) => state.user);
   const currentUser = useAppSelector((state) => state.auth.user);
 
+  // ** Initialize socket connection
   useSocket(currentUser?._id || "");
   const messageEndRef = useRef<HTMLDivElement | null>(null);
 

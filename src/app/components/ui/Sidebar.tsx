@@ -18,10 +18,8 @@ interface SidebarProps {
 const Sidebar = ({ onClose }: SidebarProps) => {
   const [activeTab, setActiveTab] = useState<"chat" | "friends">("chat");
 
-  const currentUser = useAppSelector((state) => state.auth);
-  const { activeFriendUsers, isLoading } = useFriendListUser(
-    currentUser?.user?._id || ""
-  );
+  const { user } = useAppSelector((state) => state.auth);
+  const { activeFriendUsers, isLoading } = useFriendListUser(user?._id || "");
   const { onlineUsers } = useAppSelector((state) => state.user);
   const dispatch = useAppDispatch();
 
@@ -39,12 +37,6 @@ const Sidebar = ({ onClose }: SidebarProps) => {
 
   // ** handle routes
   const handleRouteClick = () => route.push("/profile");
-
-  // ** handle Add Friend FN
-  const handleAddFriend = (user: any) => {
-    console.log("Add friend clicked:", user);
-    // TODO: call your backend / dispatch Redux action
-  };
 
   // ** handle Search Friend
   const handleUserSearch = (event: ChangeEvent<HTMLInputElement>) => {
@@ -124,12 +116,9 @@ const Sidebar = ({ onClose }: SidebarProps) => {
         </div>
 
         {/* Profile + Sign Out */}
-        {currentUser?.user && (
+        {user && (
           <div className="px-2 border-t border-slate-700 flex items-center justify-between gap-2 bg-slate-900 ">
-            <UserProfile
-              currentUser={currentUser.user}
-              isTimeAvailable={false}
-            />
+            <UserProfile currentUser={user} isTimeAvailable={false} />
             <CiSettings
               onClick={() => handleRouteClick()}
               size={29}

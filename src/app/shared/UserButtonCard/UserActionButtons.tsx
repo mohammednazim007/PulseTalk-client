@@ -13,12 +13,13 @@ import {
   useGetFriendsQuery,
 } from "@/app/redux/features/friends/friendApi";
 import toast from "react-hot-toast";
+import { useEffect } from "react";
 
 interface UserActionProps {
-  user: User;
+  friendUser: User;
 }
 
-const UserActionButtons = ({ user }: UserActionProps) => {
+const UserActionButtons = ({ friendUser }: UserActionProps) => {
   const { user: currentUser } = useAppSelector((state) => state.auth);
   const { refetch } = useGetFriendsQuery(); // 👈 re-fetch manually if needed
 
@@ -31,28 +32,21 @@ const UserActionButtons = ({ user }: UserActionProps) => {
 
   if (!currentUser) return null;
 
-  // ---- RELATIONSHIP STATES ----
-  const isFriend =
-    currentUser.friends?.includes(user._id) &&
-    user.friends?.includes(currentUser._id);
-
-  const currentUserSentRequest = currentUser.sentRequests?.includes(user._id);
-  const currentUserReceivedRequest = currentUser.friendRequests?.includes(
-    user._id
-  );
-  console.log("current user send request", currentUserSentRequest);
-  console.log("isFriend", isFriend);
-  console.log("receive", currentUserReceivedRequest);
-  console.log("user", currentUser);
-
   // ---- HANDLERS ----
   const handleAddFriend = async (receiverId: string) => {
     try {
-      await addFriend({ senderId: currentUser._id, receiverId }).unwrap();
+      // const res = await addFriend({
+      //   senderId: currentUser._id,
+      //   receiverId,
+      // }).unwrap();
+      console.log("res", currentUser);
+
       toast.success("✅ Friend request sent");
       refetch(); // 👈 ensures UI updates
-    } catch {
-      toast.error("❌ Failed to send request");
+    } catch (err) {
+      toast.error(
+        err instanceof Error ? err.message : "❌ Failed to send friend request"
+      );
     }
   };
 
@@ -60,7 +54,7 @@ const UserActionButtons = ({ user }: UserActionProps) => {
     try {
       await removeFriend(friendId).unwrap();
       toast.success("🗑️ Friend removed or request cancelled");
-      refetch();
+      // refetch();
     } catch {
       toast.error("❌ Failed to remove friend");
     }
@@ -70,7 +64,7 @@ const UserActionButtons = ({ user }: UserActionProps) => {
     try {
       await acceptRequest({ senderId, receiverId: currentUser._id }).unwrap();
       toast.success("🎉 Friend request accepted");
-      refetch();
+      // refetch();
     } catch {
       toast.error("❌ Failed to accept request");
     }
@@ -80,18 +74,30 @@ const UserActionButtons = ({ user }: UserActionProps) => {
     try {
       await rejectRequest({ senderId, receiverId: currentUser._id }).unwrap();
       toast.success("🚫 Friend request rejected");
-      refetch();
+      // refetch();
     } catch {
       toast.error("❌ Failed to reject request");
     }
   };
+
+  // ---- RELATIONSHIP STATES ----
+  const isFriend =
+    currentUser.friends?.includes(friendUser._id) &&
+    friendUser.friends?.includes(currentUser._id);
+
+  const currentUserSentRequest = currentUser.sentRequests?.includes(
+    friendUser._id
+  );
+  const currentUserReceivedRequest = currentUser.friendRequests?.includes(
+    friendUser._id
+  );
 
   // ---- CONDITIONAL BUTTON RENDERING ----
 
   if (isFriend)
     return (
       <CancelButton
-        userId={user._id}
+        userId={friendUser._id}
         onClick={handleRemoveFriend}
         isLoading={isRemoving}
       />
@@ -103,14 +109,14 @@ const UserActionButtons = ({ user }: UserActionProps) => {
     return (
       <div className="flex gap-2">
         <button
-          onClick={() => handleAcceptRequest(user._id)}
+          onClick={() => handleAcceptRequest(friendUser._id)}
           disabled={isAccepting}
           className="px-3 py-1 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
         >
           {isAccepting ? "Accepting..." : "Confirm"}
         </button>
         <button
-          onClick={() => handleRejectRequest(user._id)}
+          onClick={() => handleRejectRequest(friendUser._id)}
           disabled={isRejecting}
           className="px-3 py-1 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 transition"
         >
@@ -121,7 +127,7 @@ const UserActionButtons = ({ user }: UserActionProps) => {
 
   return (
     <AddButton
-      userId={user._id}
+      userId={friendUser._id}
       onClick={handleAddFriend}
       isLoading={isAdding}
     />
