@@ -11,7 +11,7 @@ export const refreshUser = createAsyncThunk(
       const res = await api.get(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/current-user`
       );
-      return res.data as User;
+      return res.data.user as User;
     } catch (error: any) {
       return rejectWithValue(error.response?.data || "Failed to refresh user");
     }

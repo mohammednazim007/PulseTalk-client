@@ -35,11 +35,10 @@ const UserActionButtons = ({ friendUser }: UserActionProps) => {
   // ---- HANDLERS ----
   const handleAddFriend = async (receiverId: string) => {
     try {
-      // const res = await addFriend({
-      //   senderId: currentUser._id,
-      //   receiverId,
-      // }).unwrap();
-      console.log("res", currentUser);
+      await addFriend({
+        senderId: currentUser._id,
+        receiverId,
+      }).unwrap();
 
       toast.success("✅ Friend request sent");
       refetch(); // 👈 ensures UI updates
@@ -82,8 +81,8 @@ const UserActionButtons = ({ friendUser }: UserActionProps) => {
 
   // ---- RELATIONSHIP STATES ----
   const isFriend =
-    currentUser.friends?.includes(friendUser._id) &&
-    friendUser.friends?.includes(currentUser._id);
+    currentUser.sentRequests?.includes(friendUser._id) &&
+    friendUser.sentRequests?.includes(currentUser._id);
 
   const currentUserSentRequest = currentUser.sentRequests?.includes(
     friendUser._id
