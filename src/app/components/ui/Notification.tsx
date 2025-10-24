@@ -4,24 +4,20 @@ import { useState, useEffect, useRef } from "react";
 import { IoMdNotificationsOutline } from "react-icons/io";
 import { motion, AnimatePresence } from "motion/react";
 import Image from "next/image";
+import avatar from "@/app/assets/profile.png";
 import { useNotificationSocket } from "@/app/hooks/useNotificationSocket";
 import timeAgo from "@/app/utility/timeAgo";
-import { INotification } from "@/app/types/notificationType";
-import avatar from "@/app/assets/profile.png";
 
-// ----------------- TYPES -----------------
-
-// ----------------- COMPONENT -----------------
 const Notification = () => {
-  const { count, notifications: allNotifications } = useNotificationSocket();
-  const [open, setOpen] = useState(false);
-  const [notifications, setNotifications] = useState<INotification[]>([]);
-  const popupRef = useRef<HTMLDivElement>(null);
+  const {
+    notifications,
+    count,
+    markNotificationRead,
+    markAllNotificationsRead,
+  } = useNotificationSocket();
 
-  // Sync notifications from hook
-  useEffect(() => {
-    setNotifications(allNotifications);
-  }, [allNotifications]);
+  const [open, setOpen] = useState(false);
+  const popupRef = useRef<HTMLDivElement>(null);
 
   // Close popup when clicking outside
   useEffect(() => {
@@ -34,13 +30,6 @@ const Notification = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Mark single notification as read
-  const markAsRead = (id: string) => {
-    setNotifications((prev) =>
-      prev.map((n) => (n._id === id ? { ...n, isRead: true } : n))
-    );
-  };
-
   const showBadge = count > 0;
   const displayCount = count > 20 ? "20+" : count;
 
@@ -49,10 +38,7 @@ const Notification = () => {
       {/* Notification Button */}
       <button
         onClick={() => setOpen((prev) => !prev)}
-        className="
-          relative w-10 h-10 flex items-center justify-center 
-          rounded-full hover:bg-gray-700 transition-all group text-white
-        "
+        className="relative w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-700 transition-all group text-white"
         aria-label="Notifications"
       >
         <IoMdNotificationsOutline
@@ -61,15 +47,15 @@ const Notification = () => {
         />
 
         {showBadge && (
-          <span
-            className="
-              absolute top-2 right-2 translate-x-1/2 -translate-y-1/2 
-              px-1.5 py-0.5 text-xs font-bold text-white bg-red-500 
-              rounded-full min-w-[16px] text-center border border-gray-900
-            "
+          <motion.span
+            key={count} // animate when count changes
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            exit={{ scale: 0 }}
+            className="absolute top-2 right-2 translate-x-1/2 -translate-y-1/2 px-1.5 py-0.5 text-xs font-bold text-white bg-red-500 rounded-full min-w-[16px] text-center border border-gray-900"
           >
             {displayCount}
-          </span>
+          </motion.span>
         )}
       </button>
 
@@ -81,15 +67,22 @@ const Notification = () => {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="
-              absolute right-0 mt-2 w-80 max-h-96 overflow-y-auto 
-              bg-gray-900 shadow-2xl rounded-xl border border-gray-800 z-50
-            "
+            className="absolute right-0 mt-2 w-80 max-h-96 overflow-y-auto bg-gray-900 shadow-2xl rounded-md border border-gray-800 z-50"
           >
-            <div className="p-3 border-b border-gray-700 font-semibold text-white">
-              Notifications
+            {/* Header */}
+            <div className="flex items-center justify-between p-3 border-b border-gray-700">
+              <span className="text-white font-semibold text-lg">
+                Notifications
+              </span>
+              <button
+                className="text-gray-400 text-xs hover:text-orange-400 transition-colors font-medium cursor-pointer"
+                onClick={markAllNotificationsRead}
+              >
+                Mark all as read
+              </button>
             </div>
 
+            {/* Notification List */}
             {notifications.length ? (
               notifications.map((item) => (
                 <motion.div
@@ -97,7 +90,7 @@ const Notification = () => {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.2 }}
-                  onClick={() => markAsRead(item._id)}
+                  onClick={() => markNotificationRead(item._id)}
                   className={`flex items-start gap-3 p-3 border-b cursor-pointer transition hover:bg-gray-800 ${
                     !item.isRead ? "bg-gray-800" : ""
                   }`}
@@ -115,8 +108,10 @@ const Notification = () => {
                     )}
                   </div>
                   <div className="flex-1">
-                    <p>{item?.name || "Unknown"}</p>
-                    <p className="text-xs text-gray-100 font-medium truncate">
+                    <p className="text-gray-100 font-medium">
+                      {item?.name || "Unknown"}
+                    </p>
+                    <p className="text-xs text-gray-100 truncate">
                       {item.message}
                     </p>
                     <span className="text-xs text-gray-400">
