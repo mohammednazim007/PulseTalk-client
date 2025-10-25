@@ -1,7 +1,6 @@
 "use client";
 import { useAppDispatch, useAppSelector } from "@/app/hooks/hooks";
 import UserProfile from "../ui/User-profile";
-import useFriendListUser from "@/app/hooks/useFriendList";
 import { motion, AnimatePresence } from "motion/react";
 import { setActiveUser } from "@/app/redux/features/user-slice/message-user-slice";
 import FriendList from "@/app/shared/Friend-List/FriendList";
@@ -20,11 +19,10 @@ const Sidebar = ({ onClose }: SidebarProps) => {
   const [activeTab, setActiveTab] = useState<"chat" | "friends">("chat");
 
   const { user } = useAppSelector((state) => state.auth);
-  // const { activeFriendUsers, isLoading } = useFriendListUser(user?._id || "");
   const { data, isLoading } = useGetAcceptedFriendsQuery();
   const { onlineUsers } = useAppSelector((state) => state.user);
-  const dispatch = useAppDispatch();
 
+  const dispatch = useAppDispatch();
   const route = useRouter();
 
   // ** Handle friend to add active user

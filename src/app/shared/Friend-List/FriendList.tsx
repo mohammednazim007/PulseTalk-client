@@ -17,7 +17,7 @@ const FriendList = ({ friends, onlineUsers, onClick }: FriendListProps) => {
 
   return (
     <div className="flex flex-col">
-      {friends.map((friend) => {
+      {friends?.map((friend) => {
         const isOnline = onlineUsers.includes(friend._id);
         const isSelected = friend._id === selectedFriendId;
 
