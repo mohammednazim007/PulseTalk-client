@@ -56,13 +56,12 @@ const UserActionButtons = ({ friendUser }: UserActionProps) => {
     }
   };
 
+  // ** Remove the friend request
   const handleRemoveFriend = async (receiverId: string) => {
-    console.log("id", receiverId, friendUser);
-
     try {
       await deleteFriendRequest(receiverId).unwrap();
       toast.success("Request cancelled");
-      refetch();
+      // refetch();
     } catch (error: any) {
       toast.error(error?.data?.message || "❌ Failed to cancel request");
     }

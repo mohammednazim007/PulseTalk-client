@@ -63,7 +63,7 @@ export const friendApi = createApi({
       query: (receiverId: string) => ({
         url: `/friend/cancel-request/${receiverId}`,
         method: "DELETE",
-        // headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json" },
       }),
       invalidatesTags: ["Friends"], // 👈 auto refresh friends state
     }),
