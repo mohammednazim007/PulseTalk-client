@@ -18,21 +18,20 @@ export const useNotificationSocket = () => {
     setSocket(socketInstance);
 
     // ✅ Listen for unread notifications
-    socketInstance.on("unread_notifications", (data: INotification[]) => {
-      console.log("📬 Unread notifications:", data);
-      setNotifications(data);
-    });
+    // socketInstance.on("unread_notifications", (data: INotification[]) => {
+    //   setNotifications(data);
 
-    // ✅ Listen for new friend requests or other notifications
-    socketInstance.on("friend_request_received", (data: INotification) => {
-      console.log("📩 Friend request received:", data);
-      setNotifications((prev) => [data, ...prev]); // Add new notification to top
+    //   console.log("📬 Unread notifications:", data);
+    // });
+    socketInstance.on("all_notifications", (data: INotification[]) => {
+      setNotifications(data);
+      console.log("📬 All notifications:", data);
     });
 
     // ✅ Cleanup on unmount
     return () => {
-      socketInstance.off("unread_notifications");
-      socketInstance.off("friend_request_received");
+      socketInstance.off("all_notifications");
+      // socketInstance.off("unread_notifications");
       disconnectSocket();
       console.log("🔌 Socket disconnected");
     };
@@ -41,31 +40,26 @@ export const useNotificationSocket = () => {
   // ----------------- FUNCTIONS -----------------
 
   // Mark single notification as read
-  const markNotificationRead = useCallback((id: string) => {
-    setNotifications((prev) =>
-      prev.map((n) => (n._id === id ? { ...n, isRead: true } : n))
-    );
-    socket?.emit("notification_read", { id });
-  }, []);
+  const readSingleNotification = useCallback(
+    (id: string) => {
+      setNotifications((prev) =>
+        prev.map((n) => (n._id === id ? { ...n, isRead: true } : n))
+      );
+      socket?.emit("read_single_notification", { notificationId: id });
+    },
+    [socket]
+  );
 
   // Mark all notifications as read
   const markAllNotificationsRead = useCallback(() => {
-    setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
-
     // Notify backend
-    socket?.emit("mark_as_read_all_notifications", { receiver_id: user?._id });
+    socket?.emit("read_all_notifications", { receiver_id: user?._id });
   }, [socket, user?._id]);
-
-  // Optionally, add a new notification manually
-  const addNotification = useCallback((notification: INotification) => {
-    setNotifications((prev) => [notification, ...prev]);
-  }, []);
 
   return {
     notifications,
     count: notifications.length,
-    markNotificationRead,
+    readSingleNotification,
     markAllNotificationsRead,
-    addNotification,
   };
 };

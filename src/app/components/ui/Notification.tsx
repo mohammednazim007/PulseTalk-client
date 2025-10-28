@@ -12,7 +12,7 @@ const Notification = () => {
   const {
     notifications,
     count,
-    markNotificationRead,
+    readSingleNotification,
     markAllNotificationsRead,
   } = useNotificationSocket();
 
@@ -90,7 +90,7 @@ const Notification = () => {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.2 }}
-                  onClick={() => markNotificationRead(item._id)}
+                  onClick={() => readSingleNotification(item._id)}
                   className={`flex items-start gap-3 p-3 border-b cursor-pointer transition hover:bg-gray-800 ${
                     !item.isRead ? "bg-gray-800" : ""
                   }`}
