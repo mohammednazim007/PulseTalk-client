@@ -102,7 +102,9 @@ const Profile = () => {
           formData.append("image", values.image);
         }
 
-        const response = await api.post("/user/profile", formData);
+        const response = await api.post("/user/profile", formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
 
         if (response.status === 200) {
           toast.success("Profile updated successfully!");

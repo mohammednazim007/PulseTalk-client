@@ -5,11 +5,7 @@ export const getFriends = createAsyncThunk(
   "friends/get-all-friends",
   async (_, { rejectWithValue }) => {
     try {
-      const res = await api.get(`friend/all-friends`, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      const res = await api.get(`friend/all-friends`);
 
       return res.data;
     } catch (error: any) {
