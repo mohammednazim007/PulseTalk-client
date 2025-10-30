@@ -30,6 +30,15 @@ const SignInPage = () => {
     resolver: zodResolver(signInSchema),
   });
 
+  // ✅ Load remembered email on mount
+  useEffect(() => {
+    const savedEmail = localStorage.getItem("rememberedEmail");
+    if (savedEmail) {
+      setValue("email", savedEmail);
+      setRememberMe(true);
+    }
+  }, [setValue]);
+
   // ✅ Handle Sign-in
   const onSubmit = async (data: SignInFormData) => {
     setIsLoading(true);
@@ -41,10 +50,16 @@ const SignInPage = () => {
       });
 
       if (response.status === 200) {
+        // ✅ If rememberMe checked, store email only
+        if (rememberMe) {
+          localStorage.setItem("rememberedEmail", data.email);
+        } else {
+          localStorage.removeItem("rememberedEmail");
+        }
+
+        // ✅ Update Redux + Navigate
         dispatch(setUser(response.data.user));
         router.push("/");
-
-        console.log("res", response);
       }
     } catch (err: any) {
       setError("root", {
