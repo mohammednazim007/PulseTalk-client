@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
@@ -15,6 +15,7 @@ import { signInSchema, SignInFormData } from "@/app/lib/schemas/authSchemas";
 const SignInPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
 
   const router = useRouter();
   const dispatch = useAppDispatch();
@@ -22,22 +23,41 @@ const SignInPage = () => {
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
     setError,
   } = useForm<SignInFormData>({
     resolver: zodResolver(signInSchema),
   });
 
+  // ✅ Load remembered email on mount
+  useEffect(() => {
+    const savedEmail = localStorage.getItem("rememberedEmail");
+    if (savedEmail) {
+      setValue("email", savedEmail);
+      setRememberMe(true);
+    }
+  }, [setValue]);
+
+  // ✅ Handle Sign-in
   const onSubmit = async (data: SignInFormData) => {
     setIsLoading(true);
     try {
-      const response = await api.post(
-        "/user/login",
-        { email: data.email, password: data.password },
-        { headers: { "Content-Type": "application/json" } }
-      );
+      const response = await api.post("/user/login", {
+        email: data.email,
+        password: data.password,
+        rememberMe,
+      });
 
       if (response.status === 200) {
+        // ✅ If rememberMe checked, store email only
+        if (rememberMe) {
+          localStorage.setItem("rememberedEmail", data.email);
+        } else {
+          localStorage.removeItem("rememberedEmail");
+        }
+
+        // ✅ Update Redux + Navigate
         dispatch(setUser(response.data.user));
         router.push("/");
       }
@@ -148,6 +168,8 @@ const SignInPage = () => {
             <label className="flex items-center text-slate-300">
               <input
                 type="checkbox"
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
                 className="h-4 w-4 text-indigo-500 border-slate-600 bg-slate-700 rounded"
               />
               <span className="ml-2">Remember me</span>

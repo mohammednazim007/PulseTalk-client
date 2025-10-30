@@ -14,11 +14,12 @@ const UserProfile = ({ currentUser, isTimeAvailable }: UserProfileProps) => {
       {/* Avatar Section */}
       <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-green-500/80 flex-shrink-0">
         <Image
-          width={48}
-          height={48}
+          width={400}
+          height={400}
           priority={true}
           src={currentUser?.avatar || avatar.src}
           alt={currentUser?.name || "User Avatar"}
+          className="w-full h-full object-cover"
         />
       </div>
 

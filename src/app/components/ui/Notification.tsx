@@ -11,8 +11,8 @@ import timeAgo from "@/app/utility/timeAgo";
 const Notification = () => {
   const {
     notifications,
-    count,
-    markNotificationRead,
+    unreadCount,
+    readSingleNotification,
     markAllNotificationsRead,
   } = useNotificationSocket();
 
@@ -30,8 +30,8 @@ const Notification = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const showBadge = count > 0;
-  const displayCount = count > 20 ? "20+" : count;
+  const showBadge = unreadCount > 0;
+  const displayUnreadCount = unreadCount > 20 ? "20+" : unreadCount;
 
   return (
     <div className="relative" ref={popupRef}>
@@ -48,13 +48,13 @@ const Notification = () => {
 
         {showBadge && (
           <motion.span
-            key={count} // animate when count changes
+            key={unreadCount} // animate when unreadCount changes
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             exit={{ scale: 0 }}
             className="absolute top-2 right-2 translate-x-1/2 -translate-y-1/2 px-1.5 py-0.5 text-xs font-bold text-white bg-red-500 rounded-full min-w-[16px] text-center border border-gray-900"
           >
-            {displayCount}
+            {displayUnreadCount}
           </motion.span>
         )}
       </button>
@@ -90,7 +90,7 @@ const Notification = () => {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.2 }}
-                  onClick={() => markNotificationRead(item._id)}
+                  onClick={() => readSingleNotification(item._id)}
                   className={`flex items-start gap-3 p-3 border-b cursor-pointer transition hover:bg-gray-800 ${
                     !item.isRead ? "bg-gray-800" : ""
                   }`}

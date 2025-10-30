@@ -11,7 +11,8 @@ function isPublicPath(path: string): boolean {
 
 export function middleware(req: NextRequest) {
   const { pathname } = req.nextUrl;
-  const token = req.cookies.get("authToken")?.value;
+  const token = req.cookies.get("accessToken")?.value;
+  console.log("token", token);
 
   // If user not logged in and tries private route → redirect to signin
   if (!isPublicPath(pathname) && !token) {

@@ -29,16 +29,12 @@ const SignUpPage = () => {
   const onSubmit = async (data: SignUpFormData) => {
     setIsLoading(true);
     try {
-      const response = await api.post(
-        "/user/register",
-        {
-          name: data.name,
-          email: data.email,
-          password: data.password,
-          avatar: "",
-        },
-        { headers: { "Content-Type": "application/json" } }
-      );
+      const response = await api.post("/user/register", {
+        name: data.name,
+        email: data.email,
+        password: data.password,
+        avatar: "",
+      });
 
       if (response.status === 201) router.push("/auth/signin");
     } catch (err: any) {

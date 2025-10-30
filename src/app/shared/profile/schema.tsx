@@ -5,6 +5,7 @@ const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{6,}$/;
 export const profileSchema = Yup.object({
   name: Yup.string().required("Name is required"),
   currentPassword: Yup.string(),
+
   newPassword: Yup.string().when("currentPassword", {
     is: (val: string | undefined) => !!val && val.length > 0,
     then: (schema) =>
@@ -17,6 +18,7 @@ export const profileSchema = Yup.object({
         ),
     otherwise: (schema) => schema,
   }),
+
   confirmPassword: Yup.string().when("newPassword", {
     is: (val: string | undefined) => !!val && val.length > 0,
     then: (schema) =>

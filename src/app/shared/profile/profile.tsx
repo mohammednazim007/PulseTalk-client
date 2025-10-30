@@ -26,7 +26,7 @@ import { useAppDispatch, useAppSelector } from "@/app/hooks/hooks";
 import { setUser } from "@/app/redux/features/auth/userSlice";
 import { RootState } from "@/app/redux/store";
 import { profileSchema } from "./schema";
-import SignOutButton from "@/app/components/ui/Sign-out";
+import SignOutButton from "@/app/shared/signOut/Sign-out";
 import { toast } from "react-hot-toast";
 import { debounce } from "@/app/utility/debounce";
 
@@ -102,7 +102,9 @@ const Profile = () => {
           formData.append("image", values.image);
         }
 
-        const response = await api.post("/user/profile", formData);
+        const response = await api.post("/user/profile", formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
 
         if (response.status === 200) {
           toast.success("Profile updated successfully!");
