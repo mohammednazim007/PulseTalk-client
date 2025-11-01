@@ -1,4 +1,5 @@
 "use client";
+
 import { useGetFriendsQuery } from "@/app/redux/features/friends/friendApi";
 import FriendListSkeleton from "@/app/shared/FriendListSkeleton/FriendListSkeleton";
 import UserActionButtons from "@/app/shared/UserButtonCard/UserActionButtons";
@@ -10,6 +11,7 @@ import { useState } from "react";
 const NonFriendList = () => {
   const [selectId, setSelectedId] = useState<string>();
   const { data, isLoading } = useGetFriendsQuery();
+  console.log("NonFriendList", data);
 
   const handleSelected = (id: string) => setSelectedId(id);
 

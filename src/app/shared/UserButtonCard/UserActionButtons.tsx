@@ -1,7 +1,6 @@
 "use client";
 
 import { User } from "@/app/types/auth";
-import CancelButton from "../CancelButton/CancelButton";
 import AddButton from "../AddButton/AddButton";
 import { useAppSelector } from "@/app/hooks/hooks";
 import {
@@ -11,6 +10,8 @@ import {
   useGetFriendsQuery,
 } from "@/app/redux/features/friends/friendApi";
 import toast from "react-hot-toast";
+import { playSound } from "@/app/utility/playSound";
+import ButtonIndicator from "../buttonIndicator/ButtonIndicator";
 
 interface UserActionProps {
   friendUser: User;
@@ -18,7 +19,6 @@ interface UserActionProps {
 
 const UserActionButtons = ({ friendUser }: UserActionProps) => {
   const { user: currentUser } = useAppSelector((state) => state.auth);
-  const { refetch } = useGetFriendsQuery(); // ✅ get refetch function here
 
   const [sendFriendRequest, { isLoading: isAdding }] =
     useSendFriendRequestMutation();
@@ -33,12 +33,13 @@ const UserActionButtons = ({ friendUser }: UserActionProps) => {
   //* Add Friend Handler with receiverId
   const handleAddFriend = async (receiverId: string) => {
     try {
-      const result = await sendFriendRequest({
+      await sendFriendRequest({
         senderId: currentUser._id,
         receiverId,
       }).unwrap();
 
-      toast.success("✅ Friend request sent");
+      // Play success sound
+      playSound("success");
     } catch (err: any) {
       toast.error(err?.data?.message || "❌ Failed to send request");
     }
@@ -48,7 +49,8 @@ const UserActionButtons = ({ friendUser }: UserActionProps) => {
   const handleAcceptRequest = async (senderId: string) => {
     try {
       await acceptRequest({ senderId, receiverId: currentUser._id }).unwrap();
-      toast.success("🎉 Friend request accepted");
+      // Play success sound
+      playSound("success");
     } catch {
       toast.error("❌ Failed to accept request");
     }
@@ -59,7 +61,9 @@ const UserActionButtons = ({ friendUser }: UserActionProps) => {
     try {
       await deleteFriendRequest(receiverId).unwrap();
       toast.success("Request cancelled");
-      await refetch(); // ✅ manually refetch the friends list
+
+      // Play cancel sound
+      playSound("cancel");
     } catch (error: any) {
       toast.error(error?.data?.message || "❌ Failed to cancel request");
     }
@@ -77,14 +81,14 @@ const UserActionButtons = ({ friendUser }: UserActionProps) => {
           disabled={isAccepting}
           className="px-3 py-1 bg-blue-600 text-white rounded-sm hover:bg-blue-700 transition text-xs"
         >
-          {isAccepting ? "Accepting..." : "Confirm"}
+          {isAccepting ? <ButtonIndicator /> : "Confirm"}
         </button>
         <button
           onClick={() => handleRemoveFriend(friendUser._id)}
           disabled={isRemoving}
           className=" bg-gray-300 text-gray-800 rounded-ms hover:bg-gray-400 transition text-sx px-3 py-1 rounded-sm text-xs"
         >
-          {isRemoving ? "Removing..." : "Cancel"}
+          {isRemoving ? <ButtonIndicator /> : "Cancel"}
         </button>
       </div>
     );

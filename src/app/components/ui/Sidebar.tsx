@@ -3,7 +3,7 @@ import { useAppDispatch, useAppSelector } from "@/app/hooks/hooks";
 import UserProfile from "../ui/User-profile";
 import { motion, AnimatePresence } from "motion/react";
 import { setActiveUser } from "@/app/redux/features/user-slice/message-user-slice";
-import FriendList from "@/app/shared/Friend-List/FriendList";
+import FriendList from "@/app/shared/FriendSidebarList/FriendSidebarList";
 import { CiSettings } from "react-icons/ci";
 import { useRouter } from "next/navigation";
 import FriendListSkeleton from "@/app/shared/FriendListSkeleton/FriendListSkeleton";
@@ -16,7 +16,7 @@ interface SidebarProps {
 }
 
 const Sidebar = ({ onClose }: SidebarProps) => {
-  const [activeTab, setActiveTab] = useState<"chat" | "friends">("chat");
+  const [activeTab, setActiveTab] = useState<"chat" | "friends">("friends");
 
   const { user } = useAppSelector((state) => state.auth);
   const { data, isLoading } = useGetAcceptedFriendsQuery();

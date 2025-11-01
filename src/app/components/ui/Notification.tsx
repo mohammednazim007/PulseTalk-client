@@ -32,7 +32,6 @@ const Notification = () => {
 
   const showBadge = unreadCount > 0;
   const displayUnreadCount = unreadCount > 20 ? "20+" : unreadCount;
-  console.log("time", timeAgo("2025-10-28T12:23:53.510+00:00"));
 
   return (
     <div className="relative" ref={popupRef}>
