@@ -10,7 +10,8 @@ import FriendListSkeleton from "@/app/shared/FriendListSkeleton/FriendListSkelet
 import { ChangeEvent, useState } from "react";
 import NonFriendList from "./NonFriendList";
 import { useGetAcceptedFriendsQuery } from "@/app/redux/features/friends/friendApi";
-
+import { BsChat, BsPeople } from "react-icons/bs";
+import SidebarTabs from "@/app/shared/SidebarTabs/SidebarTabs";
 interface SidebarProps {
   onClose?: () => void;
 }
@@ -62,30 +63,8 @@ const Sidebar = ({ onClose }: SidebarProps) => {
           </button>
         </div>
 
-        {/* Tabs */}
-        <div className="flex justify-around py-4 border-b border-slate-700">
-          <button
-            onClick={() => setActiveTab("chat")}
-            className={`font-semibold transition ${
-              activeTab === "chat"
-                ? "text-blue-400"
-                : "text-slate-400 hover:text-white"
-            }`}
-          >
-            Chat
-          </button>
-          <button
-            onClick={() => setActiveTab("friends")}
-            className={`font-semibold transition ${
-              activeTab === "friends"
-                ? "text-blue-400"
-                : "text-slate-400 hover:text-white"
-            }`}
-          >
-            Friends
-          </button>
-        </div>
-
+        {/* SidebarTabs */}
+        <SidebarTabs activeTab={activeTab} onTabChange={setActiveTab} />
         {/* Search */}
         <div className="p-3">
           <input
@@ -114,7 +93,6 @@ const Sidebar = ({ onClose }: SidebarProps) => {
             <NonFriendList />
           )}
         </div>
-
         {/* Profile + Sign Out */}
         {user && (
           <div className="px-2 border-t border-slate-700 flex items-center justify-between gap-2 bg-slate-900 ">

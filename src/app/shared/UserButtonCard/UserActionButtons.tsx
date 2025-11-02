@@ -11,7 +11,7 @@ import {
 import toast from "react-hot-toast";
 import { playSound } from "@/app/utility/playSound";
 import ButtonIndicator from "../buttonIndicator/ButtonIndicator";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface UserActionProps {
   friendUser: User;
@@ -19,6 +19,14 @@ interface UserActionProps {
 
 const UserActionButtons = ({ friendUser }: UserActionProps) => {
   const { user: currentUser } = useAppSelector((state) => state.auth);
+  const [localFriendRequests, setLocalFriendRequests] = useState<string[]>([]);
+
+  // Initialize local state from currentUser
+  useEffect(() => {
+    if (currentUser?.friendRequests) {
+      setLocalFriendRequests(currentUser.friendRequests);
+    }
+  }, [currentUser?.friendRequests]);
 
   const [sendFriendRequest, { isLoading: isAdding }] =
     useSendFriendRequestMutation();
@@ -49,7 +57,7 @@ const UserActionButtons = ({ friendUser }: UserActionProps) => {
   const handleAcceptRequest = async (senderId: string) => {
     try {
       await acceptRequest({ senderId, receiverId: currentUser._id }).unwrap();
-      // Play success sound
+      //Refetch to ensure UI is updated
       playSound("success");
     } catch {
       toast.error("❌ Failed to accept request");
@@ -60,9 +68,11 @@ const UserActionButtons = ({ friendUser }: UserActionProps) => {
   const handleRemoveFriend = async (receiverId: string) => {
     try {
       await deleteFriendRequest(receiverId).unwrap();
+      // Update local state immediately
+      setLocalFriendRequests((prev) => prev.filter((id) => id !== receiverId));
       toast.success("Request cancelled");
 
-      // Play cancel sound
+      //Refetch to ensure UI is updated
       playSound("cancel");
     } catch (error: any) {
       toast.error(error?.data?.message || "❌ Failed to cancel request");
@@ -70,7 +80,7 @@ const UserActionButtons = ({ friendUser }: UserActionProps) => {
   };
 
   // ---- RELATIONSHIP STATES ----
-  const isFriendRequest = currentUser.friendRequests?.includes(friendUser._id);
+  const isFriendRequest = localFriendRequests.includes(friendUser._id);
 
   // ---- CONDITIONAL BUTTON RENDERING ----
   if (isFriendRequest)
