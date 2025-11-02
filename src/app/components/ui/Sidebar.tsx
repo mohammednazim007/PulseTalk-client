@@ -18,6 +18,7 @@ interface SidebarProps {
 
 const Sidebar = ({ onClose }: SidebarProps) => {
   const [activeTab, setActiveTab] = useState<"chat" | "friends">("friends");
+  const [searchTerm, setSearchTerm] = useState("");
 
   const { user } = useAppSelector((state) => state.auth);
   const { data, isLoading } = useGetAcceptedFriendsQuery();
@@ -39,9 +40,9 @@ const Sidebar = ({ onClose }: SidebarProps) => {
   // ** handle routes
   const handleRouteClick = () => route.push("/profile");
 
-  // ** handle Search Friend
+  // ** 2. Update search handler to set state
   const handleUserSearch = (event: ChangeEvent<HTMLInputElement>) => {
-    console.log(event.target.value);
+    setSearchTerm(event.target.value);
   };
 
   return (
@@ -70,6 +71,7 @@ const Sidebar = ({ onClose }: SidebarProps) => {
           <input
             type="text"
             placeholder="Search"
+            value={searchTerm}
             onChange={(e) => handleUserSearch(e)}
             className="w-full rounded-lg bg-slate-700 px-3 py-2 text-sm placeholder-slate-400 text-white outline-none focus:ring-2 focus:ring-indigo-500 transition"
           />
@@ -85,6 +87,7 @@ const Sidebar = ({ onClose }: SidebarProps) => {
                 friends={data?.users}
                 onlineUsers={onlineUsers}
                 onClick={handleClick}
+                searchTerm={searchTerm}
               />
             ) : (
               <p className="text-center text-slate-400 p-4">No friends found</p>

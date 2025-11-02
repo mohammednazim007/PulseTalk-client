@@ -9,9 +9,14 @@ const FriendSidebarList = ({
   friends,
   onlineUsers,
   onClick,
+  searchTerm,
 }: FriendListProps) => {
   const [selectedFriendId, setSelectedFriendId] = useState<string | null>(null);
 
+  // ** 1. Filter the friends list based on the search term
+  const filteredFriends = friends?.filter((friend) =>
+    friend?.name?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
   const handleFriendClick = useCallback(
     (friend: User) => {
       setSelectedFriendId(friend._id);
@@ -22,7 +27,7 @@ const FriendSidebarList = ({
 
   return (
     <div className="flex flex-col">
-      {friends?.map((friend) => {
+      {filteredFriends?.map((friend) => {
         const isOnline = onlineUsers.includes(friend._id);
         const isSelected = friend._id === selectedFriendId;
 
