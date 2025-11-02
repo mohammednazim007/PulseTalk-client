@@ -1,5 +1,4 @@
 "use client";
-
 import { User } from "@/app/types/auth";
 import AddButton from "../AddButton/AddButton";
 import { useAppSelector } from "@/app/hooks/hooks";
@@ -12,6 +11,7 @@ import {
 import toast from "react-hot-toast";
 import { playSound } from "@/app/utility/playSound";
 import ButtonIndicator from "../buttonIndicator/ButtonIndicator";
+import { useState } from "react";
 
 interface UserActionProps {
   friendUser: User;

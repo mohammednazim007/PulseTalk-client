@@ -10,8 +10,9 @@ import { useState } from "react";
 
 const NonFriendList = () => {
   const [selectId, setSelectedId] = useState<string>();
+
   const { data, isLoading } = useGetFriendsQuery();
-  console.log("NonFriendList", data);
+  console.log("NonFriendList", data?.users);
 
   const handleSelected = (id: string) => setSelectedId(id);
 
@@ -68,7 +69,10 @@ const NonFriendList = () => {
                 {timeAgo(`${user?.lastActive}`)}
               </p>
               {/* UserActionButtons component */}
-              <UserActionButtons friendUser={user} />
+              <UserActionButtons
+                friendUser={user}
+                // toggles state
+              />
             </div>
           </div>
         </div>
