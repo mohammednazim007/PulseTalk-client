@@ -3,7 +3,13 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 // Public routes (accessible without login)
-const publicPaths: string[] = ["/auth/signin", "/auth/signup"];
+const publicPaths: string[] = [
+  "/auth/signin",
+  "/auth/signup",
+  "/auth/reset-password",
+  "/auth/verify-otp",
+  "/auth/set-new-password",
+];
 
 function isPublicPath(path: string): boolean {
   return publicPaths.some((p) => path === p || path.startsWith(p + "/"));
