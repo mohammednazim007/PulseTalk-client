@@ -115,9 +115,12 @@ const SignInPage = () => {
               id="email"
               placeholder="Enter your email"
               autoComplete="on"
-              className={`w-full px-3 py-2 border rounded-lg bg-slate-900 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 ${
-                errors.email ? "border-red-500" : "border-slate-700"
-              }`}
+              className={`w-full px-4 py-2 rounded-lg bg-slate-700 text-white placeholder-slate-400 focus:outline-none transition-colors duration-150 ease-in-out
+    ${
+      errors.email
+        ? "border-2 border-red-500"
+        : "border-2 border-slate-600 focus:border-slate-600"
+    }`}
             />
             {errors.email && (
               <p className="text-red-400 text-xs mt-1">
@@ -140,9 +143,12 @@ const SignInPage = () => {
                 type={showPassword ? "text" : "password"}
                 id="password"
                 placeholder="Enter your password"
-                className={`w-full px-3 py-2 border rounded-lg bg-slate-900 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 pr-10 ${
-                  errors.password ? "border-red-500" : "border-slate-700"
-                }`}
+                className={`w-full px-4 py-2 rounded-lg bg-slate-700 text-white placeholder-slate-400 focus:outline-none transition-colors duration-150 ease-in-out
+    ${
+      errors.password
+        ? "border-2 border-red-500"
+        : "border-2 border-slate-600 focus:border-slate-600"
+    }`}
               />
               <button
                 type="button"
@@ -175,7 +181,7 @@ const SignInPage = () => {
               <span className="ml-2">Remember me</span>
             </label>
             <Link
-              href="#"
+              href="/auth/reset-password"
               className="text-indigo-400 hover:text-indigo-300 transition-colors"
             >
               Forgot password?

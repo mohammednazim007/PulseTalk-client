@@ -53,12 +53,11 @@ const ResetPassword: React.FC = () => {
               required
               disabled={isSubmitting}
               placeholder="you@example.com"
-              // Unified input styling: border-2, focus:outline-none, matching colors from SetNewPassword
               className={`w-full px-4 py-2 rounded-lg bg-slate-700 text-white placeholder-slate-400 focus:outline-none transition-colors duration-150 ease-in-out
     ${
       errors.email
-        ? "border-2 border-red-500" // Error: consistent 2px red border
-        : "border-2 border-slate-600 focus:border-slate-600" // Default: consistent 2px gray border, removes focus ring
+        ? "border-2 border-red-500"
+        : "border-2 border-slate-600 focus:border-slate-600"
     }`}
             />
 
