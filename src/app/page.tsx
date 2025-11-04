@@ -4,7 +4,7 @@ import RefreshCurrentUser from "./shared/RefreshCurrentUser/RefreshCurrentUser";
 const page = () => {
   return (
     <div>
-      <RefreshCurrentUser />
+      {/* <RefreshCurrentUser /> */}
 
       <MessengerLayout />
     </div>

@@ -11,11 +11,9 @@ import { useState } from "react";
 
 const NonFriendList = ({ searchTerm }: { searchTerm: string }) => {
   const [selectId, setSelectedId] = useState<string>();
-
   const { data, isLoading } = useGetFriendsQuery();
 
   const handleSelected = (id: string) => setSelectedId(id);
-  // ✅ Use the reusable hook
   const filteredFriends = useFilteredFriends(data?.users, searchTerm);
 
   // Handle loading state
@@ -71,10 +69,7 @@ const NonFriendList = ({ searchTerm }: { searchTerm: string }) => {
                 {timeAgo(`${user?.lastActive}`)}
               </p>
               {/* UserActionButtons component */}
-              <UserActionButtons
-                friendUser={user}
-                // toggles state
-              />
+              <UserActionButtons friend={user} />
             </div>
           </div>
         </div>

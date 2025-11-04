@@ -19,7 +19,7 @@ const AddButton = ({ userId, onClick, isLoading }: AddButtonProps) => {
     >
       {isLoading ? (
         <span className="flex items-center px-2 py-1 bg-blue-600 text-white rounded-sm hover:bg-blue-700 transition text-xs space-x-2">
-          <ButtonIndicator />
+          <ButtonIndicator width={8} height={8} />
         </span>
       ) : (
         <span className="flex items-center px-2 py-1 bg-blue-600 text-white rounded-sm hover:bg-blue-700 transition text-xs space-x-2">

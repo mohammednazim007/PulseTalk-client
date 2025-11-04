@@ -1,6 +1,5 @@
 "use client";
-import React, { useState } from "react";
-import * as yup from "yup";
+import React from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { ResetSchema } from "@/app/lib/schemas/resetPasswordSchema";
@@ -11,8 +10,6 @@ type ResetFields = {
 };
 
 const ResetPassword: React.FC = () => {
-  const [message, setMessage] = useState("");
-
   const {
     register,
     handleSubmit,
@@ -22,9 +19,7 @@ const ResetPassword: React.FC = () => {
     mode: "onSubmit",
   });
 
-  const onSubmit: SubmitHandler<ResetFields> = (data) => {
-    setMessage("");
-  };
+  const onSubmit: SubmitHandler<ResetFields> = (data) => {};
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#0f172a] text-white p-4">

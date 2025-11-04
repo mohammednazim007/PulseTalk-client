@@ -4,5 +4,9 @@
   "editor.fontLigatures": true,
   "editor.formatOnPaste": true,
   "editor.formatOnSave": true,
-  "terminal.integrated.fontLigatures.enabled": true
+  "terminal.integrated.fontLigatures.enabled": true,
+  "terminal.integrated.cursorStyleInactive": "outline",
+  "editor.overtypeCursorStyle": "line",
+  "terminal.integrated.cursorStyle": "block",
+  "editor.cursorStyle": "line"
 }

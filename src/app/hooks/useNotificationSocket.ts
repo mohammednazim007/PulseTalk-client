@@ -2,20 +2,22 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { connectSocket, disconnectSocket } from "@/app/socket-io/socket-io";
-import { useAppSelector } from "@/app/hooks/hooks";
 import { INotification } from "../types/notificationType";
+import { useCurrentUserQuery } from "../redux/features/authApi/authApi";
 
 export const useNotificationSocket = () => {
-  const { user } = useAppSelector((state) => state.auth);
+  const { data } = useCurrentUserQuery();
   const [notifications, setNotifications] = useState<INotification[]>([]);
   const [unreadCount, setUnreadCount] = useState<number>(0);
   const [socket, setSocket] = useState<any>(null);
+
+  const user = data?.user;
 
   // Connect socket when user exists
   useEffect(() => {
     if (!user?._id) return;
 
-    const socketInstance = connectSocket(user._id);
+    const socketInstance = connectSocket(user?._id);
     setSocket(socketInstance);
 
     // ✅ Listen for all notifications

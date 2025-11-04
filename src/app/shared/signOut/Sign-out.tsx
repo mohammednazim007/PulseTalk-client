@@ -1,7 +1,6 @@
 "use client";
 import { useAppDispatch } from "@/app/hooks/hooks";
 import api from "@/app/lib/axios";
-import { clearUser } from "@/app/redux/features/auth/userSlice";
 import { useRouter, useSearchParams } from "next/navigation";
 import { IoMdLogOut } from "react-icons/io";
 import { motion } from "motion/react";
@@ -20,7 +19,6 @@ const SignOutButton = () => {
       const signOut = await api.get("/user/logout");
 
       if (signOut.status === 200) {
-        dispatch(clearUser());
         router.push(redirect);
       }
     } catch (error) {

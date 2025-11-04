@@ -54,4 +54,4 @@ const onlineSlice = createSlice({
 
 export const { setOnlineUsers, setActiveUser, addNewMessage, clearMessages } =
   onlineSlice.actions;
-export default onlineSlice.reducer; // ✅ export reducer, not slice
+export default onlineSlice.reducer;

@@ -22,73 +22,65 @@ import {
   FaEyeSlash,
 } from "react-icons/fa";
 import api from "@/app/lib/axios";
-import { useAppDispatch, useAppSelector } from "@/app/hooks/hooks";
-import { setUser } from "@/app/redux/features/auth/userSlice";
-import { RootState } from "@/app/redux/store";
+import { useAppDispatch } from "@/app/hooks/hooks";
 import { profileSchema } from "./schema";
 import SignOutButton from "@/app/shared/signOut/Sign-out";
 import { toast } from "react-hot-toast";
 import { debounce } from "@/app/utility/debounce";
-
-interface ProfileFormValues {
-  name: string;
-  currentPassword: string;
-  newPassword: string;
-  confirmPassword: string;
-  image: File | null;
-}
+import {
+  useCurrentUserQuery,
+  useUpdateProfileMutation,
+} from "@/app/redux/features/authApi/authApi";
+import ButtonIndicator from "../buttonIndicator/ButtonIndicator";
+import { IProfileForm } from "@/app/types/auth";
 
 const Profile = () => {
-  const currentUser = useAppSelector((state: RootState) => state.auth);
+  const { data: currentUser, refetch, isLoading } = useCurrentUserQuery();
+  const [updateProfile, { isLoading: isUpdating }] = useUpdateProfileMutation();
+
   const dispatch = useAppDispatch();
   const router = useRouter();
 
-  const [profileImage, setProfileImage] = useState<string | null>(
-    currentUser?.user?.avatar || null
-  );
+  //** Hooks at top (fixed hook order)
+  const [profileImage, setProfileImage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // 🔹 Track password visibility per field
-  const [showPassword, setShowPassword] = useState<{
-    [key: string]: boolean;
-  }>({
+  const [showPassword, setShowPassword] = useState<Record<string, boolean>>({
     currentPassword: false,
     newPassword: false,
     confirmPassword: false,
   });
 
-  const togglePasswordVisibility = (field: string) => {
-    setShowPassword((prev) => ({
-      ...prev,
-      [field]: !prev[field],
-    }));
-  };
+  //** Toggle password visibility
+  const togglePasswordVisibility = useCallback((field: string) => {
+    setShowPassword((prev) => ({ ...prev, [field]: !prev[field] }));
+  }, []);
 
-  const initialValues: ProfileFormValues = {
-    name: currentUser?.user?.name || "Alexandra Collins",
-    currentPassword: "",
-    newPassword: "",
-    confirmPassword: "",
-    image: null,
-  };
-
-  const handleImageChange = (
-    event: React.ChangeEvent<HTMLInputElement>,
-    setFieldValue: (field: string, value: any) => void
-  ) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      setFieldValue("image", file);
-      setProfileImage(URL.createObjectURL(file));
+  //** Update avatar when user data changes
+  useEffect(() => {
+    if (currentUser?.user?.avatar) {
+      setProfileImage(currentUser.user.avatar);
     }
-  };
+  }, [currentUser]);
 
-  // 1. Define the core, non-debounced submission logic using useCallback.
-  const submitLogic = useCallback(
-    async (
-      values: ProfileFormValues,
-      { resetForm }: { resetForm: () => void }
+  //** Handle image input
+  const handleImageChange = useCallback(
+    (
+      event: React.ChangeEvent<HTMLInputElement>,
+      setFieldValue: (field: string, value: any) => void
     ) => {
+      const file = event.target.files?.[0];
+      if (file) {
+        setFieldValue("image", file);
+        setProfileImage(URL.createObjectURL(file));
+      }
+    },
+    []
+  );
+
+  //**  Profile submit logic
+  const submitLogic = useCallback(
+    async (values: IProfileForm, { resetForm }: { resetForm: () => void }) => {
       try {
         const formData = new FormData();
         formData.append("name", values.name);
@@ -102,60 +94,74 @@ const Profile = () => {
           formData.append("image", values.image);
         }
 
-        const response = await api.post("/user/profile", formData, {
-          headers: { "Content-Type": "multipart/form-data" },
-        });
+        const response = await updateProfile(formData).unwrap();
 
-        if (response.status === 200) {
-          toast.success("Profile updated successfully!");
-          dispatch(setUser(response.data.user));
-          resetForm();
-          window.location.reload(); // Reload to reflect changes
-          // Use router.refresh()
-        }
+        toast.success("Profile updated successfully!");
+        resetForm();
       } catch (error: any) {
-        const errorMessage =
-          error.response?.data?.message ||
+        const message =
+          error?.data?.message ||
+          error?.error ||
           "Failed to update profile. Please try again.";
-        toast.error(errorMessage);
+        toast.error(message);
       }
     },
-    [dispatch, router] // Dependencies
+    [updateProfile, dispatch]
   );
 
+  //** Debounced submit to prevent spam
   const debouncedSubmit = useMemo(
-    () => debounce(submitLogic, 5000),
+    () => debounce(submitLogic, 3000),
     [submitLogic]
   );
 
-  // 3. Cleanup: Ensure any pending submission is cancelled when the component unmounts.
-  useEffect(() => debouncedSubmit.cancel(), [debouncedSubmit]);
+  //** Cleanup debounce on unmount
+  useEffect(() => debouncedSubmit.cancel, [debouncedSubmit]);
 
+  // ⏱️ Early return for loading state
+  if (isLoading || !currentUser) {
+    return (
+      <div className="flex justify-center items-center min-h-[60vh]">
+        <ButtonIndicator width={100} height={40} text="Loading xx..." />
+      </div>
+    );
+  }
+
+  //** Initial form values (after data loaded)
+  const initialValues: IProfileForm = {
+    name: currentUser?.user?.name || "",
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
+    image: null,
+  };
+
+  //**  UI
   return (
     <div className="bg-[#0f172a] flex items-center justify-center px-4 py-8 font-sans text-slate-100">
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: 0.5, ease: "easeOut" }}
+        transition={{ duration: 0.5 }}
         className="w-full max-w-4xl"
       >
-        {/* Header with Back Button */}
+        {/* Header */}
         <div className="flex items-center mb-2">
           <button
             onClick={() => router.back()}
-            className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors px-3 py-2 rounded-lg hover:bg-white/10"
+            className="flex items-center gap-2 text-slate-400 hover:text-white transition px-3 py-2 rounded-lg hover:bg-white/10"
           >
             <FaArrowLeft /> Back
           </button>
         </div>
 
-        {/* Profile Card (Dark Mode) */}
+        {/* Profile Card */}
         <div className="bg-slate-800 text-slate-100 rounded-2xl shadow-2xl overflow-hidden">
           <Formik
             initialValues={initialValues}
             validationSchema={profileSchema}
             onSubmit={debouncedSubmit}
+            enableReinitialize
           >
             {({ setFieldValue, isSubmitting }) => (
               <Form className="flex flex-col md:flex-row" noValidate>
@@ -163,36 +169,26 @@ const Profile = () => {
                 <motion.div
                   initial={{ x: -30, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
-                  transition={{ duration: 0.4, delay: 0.2 }}
-                  className="w-full md:w-1/3 p-2 md:p-4 bg-slate-700 flex flex-col items-center "
+                  transition={{ duration: 0.4 }}
+                  className="w-full md:w-1/3 p-4 bg-slate-700 flex flex-col items-center"
                 >
                   <div className="relative group w-32 h-32 md:w-40 md:h-40 mb-4">
-                    {profileImage ? (
-                      <Image
-                        width={500}
-                        height={500}
-                        src={profileImage}
-                        priority={true}
-                        alt="Profile Preview"
-                        className="rounded-full w-full h-full border-4 border-slate-700 shadow-md object-cover"
-                      />
-                    ) : (
-                      <Image
-                        width={500}
-                        height={500}
-                        priority={true}
-                        src={avatar.src}
-                        alt="Profile"
-                        className="rounded-full w-full h-full border-4 border-slate-700 shadow-md object-cover"
-                      />
-                    )}
+                    <Image
+                      width={500}
+                      height={500}
+                      src={profileImage || avatar.src}
+                      priority
+                      alt="Profile"
+                      className="rounded-full w-full h-full border-4 border-slate-700 shadow-md object-cover"
+                    />
                     <div
                       onClick={() => fileInputRef.current?.click()}
-                      className="absolute inset-0 rounded-full bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center cursor-pointer transition-all duration-300"
+                      className="absolute inset-0 rounded-full bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center cursor-pointer transition"
                     >
                       <FaCamera className="w-8 h-8 text-white" />
                     </div>
                   </div>
+
                   <input
                     type="file"
                     ref={fileInputRef}
@@ -200,10 +196,11 @@ const Profile = () => {
                     className="hidden"
                     accept="image/*"
                   />
+
                   <button
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
-                    className="font-semibold text-sm text-indigo-400 hover:text-indigo-300 transition-colors"
+                    className="font-semibold text-sm text-indigo-400 hover:text-indigo-300 transition"
                   >
                     Change Photo
                   </button>
@@ -216,18 +213,15 @@ const Profile = () => {
                 <motion.div
                   initial={{ x: 30, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
-                  transition={{ duration: 0.4, delay: 0.3 }}
-                  className="w-full md:w-2/3 p-6 md:p-8"
+                  transition={{ duration: 0.4 }}
+                  className="w-full md:w-2/3 p-8"
                 >
                   <h1 className="text-2xl font-bold text-white mb-6">
                     Account Settings
                   </h1>
 
                   {/* Personal Info */}
-                  <h2 className="text-lg font-semibold text-slate-200 mb-3">
-                    Personal Information
-                  </h2>
-                  <div className="space-y-4">
+                  <section className="space-y-4">
                     <div>
                       <label className="block text-sm font-medium text-slate-400 mb-1">
                         Full Name
@@ -237,7 +231,7 @@ const Profile = () => {
                         <Field
                           type="text"
                           name="name"
-                          className="w-full pl-10 pr-4 py-2 border rounded-lg bg-slate-900 text-white border-slate-700 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                          className="w-full pl-10 pr-4 py-2 border rounded-lg bg-slate-900 text-white border-slate-700 focus:ring-2 focus:ring-indigo-500"
                           placeholder="Your full name"
                         />
                       </div>
@@ -262,7 +256,7 @@ const Profile = () => {
                         />
                       </div>
                     </div>
-                  </div>
+                  </section>
 
                   <hr className="my-6 border-slate-700" />
 
@@ -287,18 +281,14 @@ const Profile = () => {
                               type={showPassword[field] ? "text" : "password"}
                               name={field}
                               placeholder="••••••••"
-                              className="w-full pl-10 pr-10 py-2 border rounded-lg bg-slate-900 text-white border-slate-700 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                              className="w-full pl-10 pr-10 py-2 border rounded-lg bg-slate-900 text-white border-slate-700 focus:ring-2 focus:ring-indigo-500"
                             />
                             <button
                               type="button"
                               onClick={() => togglePasswordVisibility(field)}
                               className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200"
                             >
-                              {showPassword[field] ? (
-                                <FaEyeSlash className="w-5 h-5" />
-                              ) : (
-                                <FaEye className="w-5 h-5" />
-                              )}
+                              {showPassword[field] ? <FaEyeSlash /> : <FaEye />}
                             </button>
                           </div>
                           <ErrorMessage
@@ -316,10 +306,14 @@ const Profile = () => {
                     <SignOutButton />
                     <button
                       type="submit"
-                      disabled={isSubmitting}
-                      className="px-6 py-2 rounded-lg text-sm font-semibold bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm hover:shadow-md transition-all"
+                      disabled={isSubmitting || isUpdating}
+                      className="px-6 py-2 rounded-lg text-sm font-semibold bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm transition"
                     >
-                      {isSubmitting ? "Saving..." : "Save Changes"}
+                      {isSubmitting || isUpdating ? (
+                        <ButtonIndicator width={8} height={8} text="Saving" />
+                      ) : (
+                        "Save Changes"
+                      )}
                     </button>
                   </div>
                 </motion.div>

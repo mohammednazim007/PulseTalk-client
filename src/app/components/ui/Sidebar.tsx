@@ -13,6 +13,7 @@ import { useGetAcceptedFriendsQuery } from "@/app/redux/features/friends/friendA
 import SidebarTabs from "@/app/shared/SidebarTabs/SidebarTabs";
 import { debounce } from "@/app/utility/debounce";
 import { useFilteredFriends } from "@/app/hooks/useFilteredFriends";
+import { useCurrentUserQuery } from "@/app/redux/features/authApi/authApi";
 interface SidebarProps {
   onClose?: () => void;
 }
@@ -22,7 +23,7 @@ const Sidebar = ({ onClose }: SidebarProps) => {
   const [inputValue, setInputValue] = useState(""); // ✅ back, but lightweight
   const [searchTerm, setSearchTerm] = useState(""); // ✅ used for filtering
 
-  const { user } = useAppSelector((state) => state.auth);
+  const { data: currentUser } = useCurrentUserQuery();
   const { data, isLoading } = useGetAcceptedFriendsQuery();
   const { onlineUsers } = useAppSelector((state) => state.user);
 
@@ -61,9 +62,6 @@ const Sidebar = ({ onClose }: SidebarProps) => {
 
   // ✅ Memoized filtering
   const filteredFriends = useFilteredFriends(data?.users, searchTerm);
-
-  // ✅** handle routes
-  const handleRouteClick = () => route.push("/profile");
 
   return (
     <AnimatePresence mode="wait">
@@ -116,11 +114,14 @@ const Sidebar = ({ onClose }: SidebarProps) => {
           )}
         </div>
         {/* Profile + Sign Out */}
-        {user && (
+        {currentUser?.user && (
           <div className="px-2 border-t border-slate-700 flex items-center justify-between gap-2 bg-slate-900 ">
-            <UserProfile currentUser={user} isTimeAvailable={false} />
+            <UserProfile
+              currentUser={currentUser.user}
+              isTimeAvailable={false}
+            />
             <CiSettings
-              onClick={() => handleRouteClick()}
+              onClick={() => route.push("/profile")}
               size={29}
               className="hover:animate-spin"
             />

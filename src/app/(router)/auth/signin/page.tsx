@@ -8,8 +8,6 @@ import { motion } from "motion/react";
 import { useRouter } from "next/navigation";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import api from "@/app/lib/axios";
-import { useAppDispatch } from "@/app/hooks/hooks";
-import { setUser } from "@/app/redux/features/auth/userSlice";
 import { signInSchema, SignInFormData } from "@/app/lib/schemas/authSchemas";
 
 const SignInPage = () => {
@@ -18,7 +16,6 @@ const SignInPage = () => {
   const [rememberMe, setRememberMe] = useState(false);
 
   const router = useRouter();
-  const dispatch = useAppDispatch();
 
   const {
     register,
@@ -57,8 +54,6 @@ const SignInPage = () => {
           localStorage.removeItem("rememberedEmail");
         }
 
-        // ✅ Update Redux + Navigate
-        dispatch(setUser(response.data.user));
         router.push("/");
       }
     } catch (err: any) {

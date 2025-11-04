@@ -1,32 +1,22 @@
 "use client";
 import { User } from "@/app/types/auth";
 import AddButton from "../AddButton/AddButton";
-import { useAppSelector } from "@/app/hooks/hooks";
 import {
   useSendFriendRequestMutation,
   useAcceptFriendRequestMutation,
   useDeleteFriendRequestMutation,
-  useGetFriendsQuery,
 } from "@/app/redux/features/friends/friendApi";
 import toast from "react-hot-toast";
 import { playSound } from "@/app/utility/playSound";
 import ButtonIndicator from "../buttonIndicator/ButtonIndicator";
-import { useState, useEffect } from "react";
+import { useCurrentUserQuery } from "@/app/redux/features/authApi/authApi";
 
 interface UserActionProps {
-  friendUser: User;
+  friend: User;
 }
 
-const UserActionButtons = ({ friendUser }: UserActionProps) => {
-  const { user: currentUser } = useAppSelector((state) => state.auth);
-  const [localFriendRequests, setLocalFriendRequests] = useState<string[]>([]);
-
-  // Initialize local state from currentUser
-  useEffect(() => {
-    if (currentUser?.friendRequests) {
-      setLocalFriendRequests(currentUser.friendRequests);
-    }
-  }, [currentUser?.friendRequests]);
+const UserActionButtons = ({ friend }: UserActionProps) => {
+  const { data: currentUser } = useCurrentUserQuery();
 
   const [sendFriendRequest, { isLoading: isAdding }] =
     useSendFriendRequestMutation();
@@ -35,77 +25,93 @@ const UserActionButtons = ({ friendUser }: UserActionProps) => {
   const [acceptRequest, { isLoading: isAccepting }] =
     useAcceptFriendRequestMutation();
 
-  if (!currentUser) return null;
+  const user = currentUser?.user;
+  if (!user) return null;
+
+  // ---- RELATIONSHIP STATES ----
+  const isRequestSent = user?.sentRequests?.includes(friend._id);
+  const isRequestReceived = user?.friendRequests?.includes(friend._id);
 
   // ---- HANDLERS ----
-  //* Add Friend Handler with receiverId
+
+  // * Send Friend Request
   const handleAddFriend = async (receiverId: string) => {
     try {
       await sendFriendRequest({
-        senderId: currentUser._id,
+        senderId: user?._id,
         receiverId,
       }).unwrap();
 
-      // Play success sound
       playSound("success");
+      toast.success("Friend request sent ✅");
     } catch (err: any) {
       toast.error(err?.data?.message || "❌ Failed to send request");
     }
   };
 
-  // * Accept Friend Request Handler with senderId
+  // * Accept Friend Request
   const handleAcceptRequest = async (senderId: string) => {
     try {
-      await acceptRequest({ senderId, receiverId: currentUser._id }).unwrap();
-      //Refetch to ensure UI is updated
+      await acceptRequest({
+        senderId,
+        receiverId: user?._id,
+      }).unwrap();
+
       playSound("success");
+      toast.success("Friend request accepted 🎉");
     } catch {
       toast.error("❌ Failed to accept request");
     }
   };
 
-  // ** Remove the friend request
+  // * Cancel / Delete Friend Request
   const handleRemoveFriend = async (receiverId: string) => {
     try {
       await deleteFriendRequest(receiverId).unwrap();
-      // Update local state immediately
-      setLocalFriendRequests((prev) => prev.filter((id) => id !== receiverId));
-      toast.success("Request cancelled");
 
-      //Refetch to ensure UI is updated
       playSound("cancel");
+      toast.success("Request cancelled 🚫");
     } catch (error: any) {
       toast.error(error?.data?.message || "❌ Failed to cancel request");
     }
   };
 
-  // ---- RELATIONSHIP STATES ----
-  const isFriendRequest = localFriendRequests.includes(friendUser._id);
-
   // ---- CONDITIONAL BUTTON RENDERING ----
-  if (isFriendRequest)
+  if (isRequestSent)
+    return (
+      <button
+        onClick={() => handleRemoveFriend(friend._id)}
+        disabled={isRemoving}
+        className="bg-gray-300 text-gray-800 hover:bg-gray-400 transition text-xs px-3 py-1 rounded-sm"
+      >
+        {isRemoving ? <ButtonIndicator /> : "Cancel Request"}
+      </button>
+    );
+
+  if (isRequestReceived)
     return (
       <div className="flex gap-2">
         <button
-          onClick={() => handleAcceptRequest(friendUser._id)}
+          onClick={() => handleAcceptRequest(friend._id)}
           disabled={isAccepting}
           className="px-3 py-1 bg-blue-600 text-white rounded-sm hover:bg-blue-700 transition text-xs"
         >
-          {isAccepting ? <ButtonIndicator /> : "Confirm"}
+          {isAccepting ? <ButtonIndicator width={8} height={8} /> : "Confirm"}
         </button>
         <button
-          onClick={() => handleRemoveFriend(friendUser._id)}
+          onClick={() => handleRemoveFriend(friend._id)}
           disabled={isRemoving}
-          className=" bg-gray-300 text-gray-800 rounded-ms hover:bg-gray-400 transition text-sx px-3 py-1 rounded-sm text-xs"
+          className="px-3 py-1 bg-gray-300 text-gray-800 rounded-sm hover:bg-gray-400 transition text-xs"
         >
-          {isRemoving ? <ButtonIndicator /> : "Cancel"}
+          {isRemoving ? <ButtonIndicator width={8} height={8} /> : "Cancel"}
         </button>
       </div>
     );
 
+  // Default: show add friend button
   return (
     <AddButton
-      userId={friendUser._id}
+      userId={friend._id}
       onClick={handleAddFriend}
       isLoading={isAdding}
     />

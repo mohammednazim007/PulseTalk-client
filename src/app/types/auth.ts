@@ -37,3 +37,11 @@ export interface AuthResponse {
   user: User;
   token: string;
 }
+
+export interface IProfileForm {
+  name: string;
+  currentPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+  image: File | null;
+}

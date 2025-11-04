@@ -1,12 +1,6 @@
-// redux/store.ts
 import { configureStore } from "@reduxjs/toolkit";
-import authReducer from "./features/auth/userSlice";
-import onlineReducer from "@/app/redux/features/user-slice/message-user-slice";
-import friendsReducer from "@/app/redux/features/friend-slice/friend-slice";
-
 import {
   persistStore,
-  persistReducer,
   FLUSH,
   REHYDRATE,
   PAUSE,
@@ -14,34 +8,30 @@ import {
   PURGE,
   REGISTER,
 } from "redux-persist";
-import storage from "redux-persist/lib/storage"; // uses localStorage
-import { friendApi } from "./features/friends/friendApi";
 
-// persist config for the auth slice
-const persistConfig = {
-  key: "auth",
-  storage,
-  whitelist: ["user"], // persist only the user object
-};
-
-const persistedReducer = persistReducer(persistConfig, authReducer);
+import { authApi } from "@/app/redux/features/authApi/authApi";
+import { friendApi } from "@/app/redux/features/friends/friendApi";
+import onlineReducer from "@/app/redux/features/user-slice/message-user-slice";
+import friendsReducer from "@/app/redux/features/friend-slice/friend-slice";
 
 export const store = configureStore({
   reducer: {
-    auth: persistedReducer,
     user: onlineReducer,
     friends: friendsReducer,
+
     [friendApi.reducerPath]: friendApi.reducer,
+    [authApi.reducerPath]: authApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
-    }).concat(friendApi.middleware), // ✅ Add RTK Query middleware here,
+    })
+      .concat(friendApi.middleware)
+      .concat(authApi.middleware),
 });
 
 export const persistor = persistStore(store);
-
 export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;
