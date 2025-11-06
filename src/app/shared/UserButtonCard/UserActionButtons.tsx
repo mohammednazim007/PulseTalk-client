@@ -16,7 +16,7 @@ interface UserActionProps {
 }
 
 const UserActionButtons = ({ friend }: UserActionProps) => {
-  const { data: currentUser } = useCurrentUserQuery();
+  const { data: currentUser, refetch } = useCurrentUserQuery();
 
   const [sendFriendRequest, { isLoading: isAdding }] =
     useSendFriendRequestMutation();
@@ -42,6 +42,7 @@ const UserActionButtons = ({ friend }: UserActionProps) => {
         receiverId,
       }).unwrap();
 
+      await refetch();
       playSound("success");
       toast.success("Friend request sent ✅");
     } catch (err: any) {
@@ -69,6 +70,7 @@ const UserActionButtons = ({ friend }: UserActionProps) => {
     try {
       await deleteFriendRequest(receiverId).unwrap();
 
+      await refetch();
       playSound("cancel");
       toast.success("Request cancelled 🚫");
     } catch (error: any) {
