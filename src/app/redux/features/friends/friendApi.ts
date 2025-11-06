@@ -1,5 +1,4 @@
 // src/app/redux/features/friends/friendApi.ts
-
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 
 export const friendApi = createApi({
@@ -7,18 +6,14 @@ export const friendApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: process.env.NEXT_PUBLIC_BACKEND_URL,
     credentials: "include",
-    prepareHeaders: (headers) => {
-      headers.set("Accept", "application/json");
-      return headers;
-    },
   }),
-  tagTypes: ["Friends"],
+  tagTypes: ["Auth", "User", "Friends"],
 
   endpoints: (builder) => ({
     // ✅ 1. Get all friends + pending requests
     getFriends: builder.query<any, void>({
       query: () => `/friend/non-friends`,
-      providesTags: ["Friends"], // 👈 this query will auto-refetch when invalidated
+      providesTags: ["Friends"],
     }),
 
     // 2. Get the accepted friends list
@@ -40,7 +35,7 @@ export const friendApi = createApi({
         method: "PUT",
         body: { senderId, receiverId },
       }),
-      invalidatesTags: ["Friends"], // 👈 triggers getFriends() refetch
+      invalidatesTags: ["Friends", "Auth", "User"],
     }),
 
     // ✅ 3. Accept friend request
@@ -56,7 +51,7 @@ export const friendApi = createApi({
         method: "PUT",
         body: { senderId, receiverId },
       }),
-      invalidatesTags: ["Friends"], // 👈 auto refresh friends state
+      invalidatesTags: ["Friends", "Auth", "User"],
     }),
 
     // ✅ 4. Reject friend request
@@ -65,7 +60,7 @@ export const friendApi = createApi({
         url: `/friend/cancel-request/${receiverId}`,
         method: "DELETE",
       }),
-      invalidatesTags: ["Friends"], // 👈 auto refresh friends state
+      invalidatesTags: ["Friends", "Auth", "User"],
     }),
   }),
 });

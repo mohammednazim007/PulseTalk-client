@@ -17,7 +17,7 @@ export const authApi = createApi({
     //** Get current user */
     currentUser: builder.query<CurrentUser, void>({
       query: () => "/user/current-user",
-      providesTags: ["Auth"],
+      providesTags: ["Auth", "User"],
     }),
 
     //** Update user profile */
