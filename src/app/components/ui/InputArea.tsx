@@ -10,6 +10,7 @@ import { useState } from "react";
 import { getSocket } from "@/app/socket-io/socket-io";
 import { RootState } from "@/app/redux/store";
 import { sendMessage } from "@/app/utility/sendMessage";
+import { useCurrentUserQuery } from "@/app/redux/features/authApi/authApi";
 
 const InputArea = () => {
   const [message, setMessage] = useState("");
@@ -17,7 +18,8 @@ const InputArea = () => {
 
   const { activeUser } = useAppSelector((state) => state.user);
   const dispatch = useAppDispatch();
-  const currentUser = useAppSelector((state: RootState) => state.auth.user); // Assuming you store current user
+  const { data: currentUser } = useCurrentUserQuery();
+  const user = currentUser?.user; // Assuming you store current user
 
   const { pickerRef, setShowEmojiPicker, showEmojiPicker } = useEmojiPicker();
   const isSendEnabled = message.trim().length > 0 || image !== null;
@@ -35,11 +37,11 @@ const InputArea = () => {
 
   // ** Handle Send Message
   const handleSubmit = () => {
-    if (!currentUser || !activeUser) return;
+    if (!user || !activeUser) return;
 
     dispatch(
       sendMessage({
-        sender_id: currentUser._id,
+        sender_id: user?._id,
         receiver_id: activeUser._id,
         text: message,
         media: image || undefined,
@@ -58,7 +60,7 @@ const InputArea = () => {
 
     if (socket && activeUser && currentUser) {
       socket.emit("typing", {
-        sender_id: currentUser._id,
+        sender_id: user?._id,
         receiver_id: activeUser._id,
       });
     }
@@ -68,7 +70,7 @@ const InputArea = () => {
   const handleBlur = () => {
     if (socket && activeUser && currentUser) {
       socket.emit("stop_typing", {
-        sender_id: currentUser._id,
+        sender_id: user?._id,
         receiver_id: activeUser._id,
       });
     }
