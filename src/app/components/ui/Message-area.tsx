@@ -24,9 +24,9 @@ const MessageArea = () => {
   // ** fetch the chat history
   useEffect(() => {
     if (activeUser?._id) {
-      dispatch(fetchChatHistory({ sender_id: activeUser._id }));
+      dispatch(fetchChatHistory({ friend_id: activeUser?._id }));
     }
-  }, [activeUser?._id, dispatch]);
+  }, [activeUser?._id, dispatch, user?._id]);
 
   // ** Scroll message
   useEffect(() => {
@@ -40,9 +40,8 @@ const MessageArea = () => {
           <NoChatSelected />
         ) : (
           chat.map((msg, i) => {
-            const isSender = msg.sender_id === user?._id;
-            const isActiveUser =
-              activeUser && activeUser?._id === msg?.sender_id;
+            const isSender = msg.friend_id === user?._id;
+            const isActiveUser = activeUser && activeUser?._id === msg?.user_id;
 
             return (
               <div
