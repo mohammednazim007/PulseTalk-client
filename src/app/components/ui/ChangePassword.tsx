@@ -34,10 +34,6 @@ const ChangePassword: React.FC = () => {
         toast.error("Email not found. Please try again.");
         return;
       }
-      if (!data.newPassword) {
-        toast.error("Password is required.");
-        return;
-      }
 
       const response = await setNewPassword({
         email,
