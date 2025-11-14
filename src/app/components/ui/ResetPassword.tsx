@@ -13,7 +13,7 @@ type ResetFields = {
   email: string;
 };
 
-const SendOtpPassword: React.FC = () => {
+const ResetPassword: React.FC = () => {
   const [sendOtp, { isLoading }] = useSendOtpMutation();
   const [rootError, setRootError] = useState<string | null>(null);
   const router = useRouter();
@@ -30,7 +30,7 @@ const SendOtpPassword: React.FC = () => {
   //** Handle form submission to send OTP for password reset
   const onSubmit: SubmitHandler<ResetFields> = async (data) => {
     try {
-      const email = localStorage.getItem("rememberedEmail");
+      const email = localStorage.getItem("resetEmail");
       if (!email) storageEmailLocalStorage(data.email, "add");
 
       // Send OTP for password reset
@@ -111,4 +111,4 @@ const SendOtpPassword: React.FC = () => {
   );
 };
 
-export default SendOtpPassword;
+export default ResetPassword;

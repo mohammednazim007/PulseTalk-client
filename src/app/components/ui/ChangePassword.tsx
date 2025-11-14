@@ -12,7 +12,7 @@ import { useRouter } from "next/navigation";
 
 const ChangePassword: React.FC = () => {
   const [setNewPassword, { isLoading }] = useSetNewPasswordMutation();
-  const email = localStorage.getItem("rememberedEmail");
+  const email = localStorage.getItem("resetEmail");
   const router = useRouter();
 
   // ** Visibility state
