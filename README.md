@@ -1,7 +1,5 @@
 ```markdown
-![Signin](public/screenshots/signin.png)
-![Chat](public/screenshots/chat.png)
-![Notifications](public/screenshots/notifications.png)
+![Uploading messenger.png…]()
 ```
 
 # Real‑Time Chat web app (Messenger‑style)
