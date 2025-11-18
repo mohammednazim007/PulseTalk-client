@@ -113,13 +113,6 @@ Flow
 🔹 Sign in (`src/app/(router)/auth/signin/page.tsx:1`)
 🔹 Reset/change password (`src/app/(router)/auth/reset-password/page.tsx:1`, `src/app/(router)/auth/change-password/page.tsx:1`)
 
-## Real‑Time & Sockets
-
-🔹 Socket client lives in `src/app/socket-io/socket-io.ts:1` with `connectSocket`, `getSocket`, `disconnectSocket`.
-🔹 Notifications: listens `all_notifications`, emits `read_single_notification`, `read_all_notifications` (`src/app/hooks/useNotificationSocket.ts:1`, `src/app/hooks/useNotificationSocket.ts:61`).
-🔹 Chat: listens `new_message`, `get_online_users` (`src/app/hooks/useChatSocket.ts:1`).
-🔹 Typing: emits `typing`, `stop_typing` (`src/app/components/ui/InputArea.tsx:55`), listens `user_typing`, `user_stop_typing` (`src/app/hooks/useTypingIndicator.ts:1`).
-
 ## State Management
 
 🔹 Central store configured under `src/app/redux/store.ts`.
@@ -141,13 +134,6 @@ pnpm start
 Deploy behind HTTPS and ensure cookies are scoped correctly for your domain.
 
 🔹 Set env vars for your production endpoints.
-
-## Troubleshooting
-
-🔹 Blank screen: confirm `.env.local` values and that backend/socket servers are running.
-🔹 Socket not connecting: verify `NEXT_PUBLIC_SOCKET_URL` and network access; check `transports: ["websocket"]` in the client (`src/app/socket-io/socket-io.ts`).
-🔹 Redirect loops: inspect cookies (`accessToken`) and middleware matcher (`src/middleware.ts`).
-🔹 Type or lint issues: run `pnpm lint` and review ESLint output.
 
 ## License
 
