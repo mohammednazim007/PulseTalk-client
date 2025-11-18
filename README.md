@@ -57,18 +57,12 @@ Path alias: `@/*` → `src/*` (see `tsconfig.json`)
 
 ## Installation
 
-````bash
-git clone https://github.com/your-org/frontend-socket-io.git
-cd frontend-socket-io
-pnpm install
-# or npm install
-
 1. Clone the repository
 
 ```bash
 git clone https://github.com/your-org/frontend-socket-io.git
 cd frontend-socket-io
-````
+```
 
 2. Install dependencies
 
