@@ -6,6 +6,22 @@ A modern, production-ready, real-time chat client built with Next.js 15. This ap
 
 This repository contains the full frontend code, designed to consume data from a separate Node.js/Express backend API and connect directly to its dedicated Socket.IO server.
 
+## Table of Contents
+
+- 🔹 [Overview](#-overview)
+- 🔹 [Key Features](#-key-features-client)
+- 🔹 [Tech Stack](#tech-stack)
+- 🔹 [Prerequisites](#prerequisites)
+- 🔹 [Installation](#installation)
+- 🔹 [Usage](#usage)
+- 🔹 [Scripts](#scripts)
+- 🔹 [Authentication](#authentication)
+- 🔹 [Real‑Time & Sockets](#realtime--sockets)
+- 🔹 [State Management](#state-management)
+- 🔹 [Build & Deploy](#build--deploy)
+- 🔹 [Troubleshooting](#troubleshooting)
+- 🔹 [License](#license)
+
 ## ✨ Overview
 
 🔹 Authentication: sign up, sign in, logout, OTP verification, password reset
@@ -22,10 +38,10 @@ This repository contains the full frontend code, designed to consume data from a
 🔹 🔒 Secure Sessions: Protected routing handled by Next.js Middleware and secure, cookie-based session management.
 🔹 📡 Real-Time Communication: Instant one-to-one messaging, live typing indicators, and online status detection using the Socket.IO client.
 🔹 🔔 Notification Center: Real-time push notifications for new messages and friend requests, complete with unread badges and mark-as-read functionality.
-🔹 📈 Data Management: Clean, robust state and data fetching using Redux Toolkit + RTK Query. Includes logic for silent, automatic token refresh
-🔹🎨 Responsive UI: Fully accessible, responsive interface optimized for desktop and mobile, styled exclusively with Tailwind CSS.
-🔹📜 History Loading: Smooth message history loading and pagination within the chat window for an excellent UX.
-🔹🤝 Friend System: UI flows for friend discovery, sending, accepting, rejecting, and canceling friend requests.
+🔹 📈 Data Management: Clean, robust state and data fetching using Redux Toolkit + RTK Query. Includes logic for silent, automatic token refresh.
+🔹 🎨 Responsive UI: Fully accessible, responsive interface optimized for desktop and mobile, styled exclusively with Tailwind CSS.
+🔹 📜 History Loading: Smooth message history loading and pagination within the chat window for an excellent UX.
+🔹 🤝 Friend System: UI flows for friend discovery, sending, accepting, rejecting, and canceling friend requests.
 
 ## Tech Stack
 
@@ -64,7 +80,7 @@ npm install
 
 3. Configure environment
 
-Create `.env` in the project root:
+Create `.env.local` in the project root:
 
 ```bash
 # Backend REST API base URL
@@ -90,7 +106,7 @@ Ensure your backend is reachable via `NEXT_PUBLIC_BACKEND_URL` and your Socket.I
 🔹 `pnpm start` → start production server
 🔹 `pnpm lint` → run ESLint with Next.js config
 
-<!-- Project Structure section removed -->
+
 
 ## Authentication
 
