@@ -2,58 +2,66 @@
 
 # 💖 Real-Time Dating App Client (Frontend)
 
-A modern, production-ready, real-time chat client built with Next.js 15. This application delivers a polished, Messenger-like user experience, focusing on instant message delivery, real-time presence, secure session management, and a highly responsive UI.
+A modern, production-ready, real-time chat client built with Next.js 15. This app delivers a Messenger-like user experience with instant messaging, real-time presence, secure sessions, and a highly responsive UI.
 
-This repository contains the full frontend code, designed to consume data from a separate Node.js/Express backend API and connect directly to its dedicated Socket.IO server.
+The frontend connects to a separate Node.js/Express backend API and a dedicated Socket.IO server.
 
-## Table of Contents
+---
 
-- 🔹 [Overview](#-overview)
-- 🔹 [Key Features](#-key-features-client)
-- 🔹 [Tech Stack](#tech-stack)
-- 🔹 [Prerequisites](#prerequisites)
-- 🔹 [Installation](#installation)
-- 🔹 [Usage](#usage)
-- 🔹 [Scripts](#scripts)
-- 🔹 [Authentication](#authentication)
-- 🔹 [Real‑Time & Sockets](#realtime--sockets)
-- 🔹 [State Management](#state-management)
-- 🔹 [Build & Deploy](#build--deploy)
-- 🔹 [Troubleshooting](#troubleshooting)
-- 🔹 [License](#license)
+## Overview
 
-## ✨ Overview
+- Authentication: Sign up, sign in, logout, OTP verification, password reset
+- Protected routes with cookie-based sessions and middleware
+- Real-time one-to-one chat using Socket.IO
+- Presence indicators: online users, typing notifications
+- Notifications: unread badge, mark single/all as read
+- Friend system: discovery, requests (send/accept/reject/cancel), lists and filters
+- Message history loading, emoji support, debounced inputs
+- Fully responsive and accessible UI using Tailwind CSS
 
-🔹 Authentication: sign up, sign in, logout, OTP verification, password reset
-🔹 Protected routes with cookie‑based sessions and middleware
-🔹 Real‑time one‑to‑one chat using Socket.IO
-🔹 Presence: online users, typing indicators
-🔹 Notifications: unread badge, mark single/all as read
-🔹 Friends: discovery, requests (send/accept/reject/cancel), lists and filters
-🔹 Message history loading, emoji support, debounced inputs
-🔹 Responsive, accessible UI with Tailwind CSS
+---
 
-## ✨ Key Features (Client)
+## Key Features (Client)
 
-🔹 🔒 Secure Sessions: Protected routing handled by Next.js Middleware and secure, cookie-based session management.
-🔹 📡 Real-Time Communication: Instant one-to-one messaging, live typing indicators, and online status detection using the Socket.IO client.
-🔹 🔔 Notification Center: Real-time push notifications for new messages and friend requests, complete with unread badges and mark-as-read functionality.
-🔹 📈 Data Management: Clean, robust state and data fetching using Redux Toolkit + RTK Query. Includes logic for silent, automatic token refresh.
-🔹 🎨 Responsive UI: Fully accessible, responsive interface optimized for desktop and mobile, styled exclusively with Tailwind CSS.
-🔹 📜 History Loading: Smooth message history loading and pagination within the chat window for an excellent UX.
-🔹 🤝 Friend System: UI flows for friend discovery, sending, accepting, rejecting, and canceling friend requests.
+- 🔒 **Secure Sessions:** Protected routing with cookie-based session management
+- 📡 **Real-Time Communication:** Instant messaging, live typing indicators, online status detection via Socket.IO
+- 🔔 **Notification Center:** Real-time push notifications with unread badges and mark-as-read functionality
+- 📈 **Data Management:** Clean state management with Redux Toolkit + RTK Query, automatic token refresh
+- 🎨 **Responsive UI:** Optimized for desktop and mobile, fully styled with Tailwind CSS
+- 📜 **History Loading:** Smooth message history loading and pagination
+- 🤝 **Friend System:** Discovery, sending, accepting, rejecting, and canceling friend requests
+
+---
 
 ## Tech Stack
 
-🔹 Framework: `Next.js 15` (App Router, Turbopack)
-🔹 UI: `React 19`, `Tailwind CSS 4`
-🔹 Real‑time: `socket.io-client`
-🔹 State: `Redux Toolkit`, `RTK Query`, `redux-persist`
-🔹 Forms & Validation: `react-hook-form`, `Formik`, `Yup`, `Zod`, `emoji-mart`
-🔹 HTTP: `Axios` with interceptors and refresh logic
-🔹 Tooling: `TypeScript 5`, `ESLint 9`
+- **Framework:** Next.js 15 (App Router, Turbopack)
+- **UI:** React 19, Tailwind CSS 4
+- **Real-Time:** socket.io-client
+- **State:** Redux Toolkit, RTK Query, redux-persist
+- **Forms & Validation:** react-hook-form, Formik, Yup, Zod, emoji-mart
+- **HTTP:** Axios with interceptors and refresh logic
+- **Tooling:** TypeScript 5, ESLint 9
 
-Path alias: `@/*` → `src/*` (see `tsconfig.json`).
+Path alias: `@/*` → `src/*` (see `tsconfig.json`)
+
+---
+
+## Prerequisites
+
+- Node.js 18+
+- Package manager: `pnpm` (recommended) or `npm`
+- Running backend REST API and Socket.IO server
+
+---
+
+## Installation
+
+````bash
+git clone https://github.com/your-org/frontend-socket-io.git
+cd frontend-socket-io
+pnpm install
+# or npm install
 
 ## Prerequisites
 
@@ -68,7 +76,7 @@ Path alias: `@/*` → `src/*` (see `tsconfig.json`).
 ```bash
 git clone https://github.com/your-org/frontend-socket-io.git
 cd frontend-socket-io
-```
+````
 
 2. Install dependencies
 
@@ -105,8 +113,6 @@ Ensure your backend is reachable via `NEXT_PUBLIC_BACKEND_URL` and your Socket.I
 🔹 `pnpm build` → production build
 🔹 `pnpm start` → start production server
 🔹 `pnpm lint` → run ESLint with Next.js config
-
-
 
 ## Authentication
 
