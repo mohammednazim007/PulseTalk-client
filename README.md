@@ -63,14 +63,6 @@ cd frontend-socket-io
 pnpm install
 # or npm install
 
-## Prerequisites
-
-🔹 Node.js 18+
-🔹 A package manager: `pnpm` (recommended) or `npm`
-🔹 Running backend REST API and Socket.IO server
-
-## Installation
-
 1. Clone the repository
 
 ```bash
