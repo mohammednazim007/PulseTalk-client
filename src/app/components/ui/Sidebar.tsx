@@ -11,7 +11,6 @@ import NonFriendList from "./NonFriendList";
 import { useGetAcceptedFriendsQuery } from "@/app/redux/features/friends/friendApi";
 import SidebarTabs from "@/app/shared/SidebarTabs/SidebarTabs";
 import { debounce } from "@/app/utility/debounce";
-import { useFilteredFriends } from "@/app/hooks/useFilteredFriends";
 import { useCurrentUserQuery } from "@/app/redux/features/authApi/authApi";
 import { User } from "@/app/types/auth";
 import SidebarFriendList from "@/app/shared/FriendSidebarList/FriendSidebarList";
