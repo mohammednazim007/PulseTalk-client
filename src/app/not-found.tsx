@@ -40,9 +40,9 @@ const NotFound: React.FC<GlobalErrorProps> = ({ reset }) => {
         </div>
 
         <h1 className="text-4xl md:text-6xl font-black tracking-tight mb-4">
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-orange-500">
-            System Malfunction
-          </span>
+          <h1 className="text-5xl md:text-7xl font-black tracking-tighter mb-2 text-transparent bg-clip-text bg-gradient-to-r from-white via-red-100 to-red-200 drop-shadow-sm">
+            MALFUNCTION
+          </h1>
         </h1>
 
         <div className="bg-red-950/30 border border-red-900/50 rounded-lg p-4 mb-8 w-full max-w-lg backdrop-blur-sm">
