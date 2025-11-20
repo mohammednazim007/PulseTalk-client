@@ -19,6 +19,7 @@ import SidebarSearch, {
   SidebarSearchRef,
 } from "@/app/shared/SidebarSearch/SidebarSearch";
 import { useSocket } from "@/app/hooks/useChatSocket";
+import { useSortedAndFilteredFriends } from "@/app/hooks/useSortedAndFilteredFriends";
 interface SidebarProps {
   onClose?: () => void;
 }
@@ -81,8 +82,12 @@ const Sidebar = ({ onClose }: SidebarProps) => {
     debouncedSearch(value);
   };
 
-  // ✅ Memoized filtering
-  const filteredFriends = useFilteredFriends(data?.users, searchTerm);
+  // ✅ Memoized filtering and sorting of friends
+  const filteredFriends = useSortedAndFilteredFriends(
+    data?.users,
+    searchTerm,
+    onlineUsers
+  );
 
   return (
     <AnimatePresence mode="wait">

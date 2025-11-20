@@ -32,8 +32,8 @@ const MessageArea = () => {
   }, [chat, isTyping]);
 
   return (
-    <div className="flex flex-col flex-1 min-h-0 bg-slate-900 w-full overflow-hidden">
-      <div className="flex-1 overflow-y-auto w-full py-4 space-y-3 min-h-0">
+    <div className="flex flex-col flex-1 min-h-0 w-full overflow-hidden">
+      <div className="flex-1 overflow-y-auto w-full space-y-3 min-h-0">
         {!chat || chat.length === 0 ? (
           <NoChatSelected />
         ) : (

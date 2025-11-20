@@ -1,23 +1,25 @@
-"use client";
+import { User } from "@/app/types/auth";
 import { useMemo } from "react";
-import { User } from "@/app/types/auth"; // ✅ Import your real User type
 
-/**
- * Reusable hook for filtering a list of users/friends by search term.
- */
-export function useFilteredFriends(
+export const useFilteredFriends = (
   friends: User[] | undefined,
   searchTerm: string
-) {
+) => {
+  // Use useMemo to recalculate ONLY when friends or searchTerm changes
   return useMemo(() => {
     if (!friends) return [];
-    if (!searchTerm.trim()) return friends;
+    const normalizedSearch = searchTerm.trim().toLowerCase();
 
-    const q = searchTerm.toLowerCase();
+    // Return all friends if the search term is empty
+    if (!normalizedSearch) {
+      return friends;
+    }
 
-    return friends.filter(
-      (f) =>
-        f.name.toLowerCase().includes(q) || f.email.toLowerCase().includes(q)
-    );
+    // Filter by name or email (or any other relevant field)
+    return friends.filter((friend) => {
+      const nameMatch = friend.name?.toLowerCase().includes(normalizedSearch);
+      const emailMatch = friend.email?.toLowerCase().includes(normalizedSearch);
+      return nameMatch || emailMatch;
+    });
   }, [friends, searchTerm]);
-}
+};

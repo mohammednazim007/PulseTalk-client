@@ -53,8 +53,6 @@ const SignInPage = () => {
       // Save token in cookie
       Cookies.set("accessToken", response.accessToken);
 
-      console.log("response ", response);
-
       if (response.success === true) return router.push("/");
     } catch (err: unknown) {
       const apiError = err as { data?: { message?: string } };
