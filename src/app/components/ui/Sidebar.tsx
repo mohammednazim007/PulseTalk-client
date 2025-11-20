@@ -7,7 +7,7 @@ import FriendList from "@/app/shared/FriendSidebarList/FriendSidebarList";
 import { CiSettings } from "react-icons/ci";
 import { useRouter } from "next/navigation";
 import FriendListSkeleton from "@/app/shared/FriendListSkeleton/FriendListSkeleton";
-import { ChangeEvent, useEffect, useMemo, useState } from "react";
+import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
 import NonFriendList from "./NonFriendList";
 import { useGetAcceptedFriendsQuery } from "@/app/redux/features/friends/friendApi";
 import SidebarTabs from "@/app/shared/SidebarTabs/SidebarTabs";
@@ -15,6 +15,10 @@ import { debounce } from "@/app/utility/debounce";
 import { useFilteredFriends } from "@/app/hooks/useFilteredFriends";
 import { useCurrentUserQuery } from "@/app/redux/features/authApi/authApi";
 import { User } from "@/app/types/auth";
+import { Search } from "lucide-react";
+import SidebarSearch, {
+  SidebarSearchRef,
+} from "@/app/shared/SidebarSearch/SidebarSearch";
 interface SidebarProps {
   onClose?: () => void;
 }
@@ -31,14 +35,29 @@ const Sidebar = ({ onClose }: SidebarProps) => {
   const dispatch = useAppDispatch();
   const route = useRouter();
 
+  const searchRef = useRef<SidebarSearchRef>(null); // Ref to focus input programmatically
+
   // ✅ Debounce searchTerm updates (searchTerm is only for filtering)
   const debouncedSearch = useMemo(
     () =>
       debounce((value: string) => {
         setSearchTerm(value);
-      }, 800),
+      }, 400),
     []
   );
+
+  // Keyboard shortcut: focus search input when "k" is pressed
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key.toLowerCase() === "k" && searchRef.current) {
+        e.preventDefault();
+        searchRef.current.focusInput();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   useEffect(() => debouncedSearch.cancel(), [debouncedSearch]);
 
@@ -83,16 +102,13 @@ const Sidebar = ({ onClose }: SidebarProps) => {
 
         {/* SidebarTabs */}
         <SidebarTabs activeTab={activeTab} onTabChange={setActiveTab} />
-        {/* Search */}
-        <div className="p-3">
-          <input
-            type="text"
-            placeholder="Search"
-            value={inputValue}
-            onChange={(e) => handleUserSearch(e)}
-            className="w-full rounded-lg bg-slate-700 px-3 py-2 text-sm placeholder-slate-400 text-white outline-none focus:ring-2 focus:ring-indigo-500 transition"
-          />
-        </div>
+
+        {/* Search input */}
+        <SidebarSearch
+          ref={searchRef}
+          value={inputValue}
+          onChange={handleUserSearch}
+        />
 
         {/* Friend list profile */}
         <div className="flex-1 overflow-y-auto no-scrollbar">
