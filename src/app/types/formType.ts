@@ -14,3 +14,7 @@ export interface IPasswordData {
   newPassword: string;
   confirmPassword: string;
 }
+
+export interface IResetPassword {
+  email: string;
+}

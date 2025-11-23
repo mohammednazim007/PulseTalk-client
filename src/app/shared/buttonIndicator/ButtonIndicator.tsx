@@ -62,18 +62,20 @@ import { motion } from "motion/react";
 interface ButtonIndicatorProps {
   width?: number;
   height?: number;
+  className?: string;
 }
 
 const ButtonIndicator: React.FC<ButtonIndicatorProps> = ({
   width = 5,
   height = 5,
+  className,
 }) => {
   return (
-    <div className="flex items-center justify-center gap-1">
+    <div className={`flex items-center justify-center gap-1 ${className}`}>
       {[0, 1, 2].map((i) => (
         <motion.div
           key={i}
-          className="bg-white rounded-full"
+          className={`bg-white rounded-full `}
           style={{ width, height }}
           animate={{
             y: ["0%", "-50%", "0%"],

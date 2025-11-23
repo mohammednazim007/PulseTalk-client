@@ -1,7 +1,12 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { baseQueryWithAuth } from "../../base-query/baseQueryWithAuth";
 import { IUser } from "@/app/types/userType";
-import { ILoginResponse, IResponse } from "@/app/types/responseType";
+import {
+  ILoginResponse,
+  IResponse,
+  ISendOtpRequest,
+  ISendOtpResponse,
+} from "@/app/types/responseType";
 import { ISignInData } from "@/app/types/formType";
 
 interface CurrentUser {
@@ -59,7 +64,7 @@ export const authApi = createApi({
     }),
 
     //** Send OTP for password reset */
-    sendOtp: builder.mutation<IResponse, { email: string }>({
+    sendOtp: builder.mutation<ISendOtpResponse, ISendOtpRequest>({
       query: (body) => ({
         url: "/auth/send-otp",
         method: "POST",

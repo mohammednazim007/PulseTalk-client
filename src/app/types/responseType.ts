@@ -12,3 +12,13 @@ export interface ILoginResponse {
   accessToken: string;
   user: IUser;
 }
+
+export interface ISendOtpResponse {
+  success: boolean;
+  message?: string;
+  email?: string;
+}
+
+export interface ISendOtpRequest {
+  email: string;
+}
