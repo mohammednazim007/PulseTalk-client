@@ -1,10 +1,17 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
-import { ILoginResponse, IResponse, SignUpData, User } from "@/app/types/auth";
+import {
+  ILoginResponse,
+  IProfileForms,
+  IResponse,
+  IUser,
+  SignUpData,
+  User,
+} from "@/app/types/auth";
 import { SignInFormData } from "@/app/lib/schemas/authSchemas";
 import { baseQueryWithAuth } from "../../base-query/baseQueryWithAuth";
 
 interface CurrentUser {
-  user: User;
+  user: IUser;
 }
 
 export const authApi = createApi({
@@ -20,6 +27,16 @@ export const authApi = createApi({
 
     //** Update user profile */
     updateProfile: builder.mutation<IResponse, FormData>({
+      query: (formData) => ({
+        url: "/user/profile",
+        method: "POST",
+        body: formData,
+      }),
+      invalidatesTags: ["Auth", "User"],
+    }),
+
+    //** Update user profile second */
+    updateProfileSecond: builder.mutation<IResponse, FormData>({
       query: (formData) => ({
         url: "/user/profile",
         method: "POST",
@@ -101,4 +118,5 @@ export const {
   useSendOtpMutation,
   useVerifyOtpMutation,
   useSetNewPasswordMutation,
+  useUpdateProfileSecondMutation,
 } = authApi;

@@ -1,4 +1,5 @@
 import { z } from "zod";
+import * as Yup from "yup";
 const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
 const passwordRegex = /^(?=.*[A-Z])(?=.*\d).{6,}$/;
 
@@ -64,8 +65,28 @@ export const profileSchema = z
     path: ["confirmPassword"],
   });
 
+//===================== Mock Schema
+export const IProfileSchema = Yup.object().shape({
+  name: Yup.string().required("Name is required"),
+  role: Yup.string().max(50, "Role too long"),
+  location: Yup.string().max(50, "Location too long"),
+  bio: Yup.string().max(500, "Bio must be less than 500 characters"),
+  phone: Yup.string(),
+  website: Yup.string().url("Must be a valid URL"),
+  twitter: Yup.string().matches(/^@?(\w){1,15}$/, "Invalid Twitter handle"),
+  github: Yup.string(),
+  linkedin: Yup.string(),
+  currentPassword: Yup.string(),
+  newPassword: Yup.string().min(6, "Password must be at least 6 characters"),
+  confirmPassword: Yup.string().oneOf(
+    [Yup.ref("newPassword")],
+    "Passwords must match"
+  ),
+});
+
 export type SignInFormData = z.infer<typeof signInSchema>;
 export type SignUpFormData = z.infer<typeof signUpSchema>;
+export type IProfileSchema = Yup.InferType<typeof IProfileSchema>;
 
 export type FormData = z.infer<typeof profileSchema>;
 export type FormErrors = z.ZodFormattedError<FormData> | null;
