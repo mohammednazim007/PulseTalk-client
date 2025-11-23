@@ -1,14 +1,9 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
-import {
-  ILoginResponse,
-  IProfileForms,
-  IResponse,
-  IUser,
-  SignUpData,
-  User,
-} from "@/app/types/auth";
+
 import { SignInFormData } from "@/app/lib/schemas/authSchemas";
 import { baseQueryWithAuth } from "../../base-query/baseQueryWithAuth";
+import { IUser } from "@/app/types/userType";
+import { ILoginResponse, IResponse } from "@/app/types/responseType";
 
 interface CurrentUser {
   user: IUser;
@@ -46,7 +41,7 @@ export const authApi = createApi({
     }),
 
     //** Register user */
-    registerUser: builder.mutation<IResponse, SignUpData>({
+    registerUser: builder.mutation<IResponse, FormData>({
       query: (formData) => ({
         url: "/user/register",
         method: "POST",

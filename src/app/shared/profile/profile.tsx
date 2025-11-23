@@ -1,11 +1,10 @@
 "use client";
 
-import { Formik, Form, Field, ErrorMessage, FormikHelpers } from "formik";
-import Image from "next/image";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-import { motion } from "motion/react";
-import { useRouter } from "next/navigation";
+import { Formik, Form, Field, ErrorMessage, FormikHelpers } from "formik";
+import { motion, AnimatePresence } from "motion/react";
 import avatar from "@/app/assets/profile.png";
+
 import {
   FaCamera,
   FaUser,
@@ -14,39 +13,51 @@ import {
   FaArrowLeft,
   FaEye,
   FaEyeSlash,
+  FaCheckCircle,
+  FaBriefcase,
+  FaMapMarkerAlt,
+  FaGlobe,
+  FaTwitter,
+  FaGithub,
+  FaLinkedin,
+  FaPhone,
+  FaBell,
+  FaShieldAlt,
+  FaUserCircle,
 } from "react-icons/fa";
-import { profileSchema } from "./schema";
-import SignOutButton from "@/app/shared/signOut/Sign-out";
 import { toast } from "react-hot-toast";
 import {
   useCurrentUserQuery,
-  useUpdateProfileMutation,
+  useUpdateProfileSecondMutation,
 } from "@/app/redux/features/authApi/authApi";
-import ButtonIndicator from "../buttonIndicator/ButtonIndicator";
-import { IProfileForm } from "@/app/types/auth";
+import { useRouter } from "next/navigation";
+import { IProfileSchema } from "@/app/lib/schemas/authSchemas";
+import SignOutButton from "@/app/shared/signOut/Sign-out";
+import Image from "next/image";
+import ButtonIndicator from "@/app/shared/buttonIndicator/ButtonIndicator";
+import { containerVariants, tabContentVariants } from "./animations";
+import ToggleSwitch from "@/app/shared/Profile/ToggleSwitch";
+import NavButton from "@/app/shared/Profile/NavButton";
+import { IProfileForms } from "@/app/types/userType";
 
-type PasswordFields = "currentPassword" | "newPassword" | "confirmPassword";
+// Types
+type TabType = "profile" | "security" | "notifications";
 
 const Profile: React.FC = () => {
   const { data: currentUser } = useCurrentUserQuery();
-  const [updateProfile, { isLoading: isUpdating }] = useUpdateProfileMutation();
 
+  const [updateProfileSecond, { isLoading: isUpdating }] =
+    useUpdateProfileSecondMutation();
   const router = useRouter();
 
+  const [activeTab, setActiveTab] = useState<TabType>("profile");
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const [showPassword, setShowPassword] = useState<
-    Record<PasswordFields, boolean>
-  >({
-    currentPassword: false,
-    newPassword: false,
-    confirmPassword: false,
+  const [showPassword, setShowPassword] = useState({
+    current: false,
+    new: false,
+    confirm: false,
   });
-
-  const togglePasswordVisibility = useCallback((field: PasswordFields) => {
-    setShowPassword((prev) => ({ ...prev, [field]: !prev[field] }));
-  }, []);
 
   useEffect(() => {
     if (currentUser?.user?.avatar) {
@@ -54,52 +65,88 @@ const Profile: React.FC = () => {
     }
   }, [currentUser]);
 
-  const handleImageChange = useCallback(
-    (
-      event: React.ChangeEvent<HTMLInputElement>,
-      setFieldValue: (
-        field: keyof IProfileForm,
-        value: string | File | null
-      ) => void
-    ) => {
-      const file = event.target.files?.[0] ?? null;
-      if (file) {
-        setFieldValue("image", file);
-        setProfileImage(URL.createObjectURL(file));
-      }
-    },
-    []
-  );
+  const handleImageChange = (
+    e: React.ChangeEvent<HTMLInputElement>,
+    setFieldValue: any
+  ) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setFieldValue("image", file);
+      setProfileImage(URL.createObjectURL(file));
+    }
+  };
 
-  const submitLogic = useCallback(
+  //** Handle Form submit logic
+  const handleSubmit = useCallback(
     async (
-      values: IProfileForm,
-      { resetForm }: FormikHelpers<IProfileForm>
+      values: IProfileForms,
+      { resetForm }: FormikHelpers<IProfileForms>
     ) => {
       try {
         const formData = new FormData();
-        formData.append("name", values.name);
 
+        formData.append("name", values.name ?? "");
+        formData.append("role", values.role ?? "");
+        formData.append("location", values.location ?? "");
+        formData.append("bio", values.bio ?? "");
+        formData.append("phone", values.phone ?? "");
+        formData.append("website", values.website ?? "");
+        formData.append("twitter", values.twitter ?? "");
+        formData.append("github", values.github ?? "");
+        formData.append("linkedin", values.linkedin ?? "");
+
+        // booleans → must convert to string
+        formData.append(
+          "marketingEmails",
+          String(values.marketingEmails ?? false)
+        );
+        formData.append(
+          "securityEmails",
+          String(values.securityEmails ?? false)
+        );
+        formData.append(
+          "productUpdates",
+          String(values.productUpdates ?? false)
+        );
+
+        // 3. PASSWORDS: Check existence before appending
         if (values.currentPassword && values.newPassword) {
           formData.append("currentPassword", values.currentPassword);
           formData.append("newPassword", values.newPassword);
         }
 
-        if (values.image) formData.append("image", values.image);
+        // 4. IMAGE: Check existence before appending
+        if (values.image) {
+          formData.append("image", values.image);
+        }
 
-        await updateProfile(formData).unwrap();
+        await updateProfileSecond(formData).unwrap();
         toast.success("Profile updated successfully!");
-        resetForm();
+
+        // Update form state with new values so fields don't clear
+        resetForm({ values });
       } catch (err: unknown) {
-        const apiError = err as { data?: { message?: string } };
-        toast.error(apiError.data?.message || "Login failed");
+        console.error(err);
+        toast.error("Failed to update profile");
       }
     },
-    [updateProfile]
+    [updateProfileSecond]
   );
 
-  const initialValues: IProfileForm = {
-    name: currentUser?.user?.name ?? "",
+  // ** Initialize form values
+  const initialValues: IProfileForms = {
+    name: currentUser?.user?.name,
+    role: currentUser?.user?.role,
+    location: currentUser?.user?.location,
+    bio: currentUser?.user?.bio,
+    phone: currentUser?.user?.phone,
+    website: currentUser?.user?.website,
+    twitter: currentUser?.user?.twitter,
+    github: currentUser?.user?.github,
+    linkedin: currentUser?.user?.linkedin,
+    marketingEmails: currentUser?.user?.marketingEmails || false,
+    securityEmails: currentUser?.user?.securityEmails || false,
+    productUpdates: currentUser?.user?.productUpdates || false,
     currentPassword: "",
     newPassword: "",
     confirmPassword: "",
@@ -107,183 +154,459 @@ const Profile: React.FC = () => {
   };
 
   return (
-    <div className="bg-[#0f172a] flex items-center justify-center px-4 py-8 font-sans text-slate-100">
+    <div className="flex items-center justify-center min-h-screen px-4 py-8 font-sans">
       <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.5 }}
-        className="w-full max-w-4xl"
+        variants={containerVariants}
+        initial="hidden"
+        animate="visible"
+        className="w-full max-w-6xl"
       >
-        <div className="flex items-center mb-2">
+        <div className="flex items-center gap-2 mb-6">
           <button
             onClick={() => router.back()}
-            className="flex items-center gap-2 text-slate-400 hover:text-white transition px-3 py-2 rounded-lg hover:bg-white/10"
+            className="flex items-center gap-2 text-slate-400 hover:text-white transition-colors px-3 py-2 rounded-lg hover:bg-slate-800/50"
           >
-            <FaArrowLeft /> Back
+            <FaArrowLeft /> <span className="text-sm font-medium">Back</span>
           </button>
+          <div className="h-4 w-px bg-slate-700 mx-2" />
+          <h1 className="text-xl font-bold text-slate-200">Account Settings</h1>
         </div>
 
-        <div className="bg-slate-800 text-slate-100 rounded-2xl shadow-2xl overflow-hidden">
+        <div className="bg-slate-900/80 backdrop-blur-xl border border-slate-800/60 rounded-3xl shadow-2xl overflow-hidden flex flex-col md:flex-row min-h-[600px]">
           <Formik
             initialValues={initialValues}
-            validationSchema={profileSchema}
-            onSubmit={submitLogic}
+            validationSchema={IProfileSchema}
+            onSubmit={handleSubmit}
             enableReinitialize
           >
             {({ setFieldValue }) => (
-              <Form className="flex flex-col md:flex-row" noValidate>
-                {/* Left Avatar */}
-                <motion.div
-                  initial={{ x: -30, opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
-                  transition={{ duration: 0.4 }}
-                  className="w-full md:w-1/3 p-4 bg-slate-700 flex flex-col items-center"
-                >
-                  <div className="relative group w-32 h-32 md:w-40 md:h-40 mb-4">
-                    <Image
-                      width={500}
-                      height={500}
-                      src={profileImage ?? avatar.src}
-                      priority
-                      alt="Profile"
-                      className="rounded-full w-full h-full border-4 border-slate-700 shadow-md object-cover"
-                    />
-                    <div
-                      onClick={() => fileInputRef.current?.click()}
-                      className="absolute inset-0 rounded-full bg-black/50 opacity-0 group-hover:opacity-100 flex items-center justify-center cursor-pointer transition"
-                    >
-                      <FaCamera className="w-8 h-8 text-white" />
-                    </div>
-                  </div>
-
-                  <input
-                    type="file"
-                    ref={fileInputRef}
-                    onChange={(e) => handleImageChange(e, setFieldValue)}
-                    className="hidden"
-                    accept="image/*"
-                  />
-                  <button
-                    type="button"
-                    onClick={() => fileInputRef.current?.click()}
-                    className="font-semibold text-sm text-indigo-400 hover:text-indigo-300 transition"
-                  >
-                    Change Photo
-                  </button>
-                  <p className="text-xs text-slate-500 mt-2">
-                    JPG, PNG up to 1MB
-                  </p>
-                </motion.div>
-
-                {/* Right Side Form */}
-                <motion.div
-                  initial={{ x: 30, opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
-                  transition={{ duration: 0.4 }}
-                  className="w-full md:w-2/3 p-8"
-                >
-                  <h1 className="text-2xl font-bold text-white mb-6">
-                    Account Settings
-                  </h1>
-
-                  <section className="space-y-4">
-                    <div>
-                      <label className="block text-sm font-medium text-slate-400 mb-1">
-                        Full Name
-                      </label>
-                      <div className="relative">
-                        <FaUser className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
-                        <Field
-                          type="text"
-                          name="name"
-                          className="w-full pl-10 pr-4 py-2 border rounded-lg bg-slate-900 text-white border-slate-700 focus:ring-2 focus:ring-indigo-500"
-                          placeholder="Your full name"
-                        />
-                      </div>
-                      <ErrorMessage
-                        name="name"
-                        component="p"
-                        className="text-xs text-red-400 mt-1"
+              <Form className="contents">
+                {/* LEFT SIDEBAR */}
+                <div className="w-full md:w-72 bg-slate-950/30 border-b md:border-b-0 md:border-r border-slate-800 p-6 flex flex-col">
+                  {/* Profile Summary */}
+                  <div className="flex flex-col items-center mb-8">
+                    <div className="relative group w-24 h-24 mb-4">
+                      <div className="absolute -inset-0.5 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-full opacity-75 blur-sm" />
+                      <Image
+                        src={profileImage || avatar.src}
+                        alt="Profile"
+                        className="relative w-full h-full rounded-full object-cover border-2 border-slate-900 shadow-xl"
+                        width={100}
+                        height={100}
+                      />
+                      <button
+                        type="button"
+                        onClick={() => fileInputRef.current?.click()}
+                        className="absolute bottom-0 right-0 w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center text-white border-2 border-slate-900 hover:bg-indigo-500 transition-colors shadow-lg z-10"
+                      >
+                        <FaCamera className="w-3 h-3" />
+                      </button>
+                      <input
+                        type="file"
+                        ref={fileInputRef}
+                        onChange={(e) => handleImageChange(e, setFieldValue)}
+                        className="hidden"
+                        accept="image/*"
                       />
                     </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-slate-400 mb-1">
-                        Email Address
-                      </label>
-                      <div className="relative">
-                        <FaEnvelope className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
-                        <input
-                          type="email"
-                          value={currentUser?.user?.email ?? ""}
-                          readOnly
-                          className="w-full pl-10 pr-4 py-2 border rounded-lg bg-slate-900 text-slate-400 border-slate-700 cursor-not-allowed"
-                        />
-                      </div>
-                    </div>
-                  </section>
-
-                  <hr className="my-6 border-slate-700" />
-
-                  <h2 className="text-lg font-semibold text-slate-200 mb-3">
-                    Change Password
-                  </h2>
-                  <div className="space-y-4">
-                    {(
-                      [
-                        "currentPassword",
-                        "newPassword",
-                        "confirmPassword",
-                      ] as PasswordFields[]
-                    ).map((field) => (
-                      <div key={field}>
-                        <label className="block text-sm font-medium text-slate-400 mb-1">
-                          {field === "currentPassword"
-                            ? "Current Password"
-                            : field === "newPassword"
-                            ? "New Password"
-                            : "Confirm Password"}
-                        </label>
-                        <div className="relative">
-                          <FaLock className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
-                          <Field
-                            type={showPassword[field] ? "text" : "password"}
-                            name={field}
-                            placeholder="••••••••"
-                            className="w-full pl-10 pr-10 py-2 border rounded-lg bg-slate-900 text-white border-slate-700 focus:ring-2 focus:ring-indigo-500"
-                          />
-                          <button
-                            type="button"
-                            onClick={() => togglePasswordVisibility(field)}
-                            className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200"
-                          >
-                            {showPassword[field] ? <FaEyeSlash /> : <FaEye />}
-                          </button>
-                        </div>
-                        <ErrorMessage
-                          name={field}
-                          component="p"
-                          className="text-xs text-red-400 mt-1"
-                        />
-                      </div>
-                    ))}
+                    <h2 className="text-lg font-bold text-white text-center">
+                      {currentUser?.user?.name || "User"}
+                    </h2>
+                    <p className="text-xs text-slate-400 text-center mt-1">
+                      {/* {currentUser?.user?.role || "Developer"} */}
+                    </p>
                   </div>
 
-                  <div className="flex justify-end gap-4 pt-6">
+                  {/* Navigation */}
+                  <div className="flex-1 space-y-2">
+                    <NavButton
+                      active={activeTab === "profile"}
+                      onClick={() => setActiveTab("profile")}
+                      icon={<FaUserCircle />}
+                      label="My Profile"
+                    />
+                    <NavButton
+                      active={activeTab === "security"}
+                      onClick={() => setActiveTab("security")}
+                      icon={<FaShieldAlt />}
+                      label="Login & Security"
+                    />
+                    <NavButton
+                      active={activeTab === "notifications"}
+                      onClick={() => setActiveTab("notifications")}
+                      icon={<FaBell />}
+                      label="Notifications"
+                    />
+                  </div>
+
+                  <div className="mt-8 pt-6 border-t border-slate-800">
                     <SignOutButton />
-                    <button
+                  </div>
+                </div>
+
+                {/* RIGHT CONTENT AREA */}
+                <div className="flex-1 p-6 md:p-10 relative overflow-hidden bg-slate-900/20">
+                  <AnimatePresence mode="wait">
+                    {/* PROFILE TAB */}
+                    {activeTab === "profile" && (
+                      <motion.div
+                        key="profile"
+                        variants={tabContentVariants}
+                        initial="hidden"
+                        animate="visible"
+                        exit="exit"
+                        className="space-y-8 max-w-2xl"
+                      >
+                        <div>
+                          <h2 className="text-2xl font-bold text-white mb-2">
+                            My Profile
+                          </h2>
+                          <p className="text-slate-400">
+                            Manage your personal information and social links.
+                          </p>
+                        </div>
+
+                        {/* Personal Info Grid */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          <div className="col-span-1 md:col-span-2">
+                            <label className="block text-sm font-medium text-slate-300 mb-2">
+                              Full Name
+                            </label>
+                            <div className="relative">
+                              <FaUser className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" />
+                              <Field
+                                name="name"
+                                className="w-full pl-11 pr-4 py-2.5 bg-slate-950/50 border border-slate-700 rounded-xl focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 outline-none text-slate-200 transition-all"
+                                placeholder="John Doe"
+                              />
+                            </div>
+                            <ErrorMessage
+                              name="name"
+                              component="p"
+                              className="text-xs text-red-400 mt-1"
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-sm font-medium text-slate-300 mb-2">
+                              Job Title
+                            </label>
+                            <div className="relative">
+                              <FaBriefcase className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" />
+                              <Field
+                                name="role"
+                                className="w-full pl-11 pr-4 py-2.5 bg-slate-950/50 border border-slate-700 rounded-xl focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 outline-none text-slate-200 transition-all"
+                                placeholder="Software Engineer"
+                              />
+                            </div>
+                          </div>
+
+                          <div>
+                            <label className="block text-sm font-medium text-slate-300 mb-2">
+                              Location
+                            </label>
+                            <div className="relative">
+                              <FaMapMarkerAlt className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" />
+                              <Field
+                                name="location"
+                                className="w-full pl-11 pr-4 py-2.5 bg-slate-950/50 border border-slate-700 rounded-xl focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 outline-none text-slate-200 transition-all"
+                                placeholder="New York, USA"
+                              />
+                            </div>
+                          </div>
+
+                          <div className="col-span-1 md:col-span-2">
+                            <label className="block text-sm font-medium text-slate-300 mb-2">
+                              Bio
+                            </label>
+                            <Field
+                              as="textarea"
+                              rows={4}
+                              name="bio"
+                              className="w-full px-4 py-3 bg-slate-950/50 border border-slate-700 rounded-xl focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 outline-none text-slate-200 transition-all resize-none"
+                              placeholder="Tell us a little about yourself..."
+                            />
+                            <div className="text-right text-xs text-slate-500 mt-1">
+                              Max 500 characters
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="h-px bg-slate-800" />
+
+                        {/* Social Links */}
+                        <div className="space-y-4">
+                          <h3 className="text-lg font-semibold text-white">
+                            Social Profiles
+                          </h3>
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="relative">
+                              <FaGlobe className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" />
+                              <Field
+                                name="website"
+                                className="w-full pl-11 pr-4 py-2.5 bg-slate-950/50 border border-slate-700 rounded-xl focus:ring-indigo-500/50 outline-none text-slate-200"
+                                placeholder="https://website.com"
+                              />
+                            </div>
+                            <div className="relative">
+                              <FaTwitter className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" />
+                              <Field
+                                name="twitter"
+                                className="w-full pl-11 pr-4 py-2.5 bg-slate-950/50 border border-slate-700 rounded-xl focus:ring-indigo-500/50 outline-none text-slate-200"
+                                placeholder="@username"
+                              />
+                            </div>
+                            <div className="relative">
+                              <FaGithub className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" />
+                              <Field
+                                name="github"
+                                className="w-full pl-11 pr-4 py-2.5 bg-slate-950/50 border border-slate-700 rounded-xl focus:ring-indigo-500/50 outline-none text-slate-200"
+                                placeholder="Github username"
+                              />
+                            </div>
+                            <div className="relative">
+                              <FaLinkedin className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" />
+                              <Field
+                                name="linkedin"
+                                className="w-full pl-11 pr-4 py-2.5 bg-slate-950/50 border border-slate-700 rounded-xl focus:ring-indigo-500/50 outline-none text-slate-200"
+                                placeholder="Linkedin username"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </motion.div>
+                    )}
+
+                    {/* SECURITY TAB */}
+                    {activeTab === "security" && (
+                      <motion.div
+                        key="security"
+                        variants={tabContentVariants}
+                        initial="hidden"
+                        animate="visible"
+                        exit="exit"
+                        className="space-y-8 max-w-2xl"
+                      >
+                        <div>
+                          <h2 className="text-2xl font-bold text-white mb-2">
+                            Login & Security
+                          </h2>
+                          <p className="text-slate-400">
+                            Manage your password and contact details.
+                          </p>
+                        </div>
+
+                        <div className="space-y-6">
+                          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                              <label className="block text-sm font-medium text-slate-300 mb-2">
+                                Email Address
+                              </label>
+                              <div className="relative">
+                                <FaEnvelope className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" />
+                                <input
+                                  type="email"
+                                  readOnly
+                                  value={currentUser?.user?.email || ""}
+                                  className="w-full pl-11 pr-4 py-2.5 bg-slate-900/50 border border-slate-800 rounded-xl text-slate-500 cursor-not-allowed"
+                                />
+                                <FaLock className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-600 w-3 h-3" />
+                              </div>
+                            </div>
+                            <div>
+                              <label className="block text-sm font-medium text-slate-300 mb-2">
+                                Phone Number
+                              </label>
+                              <div className="relative">
+                                <FaPhone className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" />
+                                <Field
+                                  name="phone"
+                                  className="w-full pl-11 pr-4 py-2.5 bg-slate-950/50 border border-slate-700 rounded-xl focus:ring-2 focus:ring-indigo-500/50 focus:border-indigo-500 outline-none text-slate-200 transition-all"
+                                  placeholder="+1 (555) 000-0000"
+                                />
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="h-px bg-slate-800 my-6" />
+
+                          <div className="bg-slate-950/30 p-6 rounded-2xl border border-slate-800/50">
+                            <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+                              <FaShieldAlt className="text-indigo-400" /> Change
+                              Password
+                            </h3>
+                            <div className="space-y-4">
+                              <div className="relative">
+                                <Field
+                                  type={
+                                    showPassword.current ? "text" : "password"
+                                  }
+                                  name="currentPassword"
+                                  placeholder="Current Password"
+                                  className="w-full px-4 py-2.5 bg-slate-900 border border-slate-700 rounded-lg focus:ring-2 focus:ring-indigo-500/50 outline-none text-slate-200"
+                                />
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    setShowPassword((p) => ({
+                                      ...p,
+                                      current: !p.current,
+                                    }))
+                                  }
+                                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white"
+                                >
+                                  {showPassword.current ? (
+                                    <FaEyeSlash />
+                                  ) : (
+                                    <FaEye />
+                                  )}
+                                </button>
+                              </div>
+                              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div className="relative">
+                                  <Field
+                                    type={
+                                      showPassword.new ? "text" : "password"
+                                    }
+                                    name="newPassword"
+                                    placeholder="New Password"
+                                    className="w-full px-4 py-2.5 bg-slate-900 border border-slate-700 rounded-lg focus:ring-2 focus:ring-indigo-500/50 outline-none text-slate-200"
+                                  />
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      setShowPassword((p) => ({
+                                        ...p,
+                                        new: !p.new,
+                                      }))
+                                    }
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white"
+                                  >
+                                    {showPassword.new ? (
+                                      <FaEyeSlash />
+                                    ) : (
+                                      <FaEye />
+                                    )}
+                                  </button>
+                                </div>
+                                <div className="relative">
+                                  <Field
+                                    type={
+                                      showPassword.confirm ? "text" : "password"
+                                    }
+                                    name="confirmPassword"
+                                    placeholder="Confirm Password"
+                                    className="w-full px-4 py-2.5 bg-slate-900 border border-slate-700 rounded-lg focus:ring-2 focus:ring-indigo-500/50 outline-none text-slate-200"
+                                  />
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      setShowPassword((p) => ({
+                                        ...p,
+                                        confirm: !p.confirm,
+                                      }))
+                                    }
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-white"
+                                  >
+                                    {showPassword.confirm ? (
+                                      <FaEyeSlash />
+                                    ) : (
+                                      <FaEye />
+                                    )}
+                                  </button>
+                                </div>
+                              </div>
+                              <ErrorMessage
+                                name="newPassword"
+                                component="p"
+                                className="text-xs text-red-400"
+                              />
+                              <ErrorMessage
+                                name="confirmPassword"
+                                component="p"
+                                className="text-xs text-red-400"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      </motion.div>
+                    )}
+
+                    {/* NOTIFICATIONS TAB */}
+                    {activeTab === "notifications" && (
+                      <motion.div
+                        key="notifications"
+                        variants={tabContentVariants}
+                        initial="hidden"
+                        animate="visible"
+                        exit="exit"
+                        className="space-y-8 max-w-2xl"
+                      >
+                        <div>
+                          <h2 className="text-2xl font-bold text-white mb-2">
+                            Notifications
+                          </h2>
+                          <p className="text-slate-400">
+                            Choose what updates you want to receive.
+                          </p>
+                        </div>
+
+                        <div className="space-y-4">
+                          <ToggleSwitch
+                            name="marketingEmails"
+                            label="Marketing Emails"
+                            description="Receive emails about new features, promotions, and special offers."
+                          />
+                          <ToggleSwitch
+                            name="securityEmails"
+                            label="Security Alerts"
+                            description="Get notified about important security alerts and login attempts."
+                          />
+                          <ToggleSwitch
+                            name="productUpdates"
+                            label="Product Updates"
+                            description="Receive the latest news about product updates and changes."
+                          />
+                        </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
+                  {/* Floating Save Button */}
+                  <motion.div
+                    initial={{ y: 50, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.2 }}
+                    className="absolute bottom-6 right-6 md:bottom-10 md:right-10 z-20"
+                  >
+                    <motion.button
+                      whileHover={!isUpdating ? { scale: 1.05 } : {}}
+                      whileTap={!isUpdating ? { scale: 0.95 } : {}}
                       type="submit"
                       disabled={isUpdating}
-                      className="px-6 py-2 rounded-lg text-sm font-semibold bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm transition"
+                      className={`
+                        flex items-center gap-2 px-6 py-3 rounded-full font-bold shadow-lg shadow-indigo-500/30 transition-all
+                        ${
+                          isUpdating
+                            ? "bg-indigo-500/50 cursor-not-allowed"
+                            : "bg-indigo-600 hover:bg-indigo-500 text-white"
+                        }
+                      `}
                     >
                       {isUpdating ? (
-                        <ButtonIndicator width={8} height={8} />
+                        <>
+                          <ButtonIndicator width={4} height={4} />
+                          <span className="ml-1">Saving...</span>
+                        </>
                       ) : (
-                        "Save Changes"
+                        <>
+                          <span>Save Changes</span>
+                          <FaCheckCircle />
+                        </>
                       )}
-                    </button>
-                  </div>
-                </motion.div>
+                    </motion.button>
+                  </motion.div>
+                </div>
               </Form>
             )}
           </Formik>

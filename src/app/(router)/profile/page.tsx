@@ -1,11 +1,10 @@
-import Profile from "@/app/shared/profile/profile";
-import React from "react";
+import Profile from "@/app/shared/Profile/Profile";
 
 const page = () => {
   return (
-    <>
+    <div>
       <Profile />
-    </>
+    </div>
   );
 };
 

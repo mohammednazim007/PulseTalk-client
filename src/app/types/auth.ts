@@ -1,66 +1,17 @@
 import { KeyboardEvent, RefObject } from "react";
-
-export interface User {
-  _id: string;
-  name: string;
-  email: string;
-
-  password?: string;
-  avatar: string | null;
-  isFriend?: boolean;
-
-  friends?: string[]; // IDs of accepted friends
-  friendRequests?: string[]; // IDs of incoming friend requests
-  sentRequests?: string[]; // IDs of sent friend requests
-  blockedUsers?: string[]; // IDs of blocked users
-  lastActive?: string; // Last online timestamp
-  createdAt?: string;
-  updatedAt?: string;
-}
+import { IUser } from "./userType";
 
 export interface IUserState {
-  user: User | null;
+  user: IUser | null;
   loading: boolean;
   error: string | null;
 }
 
-export interface SignInCredentials {
-  email: string;
-  password: string;
-}
-
-export interface SignUpData {
-  name: string;
-  email: string;
-  password: string;
-  avatar?: File | null | string;
-}
-
 export interface AuthResponse {
-  user: User;
+  user: IUser;
   token: string;
 }
 
-export interface IProfileForm {
-  name: string;
-  currentPassword: string;
-  newPassword: string;
-  confirmPassword: string;
-  image: File | null;
-}
-
-export interface IResponse {
-  success: boolean;
-  message: string;
-  email?: string;
-  users?: User[];
-}
-export interface ILoginResponse {
-  success: boolean;
-  message: string;
-  accessToken: string;
-  user: User;
-}
 export interface IOtpVerify {
   email: string;
   otpCode: string;
@@ -72,63 +23,4 @@ export interface OtpInputProps {
   onFocus: () => void;
   inputRef: RefObject<HTMLInputElement | null>;
   isFocused: boolean;
-}
-//** */ Define the shape of the form data
-export type PasswordFields = {
-  newPassword: string;
-  confirmPassword: string;
-};
-
-// =================
-export interface IUser {
-  _id: string;
-  name: string;
-  email: string;
-  avatar: string | null;
-  role?: string;
-  location?: string;
-  bio?: string;
-  phone?: string;
-  website?: string;
-
-  twitter?: string;
-  github?: string;
-  linkedin?: string;
-  marketingEmails?: boolean;
-  securityEmails?: boolean;
-  productUpdates?: boolean;
-
-  isFriend?: boolean;
-  friends?: string[];
-  friendRequests?: string[];
-  sentRequests?: string[];
-  blockedUsers?: string[];
-  lastActive?: string;
-  createdAt?: string;
-  updatedAt?: string;
-}
-
-export interface IProfileForms {
-  name?: string;
-  role?: string;
-  location?: string;
-  bio?: string;
-  phone?: string;
-  website?: string;
-  twitter?: string;
-  github?: string;
-  linkedin?: string;
-  marketingEmails?: boolean;
-  securityEmails?: boolean;
-  productUpdates?: boolean;
-  image?: File | null;
-  currentPassword?: string;
-  newPassword?: string;
-  confirmPassword?: string;
-}
-
-export interface IUpdateProfileResponse {
-  success: boolean;
-  message: string;
-  user: IUser;
 }
