@@ -1,112 +1,3 @@
-// "use client";
-
-// import React from "react";
-// import { Formik, Form, Field, FormikHelpers } from "formik";
-// import { useSendOtpMutation } from "@/app/redux/features/authApi/authApi";
-// import { useRouter } from "next/navigation";
-// import ButtonIndicator from "@/app/shared/buttonIndicator/ButtonIndicator";
-// import storageEmailLocalStorage from "@/app/utility/storeEmail";
-// import { resetEmailValidation } from "@/app/lib/validation/reset-password";
-
-// interface ResetFields {
-//   email: string;
-// }
-
-// const ResetPassword: React.FC = () => {
-//   const [sendOtp, { isLoading }] = useSendOtpMutation();
-//   const router = useRouter();
-
-//   const handleSubmit = async (
-//     values: ResetFields,
-//     { setFieldError, setSubmitting }: FormikHelpers<ResetFields>
-//   ) => {
-//     try {
-//       const email = localStorage.getItem("resetEmail");
-//       if (!email) storageEmailLocalStorage(values.email, "add");
-
-//       const response = await sendOtp({ email: values.email }).unwrap();
-//       if (!response.success)
-//         throw new Error(response.message || "Failed to send OTP");
-
-//       router.push("/auth/verify-otp");
-//     } catch (err: unknown) {
-//       const apiError = err as { data?: { message?: string } };
-//       setFieldError("email", apiError.data?.message || "Reset password failed");
-//     } finally {
-//       setSubmitting(false);
-//     }
-//   };
-
-//   return (
-//     <div className="min-h-screen flex items-center justify-center bg-[#0f172a] text-white p-4">
-//       <div className="bg-slate-800 p-8 rounded-xl shadow-2xl w-full max-w-md">
-//         <h2 className="text-3xl font-bold mb-6 text-center text-slate-100">
-//           Reset Password
-//         </h2>
-
-//         <Formik
-//           initialValues={{ email: "" }}
-//           validationSchema={resetEmailValidation}
-//           onSubmit={handleSubmit}
-//         >
-//           {({ isSubmitting, errors }) => (
-//             <Form className="space-y-6">
-//               <p className="text-sm text-center text-slate-400">
-//                 {`Enter your email address and we'll send you a link or code to
-//                 reset your password.`}
-//               </p>
-
-//               {/* Error Alert */}
-//               {errors.email && (
-//                 <div className="bg-red-500/10 border border-red-500/20 p-3 rounded-lg text-red-400 text-sm mb-4">
-//                   {errors.email}
-//                 </div>
-//               )}
-
-//               <div>
-//                 <label
-//                   htmlFor="email"
-//                   className="block text-sm font-medium text-slate-300 mb-1"
-//                 >
-//                   Email Address
-//                 </label>
-//                 <Field
-//                   type="email"
-//                   id="email"
-//                   name="email"
-//                   disabled={isLoading || isSubmitting}
-//                   placeholder="you@example.com"
-//                   className={`w-full px-4 py-2 rounded-lg bg-slate-700 text-white placeholder-slate-400 focus:outline-none transition-colors duration-150 ease-in-out
-//                     ${
-//                       errors.email
-//                         ? "border-2 border-red-500"
-//                         : "border-2 border-slate-600 focus:border-slate-600"
-//                     }`}
-//                 />
-//               </div>
-
-//               <button
-//                 type="submit"
-//                 disabled={isLoading || isSubmitting}
-//                 className={`w-full py-2 px-4 rounded-lg font-semibold transition duration-200 ease-in-out bg-lime-500 text-slate-900 hover:bg-lime-600 disabled:bg-slate-600 disabled:text-slate-400 disabled:cursor-not-allowed ${
-//                   isLoading ? "cursor-not-allowed" : ""
-//                 }`}
-//               >
-//                 {isLoading || isSubmitting ? (
-//                   <ButtonIndicator width={11} height={11} />
-//                 ) : (
-//                   "Send OTP"
-//                 )}
-//               </button>
-//             </Form>
-//           )}
-//         </Formik>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default ResetPassword;
 "use client";
 import React from "react";
 import { Formik, Form, Field, FormikHelpers } from "formik";
@@ -119,14 +10,7 @@ import { resetEmailValidation } from "@/app/lib/validation/reset-password";
 import ButtonIndicator from "@/app/shared/buttonIndicator/ButtonIndicator";
 import { IResetPassword } from "@/app/types/formType";
 import BackButton from "@/app/shared/BackButton/BackButton";
-import { ISendOtpResponse } from "@/app/types/responseType";
-
-// Inline mock for storage utility since original file is missing
-const storageEmailLocalStorage = (email: string, action: string) => {
-  if (action === "add") {
-    localStorage.setItem("resetEmail", email);
-  }
-};
+import storageEmailLocalStorage from "@/app/utility/storeEmail";
 
 const ResetPassword: React.FC = () => {
   const [sendOtp, { isLoading }] = useSendOtpMutation();
@@ -162,9 +46,9 @@ const ResetPassword: React.FC = () => {
   return (
     <div className="min-h-screen flex items-center justify-center p-4 font-sans">
       <motion.div
-        initial={{ opacity: 0, scale: 0.95, y: 20 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        transition={{ duration: 0.5, ease: "easeOut" }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
         className="w-full max-w-md"
       >
         {/* Back Button */}
@@ -228,7 +112,7 @@ const ResetPassword: React.FC = () => {
                         name="email"
                         disabled={isLoading || isSubmitting}
                         placeholder="you@example.com"
-                        className={`w-full pl-11 pr-4 py-3.5 rounded-xl bg-slate-950/50 text-white placeholder-slate-500 outline-none border transition-all duration-200
+                        className={`w-full pl-11 pr-4 py-2.5 rounded-xl bg-slate-950/50 text-white placeholder-slate-500 outline-none border transition-all duration-200
                           ${
                             errors.email && touched.email
                               ? "border-red-500/50 focus:border-red-500 focus:ring-4 focus:ring-red-500/10"
@@ -254,11 +138,9 @@ const ResetPassword: React.FC = () => {
                   </div>
 
                   <motion.button
-                    whileHover={{ scale: 1.02 }}
-                    whileTap={{ scale: 0.98 }}
                     type="submit"
                     disabled={isLoading || isSubmitting}
-                    className={`w-full py-1.5 rounded-xl font-bold text-white shadow-lg transition-all flex items-center justify-center gap-2
+                    className={`w-full py-1.5 rounded-xl font-semibold text-white shadow-lg transition-all flex items-center justify-center gap-2
                       ${
                         isLoading || isSubmitting
                           ? "bg-slate-800 text-slate-500 cursor-not-allowed shadow-none"
