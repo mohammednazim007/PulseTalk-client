@@ -1,9 +1,8 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
-
-import { SignInFormData } from "@/app/lib/schemas/authSchemas";
 import { baseQueryWithAuth } from "../../base-query/baseQueryWithAuth";
 import { IUser } from "@/app/types/userType";
 import { ILoginResponse, IResponse } from "@/app/types/responseType";
+import { ISignInData } from "@/app/types/formType";
 
 interface CurrentUser {
   user: IUser;
@@ -20,7 +19,7 @@ export const authApi = createApi({
       providesTags: ["Auth", "User"],
     }),
 
-    //** Update user profile */
+    //** Update user profile  */
     updateProfile: builder.mutation<IResponse, FormData>({
       query: (formData) => ({
         url: "/user/profile",
@@ -30,18 +29,8 @@ export const authApi = createApi({
       invalidatesTags: ["Auth", "User"],
     }),
 
-    //** Update user profile second */
-    updateProfileSecond: builder.mutation<IResponse, FormData>({
-      query: (formData) => ({
-        url: "/user/profile",
-        method: "POST",
-        body: formData,
-      }),
-      invalidatesTags: ["Auth", "User"],
-    }),
-
     //** Register user */
-    registerUser: builder.mutation<IResponse, FormData>({
+    registerUser: builder.mutation<IResponse, ISignInData>({
       query: (formData) => ({
         url: "/user/register",
         method: "POST",
@@ -51,7 +40,7 @@ export const authApi = createApi({
     }),
 
     //** Login user */
-    login: builder.mutation<ILoginResponse, SignInFormData>({
+    login: builder.mutation<ILoginResponse, ISignInData>({
       query: (body) => ({
         url: "/user/login",
         method: "POST",
@@ -113,5 +102,4 @@ export const {
   useSendOtpMutation,
   useVerifyOtpMutation,
   useSetNewPasswordMutation,
-  useUpdateProfileSecondMutation,
 } = authApi;

@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { IChatMessage, OnlineState } from "./interface";
 import { fetchChatHistory } from "@/app/utility/fetchChatHistory";
 import { sendMessage } from "@/app/utility/sendMessage";
-import { User } from "@/app/types/auth";
+import { IUser } from "@/app/types/userType";
 
 const initialState: OnlineState = {
   onlineUsers: [],
@@ -20,7 +20,7 @@ const onlineSlice = createSlice({
       state.onlineUsers = action.payload;
     },
 
-    setActiveUser: (state, action: PayloadAction<User>) => {
+    setActiveUser: (state, action: PayloadAction<IUser>) => {
       state.activeUser = action.payload;
     },
 

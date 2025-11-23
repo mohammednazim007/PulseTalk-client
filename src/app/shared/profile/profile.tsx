@@ -28,10 +28,9 @@ import {
 import { toast } from "react-hot-toast";
 import {
   useCurrentUserQuery,
-  useUpdateProfileSecondMutation,
+  useUpdateProfileMutation,
 } from "@/app/redux/features/authApi/authApi";
 import { useRouter } from "next/navigation";
-import { IProfileSchema } from "@/app/lib/schemas/authSchemas";
 import SignOutButton from "@/app/shared/signOut/Sign-out";
 import Image from "next/image";
 import ButtonIndicator from "@/app/shared/buttonIndicator/ButtonIndicator";
@@ -39,6 +38,7 @@ import { containerVariants, tabContentVariants } from "./animations";
 import ToggleSwitch from "@/app/shared/Profile/ToggleSwitch";
 import NavButton from "@/app/shared/Profile/NavButton";
 import { IProfileForms } from "@/app/types/userType";
+import { profileValidation } from "@/app/lib/validation/form-validation";
 
 // Types
 type TabType = "profile" | "security" | "notifications";
@@ -46,8 +46,7 @@ type TabType = "profile" | "security" | "notifications";
 const Profile: React.FC = () => {
   const { data: currentUser } = useCurrentUserQuery();
 
-  const [updateProfileSecond, { isLoading: isUpdating }] =
-    useUpdateProfileSecondMutation();
+  const [updateProfile, { isLoading: isUpdating }] = useUpdateProfileMutation();
   const router = useRouter();
 
   const [activeTab, setActiveTab] = useState<TabType>("profile");
@@ -67,7 +66,11 @@ const Profile: React.FC = () => {
 
   const handleImageChange = (
     e: React.ChangeEvent<HTMLInputElement>,
-    setFieldValue: any
+    setFieldValue: (
+      field: string,
+      value: File | null,
+      shouldValidate?: boolean
+    ) => void
   ) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -120,7 +123,7 @@ const Profile: React.FC = () => {
           formData.append("image", values.image);
         }
 
-        await updateProfileSecond(formData).unwrap();
+        await updateProfile(formData).unwrap();
         toast.success("Profile updated successfully!");
 
         // Update form state with new values so fields don't clear
@@ -130,7 +133,7 @@ const Profile: React.FC = () => {
         toast.error("Failed to update profile");
       }
     },
-    [updateProfileSecond]
+    [updateProfile]
   );
 
   // ** Initialize form values
@@ -175,7 +178,7 @@ const Profile: React.FC = () => {
         <div className="bg-slate-900/80 backdrop-blur-xl border border-slate-800/60 rounded-3xl shadow-2xl overflow-hidden flex flex-col md:flex-row min-h-[600px]">
           <Formik
             initialValues={initialValues}
-            validationSchema={IProfileSchema}
+            validationSchema={profileValidation}
             onSubmit={handleSubmit}
             enableReinitialize
           >

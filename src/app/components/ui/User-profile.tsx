@@ -1,10 +1,10 @@
 import Image from "next/image";
 import avatar from "@/app/assets/profile.png";
-import { User } from "@/app/types/auth";
+import { IUser } from "@/app/types/userType";
 import timeAgo from "@/app/utility/timeAgo";
 
 interface UserProfileProps {
-  currentUser: User | null;
+  currentUser: IUser | null;
   isTimeAvailable: boolean;
 }
 

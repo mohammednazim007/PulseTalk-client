@@ -45,7 +45,7 @@
 "use client";
 
 import React, { useCallback, memo } from "react";
-import { User } from "@/app/types/auth";
+import { IUser } from "@/app/types/userType";
 import { FriendListProps } from "./interface";
 import FriendListItem from "./FriendListItem";
 import { useAppSelector } from "@/app/hooks/hooks";
@@ -58,7 +58,7 @@ const SidebarFriendList = ({
   const { activeUser } = useAppSelector((state) => state.user);
 
   const handleFriendClick = useCallback(
-    (friend: User) => {
+    (friend: IUser) => {
       onClick?.(friend);
     },
     [onClick]

@@ -1,16 +1,16 @@
-export interface SignInCredentials {
+export interface ISignInData {
   email: string;
   password: string;
 }
 
-export interface SignUpData {
+export interface ISignUpData {
   name: string;
   email: string;
   password: string;
-  avatar?: File | null | string;
+  confirmPassword: string;
 }
 
-export type PasswordFields = {
+export interface IPasswordData {
   newPassword: string;
   confirmPassword: string;
-};
+}

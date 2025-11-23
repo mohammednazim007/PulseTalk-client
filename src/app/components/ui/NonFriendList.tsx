@@ -4,7 +4,7 @@ import { useFilteredFriends } from "@/app/hooks/useFilteredFriends";
 import { useGetFriendsQuery } from "@/app/redux/features/friends/friendApi";
 import FriendListSkeleton from "@/app/shared/FriendListSkeleton/FriendListSkeleton";
 import UserActionButtons from "@/app/shared/UserButtonCard/UserActionButtons";
-import { User } from "@/app/types/auth";
+import { IUser } from "@/app/types/userType";
 import timeAgo from "@/app/utility/timeAgo";
 import Image from "next/image";
 import { useState } from "react";
@@ -27,7 +27,7 @@ const NonFriendList = ({ searchTerm }: { searchTerm: string }) => {
 
   return (
     <div className="flex flex-col divide-y divide-slate-700">
-      {filteredFriends?.map((user: User) => (
+      {filteredFriends?.map((user: IUser) => (
         <div
           onClick={() => handleSelected(user._id)}
           key={user._id}

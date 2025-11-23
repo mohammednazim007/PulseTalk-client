@@ -1,4 +1,4 @@
-import { IProfileForms } from "@/app/types/auth";
+import { IProfileForms } from "@/app/types/userType";
 import { useFormikContext } from "formik";
 import { motion } from "motion/react";
 // Components
@@ -9,8 +9,8 @@ const ToggleSwitch: React.FC<{
   description?: string;
 }> = ({ name, label, description }) => {
   const { values, setFieldValue } = useFormikContext<IProfileForms>();
-  // @ts-ignore - dynamic access
-  const isOn = values[name] as boolean;
+
+  const isOn = values[name as keyof IProfileForms] as boolean;
 
   return (
     <div className="flex items-center justify-between p-4 bg-slate-950/30 rounded-xl border border-slate-800/50 hover:border-slate-700 transition-colors">

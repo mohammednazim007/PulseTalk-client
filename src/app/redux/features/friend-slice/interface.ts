@@ -1,7 +1,7 @@
-import { User } from "@/app/types/auth";
+import { IUser } from "@/app/types/userType";
 
 export interface IFriendsState {
-  friends: User[];
+  friends: IUser[];
   isLoading: boolean;
   isError: null | string;
 }

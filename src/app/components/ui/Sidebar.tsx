@@ -12,7 +12,7 @@ import { useGetAcceptedFriendsQuery } from "@/app/redux/features/friends/friendA
 import SidebarTabs from "@/app/shared/SidebarTabs/SidebarTabs";
 import { debounce } from "@/app/utility/debounce";
 import { useCurrentUserQuery } from "@/app/redux/features/authApi/authApi";
-import { User } from "@/app/types/auth";
+import { IUser } from "@/app/types/userType";
 import SidebarFriendList from "@/app/shared/FriendSidebarList/FriendSidebarList";
 import SidebarSearch, {
   SidebarSearchRef,
@@ -65,7 +65,7 @@ const Sidebar = ({ onClose }: SidebarProps) => {
   useEffect(() => debouncedSearch.cancel(), [debouncedSearch]);
 
   // ✅** Handle friend to add active user
-  const handleClick = (friend: User) => {
+  const handleClick = (friend: IUser) => {
     dispatch(setActiveUser(friend));
 
     // Only close sidebar on mobile (width < 768px)

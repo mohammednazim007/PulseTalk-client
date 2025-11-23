@@ -1,5 +1,5 @@
 "use client";
-import { User } from "@/app/types/auth";
+import { IUser } from "@/app/types/userType";
 import AddButton from "../AddButton/AddButton";
 import {
   useSendFriendRequestMutation,
@@ -13,7 +13,7 @@ import ButtonIndicator from "../buttonIndicator/ButtonIndicator";
 import { useCurrentUserQuery } from "@/app/redux/features/authApi/authApi";
 
 interface UserActionProps {
-  friend: User;
+  friend: IUser;
 }
 
 const UserActionButtons = ({ friend }: UserActionProps) => {
