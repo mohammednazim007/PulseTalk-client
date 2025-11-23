@@ -123,7 +123,7 @@ const SignInPage = () => {
                       </label>
                       <Link
                         href="/auth/reset-password"
-                        className="text-indigo-400 hover:text-indigo-300 transition-colors"
+                        className="text-indigo-400 hover:text-indigo-300 transition-colors text-xs"
                       >
                         Forgot password?
                       </Link>

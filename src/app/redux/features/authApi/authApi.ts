@@ -8,6 +8,7 @@ import {
   ISendOtpResponse,
 } from "@/app/types/responseType";
 import { ISignInData } from "@/app/types/formType";
+import { IOTPResponse } from "@/app/types/auth";
 
 interface CurrentUser {
   user: IUser;
@@ -73,11 +74,17 @@ export const authApi = createApi({
       invalidatesTags: ["Auth"],
     }),
 
-    // ** Verify OTP for password reset */
-    verifyOtp: builder.mutation<IResponse, { email: string; otpCode: string }>({
+    // ** Verify OTP  */
+    verifyOtp: builder.mutation<
+      IOTPResponse,
+      { email: string; otpCode: string }
+    >({
       query: (body) => ({
         url: "/auth/verify-otp",
         method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
         body,
       }),
       invalidatesTags: ["Auth"],

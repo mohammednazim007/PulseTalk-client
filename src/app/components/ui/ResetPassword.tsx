@@ -75,7 +75,7 @@ const ResetPassword: React.FC = () => {
                 <FaKey className="w-7 h-7" />
               </motion.div>
 
-              <h2 className="text-3xl font-bold text-white mb-3 tracking-tight">
+              <h2 className="text-xl font-bold text-white mb-3 tracking-tight">
                 Reset Password
               </h2>
               <p className="text-slate-400 leading-relaxed max-w-[90%]">

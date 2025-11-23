@@ -15,6 +15,7 @@ export interface AuthResponse {
 export interface IOtpVerify {
   email: string;
   otpCode: string;
+  verify: boolean;
 }
 export interface OtpInputProps {
   value: string;
@@ -23,4 +24,10 @@ export interface OtpInputProps {
   onFocus: () => void;
   inputRef: RefObject<HTMLInputElement | null>;
   isFocused: boolean;
+}
+
+export interface IOTPResponse {
+  message: string;
+  success: boolean;
+  verify: boolean;
 }

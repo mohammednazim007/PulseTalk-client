@@ -71,17 +71,20 @@ const VerifyOTP: FC = () => {
       return;
     }
 
-    const email = localStorage.getItem("resetEmail") || "demo@example.com"; // Fallback for demo
+    const email = localStorage.getItem("resetEmail");
     if (!email) {
       setErrorMessage("No email found");
       return;
     }
 
+    console.log("email", email, otp.join(""));
     try {
-      const response: any = await verifyOtp({
+      const response = await verifyOtp({
         email,
         otpCode: otp.join(""),
-      });
+      }).unwrap();
+
+      console.log("response", response);
 
       if (response.success) {
         toast.success("OTP verified successfully!");
@@ -95,11 +98,12 @@ const VerifyOTP: FC = () => {
     }
   }, [otp, verifyOtp, router]);
 
+  // ** Handle resend OTP */
   const handleResend = useCallback(async () => {
     setErrorMessage("");
     if (timeLeft > 0) return;
 
-    const email = localStorage.getItem("rememberedEmail") || "demo@example.com"; // Fallback
+    const email = localStorage.getItem("resetEmail");
     if (!email) {
       setErrorMessage("Email not found");
       return;
@@ -145,7 +149,7 @@ const VerifyOTP: FC = () => {
               <FaShieldAlt className="w-8 h-8" />
             </motion.div>
 
-            <h2 className="text-3xl font-bold text-white mb-2 text-center tracking-tight">
+            <h2 className="text-xl font-bold text-white mb-2 text-center tracking-tight">
               Verification Code
             </h2>
             <p className="text-slate-400 text-center mb-8 max-w-[280px] leading-relaxed">
