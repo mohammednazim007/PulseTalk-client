@@ -64,6 +64,7 @@ const VerifyOTP: FC = () => {
     [otp, focusInput]
   );
 
+  // ** Handle verify OTP */
   const handleVerify = useCallback(async () => {
     setErrorMessage("");
     if (otp.some((d) => !d)) {
@@ -72,19 +73,13 @@ const VerifyOTP: FC = () => {
     }
 
     const email = localStorage.getItem("resetEmail");
-    if (!email) {
-      setErrorMessage("No email found");
-      return;
-    }
+    if (!email) return setErrorMessage("No email found");
 
-    console.log("email", email, otp.join(""));
     try {
       const response = await verifyOtp({
         email,
         otpCode: otp.join(""),
       }).unwrap();
-
-      console.log("response", response);
 
       if (response.success) {
         toast.success("OTP verified successfully!");

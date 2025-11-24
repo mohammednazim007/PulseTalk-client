@@ -79,14 +79,14 @@ export const authApi = createApi({
       IOTPResponse,
       { email: string; otpCode: string }
     >({
-      query: (body) => ({
-        url: "/auth/verify-otp",
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body,
-      }),
+      query: (body) => {
+        console.log("body", body);
+        return {
+          url: "/auth/verify-otp",
+          method: "POST",
+          body,
+        };
+      },
       invalidatesTags: ["Auth"],
     }),
 

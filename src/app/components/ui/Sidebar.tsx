@@ -143,7 +143,7 @@ const Sidebar = ({ onClose }: SidebarProps) => {
               isTimeAvailable={false}
             />
             <CiSettings
-              onClick={() => route.push("/profile")}
+              onClick={() => route.push("/profile/my-profile")}
               size={29}
               className="hover:animate-spin"
             />
