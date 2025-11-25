@@ -10,6 +10,7 @@ const initialState: OnlineState = {
   chat: [],
   loading: false,
   error: null,
+  closeSidebar: true,
 };
 
 const onlineSlice = createSlice({
@@ -30,6 +31,10 @@ const onlineSlice = createSlice({
 
     clearMessages: (state) => {
       state.chat = [];
+    },
+
+    setCloseSidebar: (state, action: PayloadAction<boolean>) => {
+      state.closeSidebar = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -52,6 +57,11 @@ const onlineSlice = createSlice({
   },
 });
 
-export const { setOnlineUsers, setActiveUser, addNewMessage, clearMessages } =
-  onlineSlice.actions;
+export const {
+  setOnlineUsers,
+  setActiveUser,
+  addNewMessage,
+  clearMessages,
+  setCloseSidebar,
+} = onlineSlice.actions;
 export default onlineSlice.reducer;

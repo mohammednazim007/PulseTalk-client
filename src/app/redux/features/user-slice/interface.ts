@@ -15,4 +15,5 @@ export interface OnlineState {
   chat: IChatMessage[];
   loading: boolean;
   error: string | null;
+  closeSidebar: boolean;
 }

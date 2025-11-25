@@ -3,17 +3,24 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import ProfileSidebar from "@/app/shared/Profile-sidebar/Profile-sidebar";
+import { useAppDispatch, useAppSelector } from "@/app/hooks/hooks";
+import { setCloseSidebar } from "@/app/redux/features/user-slice/message-user-slice";
 
 const ProfileLayout = ({ children }: { children: React.ReactNode }) => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  // const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const isSidebarOpen = useAppSelector((state) => state.user.closeSidebar);
+  const dispatch = useAppDispatch();
+  console.log("isSidebarOpen", isSidebarOpen);
 
   // Responsive sidebar behavior
   useEffect(() => {
     const mediaQuery = window.matchMedia("(min-width: 768px)");
-    setIsSidebarOpen(mediaQuery.matches); // Desktop open, mobile closed
+    // Desktop open, mobile closed
+    dispatch(setCloseSidebar(mediaQuery.matches));
+    console.log("mediaQuery.matches", mediaQuery.matches);
 
     const handleResize = (e: MediaQueryListEvent) => {
-      setIsSidebarOpen(e.matches);
+      dispatch(setCloseSidebar(e.matches));
     };
 
     mediaQuery.addEventListener("change", handleResize);
@@ -33,7 +40,7 @@ const ProfileLayout = ({ children }: { children: React.ReactNode }) => {
             transition={{ duration: 0.3, ease: "easeInOut" }}
             className="fixed md:static z-50 h-full shadow-2xl md:shadow-none"
           >
-            <ProfileSidebar onClose={() => setIsSidebarOpen(false)} />
+            <ProfileSidebar />
           </motion.div>
         )}
       </AnimatePresence>
