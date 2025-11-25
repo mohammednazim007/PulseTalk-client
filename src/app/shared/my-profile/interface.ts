@@ -7,6 +7,7 @@ export interface IMyProfile {
   twitter: string;
   github: string;
   linkedin: string;
+  avatar: File | null | string;
 }
 
 export interface FileInfoState {

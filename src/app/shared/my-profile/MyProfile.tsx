@@ -13,6 +13,7 @@ import {
 } from "react-icons/fa";
 import { motion } from "motion/react";
 import { Field, ErrorMessage, Formik, Form, FormikHelpers } from "formik";
+import defaultAvatar from "@/app/assets/profile.png";
 
 import { tabContentVariants } from "./animation";
 import ButtonIndicator from "../buttonIndicator/ButtonIndicator";
@@ -23,10 +24,10 @@ import {
   useCurrentUserQuery,
   useUpdateProfileMutation,
 } from "@/app/redux/features/authApi/authApi";
+import Image from "next/image";
 
 const MAX_FILE_SIZE = 3 * 1024 * 1024; // 3MB
 const ALLOWED_FILE_TYPES = ["image/png", "image/jpeg", "image/svg+xml"];
-const defaultAvatar = "https://picsum.photos/200/200";
 
 const MyProfile = () => {
   const [profileImage, setProfileImage] = useState<string | null>(null);
@@ -111,7 +112,8 @@ const MyProfile = () => {
       }
 
       // Execute the RTK Query mutation
-      await updateProfile(formData).unwrap();
+      const response = await updateProfile(formData).unwrap();
+      console.log("response", response);
 
       toast.success("Profile updated successfully!");
       resetForm({ values });
@@ -132,6 +134,7 @@ const MyProfile = () => {
     twitter: currentUser?.twitter || "",
     github: currentUser?.github || "",
     linkedin: currentUser?.linkedin || "",
+    avatar: currentUser?.avatar || null,
   };
 
   return (
@@ -161,7 +164,9 @@ const MyProfile = () => {
             {/* Profile Image Upload */}
             <div className="flex flex-col items-center gap-4 pt-4">
               <div className="relative w-36 h-36 group">
-                <img
+                <Image
+                  width={144}
+                  height={144}
                   src={profileImage || defaultAvatar}
                   alt="Profile Avatar"
                   className={`w-full h-full object-cover rounded-full border-4 ${
