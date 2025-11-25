@@ -1,33 +1,32 @@
 "use client";
+
 import { FaArrowLeft, FaTimes } from "react-icons/fa";
-import { useAppDispatch } from "@/app/hooks/hooks";
+import { useAppDispatch, useAppSelector } from "@/app/hooks/hooks";
 import { setCloseSidebar } from "@/app/redux/features/user-slice/message-user-slice";
-import { useAppSelector } from "@/app/hooks/hooks";
+import { SquareChartGantt } from "lucide-react";
 
 const CloseSidebar = () => {
   const isSidebarOpen = useAppSelector((state) => state.user.closeSidebar);
   const dispatch = useAppDispatch();
 
+  const toggleSidebar = () => {
+    dispatch(setCloseSidebar(!isSidebarOpen));
+  };
+
   return (
-    <div>
-      {isSidebarOpen ? (
-        <button
-          onClick={() => dispatch(setCloseSidebar(false))}
-          className=" absolute top-3 right-3 z-50 p-2 rounded-lg bg-slate-700 hover:bg-slate-600 transition"
-        >
-          <FaArrowLeft size={16} />
-        </button>
-      ) : (
-        <button
-          onClick={() => dispatch(setCloseSidebar(true))}
-          className=" absolute top-3 right-3 z-50 p-2 rounded-lg bg-slate-700 hover:bg-slate-600 transition"
-        >
-          <FaTimes size={16} />
-        </button>
-      )}
-    </div>
+    <button
+      onClick={toggleSidebar}
+      className="
+        md:hidden
+        absolute top-3 right-3 z-50 
+        p-2 rounded-lg 
+        bg-slate-700 hover:bg-slate-600 
+        transition
+      "
+    >
+      {isSidebarOpen ? <FaTimes size={16} /> : <SquareChartGantt size={16} />}
+    </button>
   );
 };
 
 export default CloseSidebar;
-// md: hidden;

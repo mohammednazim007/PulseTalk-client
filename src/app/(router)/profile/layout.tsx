@@ -17,7 +17,6 @@ const ProfileLayout = ({ children }: { children: React.ReactNode }) => {
     const mediaQuery = window.matchMedia("(min-width: 768px)");
     // Desktop open, mobile closed
     dispatch(setCloseSidebar(mediaQuery.matches));
-    console.log("mediaQuery.matches", mediaQuery.matches);
 
     const handleResize = (e: MediaQueryListEvent) => {
       dispatch(setCloseSidebar(e.matches));

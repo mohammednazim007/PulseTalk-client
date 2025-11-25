@@ -10,7 +10,7 @@ import Cookies from "js-cookie";
 import React from "react";
 import { FaSignOutAlt } from "react-icons/fa";
 
-const SignOutButton: React.FC = () => {
+const SignOutButton: React.FC<{ className?: string }> = ({ className }) => {
   const [isLoading, setLoading] = useState(false);
   const router = useRouter();
 
@@ -34,10 +34,8 @@ const SignOutButton: React.FC = () => {
 
   return (
     <motion.button
-      whileHover={{ scale: 1.02 }}
-      whileTap={{ scale: 0.98 }}
       type="button"
-      className="px-4 py-2 rounded-lg text-sm font-semibold text-red-400 bg-red-400/10 hover:bg-red-400/20 border border-red-400/20 transition flex items-center gap-2"
+      className={`px-4 py-2 rounded-lg text-sm font-semibold text-red-400 bg-red-400/10 hover:bg-red-400/20 border border-red-400/20 transition flex items-center gap-2 ${className}`}
       onClick={signOutHandler}
     >
       <FaSignOutAlt />
