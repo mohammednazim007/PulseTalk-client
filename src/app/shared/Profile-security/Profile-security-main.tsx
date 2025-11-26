@@ -21,6 +21,7 @@ import { SecuritySchema } from "./validation";
 import { useCurrentUserQuery } from "@/app/redux/features/authApi/authApi";
 import { useUpdateSecurityMutation } from "@/app/redux/features/update-profile/update-profile";
 import Security_2FA from "./Security_2FA";
+import toast from "react-hot-toast";
 
 const ProfileSecurity: React.FC = () => {
   const [showCurrentPass, setShowCurrentPass] = useState(false);
@@ -40,7 +41,6 @@ const ProfileSecurity: React.FC = () => {
     confirmPassword: "",
     twoFactorEnabled: currentUser?.user.twoFactorEnabled,
   };
-  console.log("ini", initialValues);
 
   // ** handle Security Form Submit
   const handleSubmit = async (
@@ -48,9 +48,9 @@ const ProfileSecurity: React.FC = () => {
     { resetForm }: FormikHelpers<SecurityFormValues>
   ) => {
     try {
-      console.log("value ", values);
       const response = await updateSecurity(values);
-      console.log(response);
+      console.log("form", response);
+
       resetForm();
     } catch (error) {
       console.log(error);

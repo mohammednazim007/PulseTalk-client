@@ -5,7 +5,7 @@ import { SecurityFormValues } from "./types";
 
 const Security_2FA = () => {
   const { values, setFieldValue } = useFormikContext<SecurityFormValues>();
-  console.log("x", values);
+  //   console.log("x", values);
 
   return (
     <div className="bg-slate-950/30 p-4 rounded-xl border border-slate-800/50">
