@@ -1,8 +1,9 @@
 import { useFormikContext } from "formik";
 import Toggle from "./Toggle";
+import { SecurityFormValues } from "./types";
 
 const Security_2FA = () => {
-  const { values, setFieldValue } = useFormikContext<any>();
+  const { values, setFieldValue } = useFormikContext<SecurityFormValues>();
 
   return (
     <div className="bg-slate-950/30 p-4 rounded-xl border border-slate-800/50">

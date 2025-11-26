@@ -25,16 +25,6 @@ export const authApi = createApi({
       providesTags: ["Auth", "User"],
     }),
 
-    //** Update user profile  */
-    updateProfile: builder.mutation<IResponse, FormData>({
-      query: (formData) => ({
-        url: "/user/profile",
-        method: "POST",
-        body: formData,
-      }),
-      invalidatesTags: ["Auth", "User"],
-    }),
-
     //** Register user */
     registerUser: builder.mutation<IResponse, ISignInData>({
       query: (formData) => ({
@@ -89,19 +79,6 @@ export const authApi = createApi({
       },
       invalidatesTags: ["Auth"],
     }),
-
-    // ** Set new password */
-    setNewPassword: builder.mutation<
-      IResponse,
-      { email: string; newPassword: string }
-    >({
-      query: (body) => ({
-        url: "/auth/change-password",
-        method: "PUT",
-        body,
-      }),
-      invalidatesTags: ["Auth"],
-    }),
   }),
 });
 
@@ -110,8 +87,6 @@ export const {
   useRegisterUserMutation,
   useLoginMutation,
   useLogoutMutation,
-  useUpdateProfileMutation,
   useSendOtpMutation,
   useVerifyOtpMutation,
-  useSetNewPasswordMutation,
 } = authApi;

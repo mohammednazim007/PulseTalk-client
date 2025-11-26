@@ -20,4 +20,5 @@ export const SecuritySchema = Yup.object().shape({
       is: (val: string) => val && val.length > 0,
       then: (schema) => schema.required("Confirm your new password"),
     }),
+  twoFactorEnabled: Yup.boolean(),
 });

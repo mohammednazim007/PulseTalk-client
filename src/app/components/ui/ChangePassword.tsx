@@ -11,13 +11,13 @@ import {
   FaCheckCircle,
   FaExclamationCircle,
 } from "react-icons/fa";
-import { useSetNewPasswordMutation } from "@/app/redux/features/authApi/authApi";
 import { useRouter } from "next/navigation";
 import { IPasswordData } from "@/app/types/formType";
 import ButtonIndicator from "@/app/shared/buttonIndicator/ButtonIndicator";
 import { resetPasswordValidation } from "@/app/lib/validation/reset-password";
 import storageEmailLocalStorage from "@/app/utility/storeEmail";
 import BackButton from "@/app/shared/BackButton/BackButton";
+import { useSetNewPasswordMutation } from "@/app/redux/features/update-profile/update-profile";
 
 const ChangePassword: React.FC = () => {
   const [setNewPassword, { isLoading }] = useSetNewPasswordMutation();
