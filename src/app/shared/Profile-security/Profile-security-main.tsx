@@ -1,17 +1,9 @@
 "use client";
 
 import React, { useState } from "react";
-import { Formik, Form, Field, ErrorMessage, FormikHelpers } from "formik";
+import { Formik, Form, Field, ErrorMessage } from "formik";
 import { motion } from "motion/react";
-import {
-  Lock,
-  Mail,
-  Phone,
-  ShieldCheck,
-  Eye,
-  EyeOff,
-  CheckCircle2,
-} from "lucide-react";
+import { Lock, Mail, Phone, ShieldCheck, Eye, EyeOff } from "lucide-react";
 import { SecurityFormValues } from "./types";
 import DeviceHistory from "./DeviceHistory";
 import { containerVariants, itemVariants } from "./animation";
@@ -22,6 +14,7 @@ import { useCurrentUserQuery } from "@/app/redux/features/authApi/authApi";
 import { useUpdateSecurityMutation } from "@/app/redux/features/update-profile/update-profile";
 import Security_2FA from "./Security_2FA";
 import toast from "react-hot-toast";
+import { CustomRTKError } from "@/app/redux/features/update-profile/types";
 
 const ProfileSecurity: React.FC = () => {
   const [showCurrentPass, setShowCurrentPass] = useState(false);
@@ -30,8 +23,6 @@ const ProfileSecurity: React.FC = () => {
 
   const { data: currentUser } = useCurrentUserQuery();
   const [updateSecurity, { isLoading }] = useUpdateSecurityMutation();
-
-  const { refetch } = useCurrentUserQuery();
 
   // ** initialValues
   const initialValues: SecurityFormValues = {
@@ -43,17 +34,16 @@ const ProfileSecurity: React.FC = () => {
   };
 
   // ** handle Security Form Submit
-  const handleSubmit = async (
-    values: SecurityFormValues,
-    { resetForm }: FormikHelpers<SecurityFormValues>
-  ) => {
+  const handleSubmit = async (values: SecurityFormValues) => {
     try {
-      const response = await updateSecurity(values);
-      console.log("form", response);
-
-      resetForm();
+      const response = await updateSecurity(values).unwrap();
+      toast.success(response.message);
     } catch (error) {
-      console.log(error);
+      const apiError = error as CustomRTKError;
+
+      const errorMessage =
+        apiError?.data?.message || "An unknown error occurred.";
+      toast.error(errorMessage);
     }
   };
 
@@ -288,7 +278,7 @@ const ProfileSecurity: React.FC = () => {
                           : "bg-indigo-600 hover:bg-indigo-500 hover:-translate-y-0.5 active:translate-y-0"
                       }`}
                     >
-                      {isSubmitting ? (
+                      {isSubmitting || isLoading ? (
                         <>
                           <span>Saving</span>{" "}
                           <ButtonIndicator width={10} height={10} />

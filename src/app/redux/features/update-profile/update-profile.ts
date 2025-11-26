@@ -2,6 +2,7 @@ import { createApi } from "@reduxjs/toolkit/query/react";
 import { baseQueryWithAuth } from "../../base-query/baseQueryWithAuth";
 import { IResponse } from "@/app/types/responseType";
 import { SecurityFormValues } from "@/app/shared/Profile-security/types";
+import { IUpdateProfile } from "./types";
 
 export const updateSecurity = createApi({
   reducerPath: "updateProfile",
@@ -32,13 +33,13 @@ export const updateSecurity = createApi({
     }),
 
     // ** Update profile security (2FA, etc.)
-    updateSecurity: builder.mutation<IResponse, SecurityFormValues>({
+    updateSecurity: builder.mutation<IUpdateProfile, SecurityFormValues>({
       query: (data) => ({
         url: "/profile/security",
         method: "PUT",
         body: data,
       }),
-      invalidatesTags: ["Auth", "User"],
+      invalidatesTags: ["Auth", "User", "UpdateProfile"],
     }),
   }),
 });
