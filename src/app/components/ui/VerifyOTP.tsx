@@ -185,7 +185,7 @@ const VerifyOTP: FC = () => {
 
             <div className="mt-8 text-center">
               <p className="text-sm text-slate-500 font-medium">
-                Didn't receive the code?
+                {`Didn't receive the code?`}
               </p>
               <div className="mt-2 flex items-center justify-center gap-2">
                 {timeLeft > 0 ? (

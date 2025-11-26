@@ -5,7 +5,6 @@ import { SecurityFormValues } from "./types";
 
 const Security_2FA = () => {
   const { values, setFieldValue } = useFormikContext<SecurityFormValues>();
-  //   console.log("x", values);
 
   return (
     <div className="bg-slate-950/30 p-4 rounded-xl border border-slate-800/50">
@@ -16,8 +15,8 @@ const Security_2FA = () => {
           </span>
 
           <span className="text-xs text-slate-400 mt-1">
-            "Add an extra layer of security to your account by requiring a code
-            when logging in."
+            Add an extra layer of security to your account by requiring a code
+            when logging in.
           </span>
         </div>
         <button

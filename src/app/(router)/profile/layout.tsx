@@ -1,16 +1,14 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import ProfileSidebar from "@/app/shared/Profile-sidebar/Profile-sidebar";
 import { useAppDispatch, useAppSelector } from "@/app/hooks/hooks";
 import { setCloseSidebar } from "@/app/redux/features/user-slice/message-user-slice";
 
 const ProfileLayout = ({ children }: { children: React.ReactNode }) => {
-  // const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const isSidebarOpen = useAppSelector((state) => state.user.closeSidebar);
   const dispatch = useAppDispatch();
-  console.log("isSidebarOpen", isSidebarOpen);
 
   // Responsive sidebar behavior
   useEffect(() => {
@@ -24,7 +22,7 @@ const ProfileLayout = ({ children }: { children: React.ReactNode }) => {
 
     mediaQuery.addEventListener("change", handleResize);
     return () => mediaQuery.removeEventListener("change", handleResize);
-  }, []);
+  }, [dispatch]);
 
   return (
     <div className="flex h-screen bg-[#0f172a] text-white overflow-hidden">

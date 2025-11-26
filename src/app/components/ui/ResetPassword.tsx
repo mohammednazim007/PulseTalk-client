@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { Formik, Form, Field, FormikHelpers } from "formik";
+import { Formik, Form, Field } from "formik";
 import { motion, AnimatePresence } from "motion/react";
 
 import { FaEnvelope, FaKey, FaExclamationCircle } from "react-icons/fa";
@@ -11,15 +11,14 @@ import ButtonIndicator from "@/app/shared/buttonIndicator/ButtonIndicator";
 import { IResetPassword } from "@/app/types/formType";
 import BackButton from "@/app/shared/BackButton/BackButton";
 import storageEmailLocalStorage from "@/app/utility/storeEmail";
+import { CustomRTKError } from "@/app/redux/features/update-profile/types";
+import toast from "react-hot-toast";
 
 const ResetPassword: React.FC = () => {
   const [sendOtp, { isLoading }] = useSendOtpMutation();
   const router = useRouter();
 
-  const handleSubmit = async (
-    values: IResetPassword,
-    { setFieldError, setSubmitting }: FormikHelpers<IResetPassword>
-  ) => {
+  const handleSubmit = async (values: IResetPassword) => {
     try {
       const email = localStorage.getItem("resetEmail");
       if (!email) storageEmailLocalStorage(values.email, "add");
@@ -32,14 +31,12 @@ const ResetPassword: React.FC = () => {
         throw new Error(response.message || "Failed to send OTP");
 
       router.push("/auth/verify-otp");
-    } catch (err: unknown) {
-      const apiError = err as { data?: { message?: string }; message?: string };
-      setFieldError(
-        "email",
-        apiError.data?.message || apiError.message || "Reset password failed"
-      );
-    } finally {
-      setSubmitting(false);
+    } catch (error) {
+      const apiError = error as CustomRTKError;
+
+      const errorMessage =
+        apiError?.data?.message || "An unknown error occurred.";
+      toast.error(errorMessage);
     }
   };
 
@@ -79,8 +76,8 @@ const ResetPassword: React.FC = () => {
                 Reset Password
               </h2>
               <p className="text-slate-400 leading-relaxed max-w-[90%]">
-                Enter the email associated with your account and we'll send you
-                a code to reset your password.
+                {`Enter the email associated with your account and we'll send you
+                a code to reset your password.`}
               </p>
             </div>
 

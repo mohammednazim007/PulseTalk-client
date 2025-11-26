@@ -20,6 +20,9 @@ import ButtonIndicator from "../buttonIndicator/ButtonIndicator";
 import { ProfileValidation } from "./validation";
 import CloseSidebar from "../BackAndClose/Back-close";
 import { useUpdateProfileMutation } from "@/app/redux/features/update-profile/update-profile";
+import { CustomRTKError } from "@/app/redux/features/update-profile/types";
+import Image from "next/image";
+import defaultAvatar from "@/app/assets/profile.png";
 
 // --- Constants ---
 const MAX_FILE_SIZE = 3 * 1024 * 1024; // 3MB
@@ -108,13 +111,18 @@ const MyProfile = () => {
         formData.append("image", profileFile);
       }
 
-      await updateProfile(formData); // Using mocked promise
+      const response = await updateProfile(formData).unwrap();
 
-      toast.success("Profile updated successfully!");
-      resetForm({ values });
-    } catch (err: any) {
-      console.error("Error:", err);
-      toast.error(err?.message || "Failed to update profile.");
+      if (response.success === true) {
+        toast.success("Profile updated successfully!");
+        resetForm({ values });
+      }
+    } catch (error) {
+      const apiError = error as CustomRTKError;
+
+      const errorMessage =
+        apiError?.data?.message || "An unknown error occurred.";
+      toast.error(errorMessage);
     }
   };
 
@@ -156,8 +164,10 @@ const MyProfile = () => {
                   <div className="relative group shrink-0">
                     <div className="w-32 h-32 md:w-40 md:h-40 rounded-full p-1 bg-gradient-to-br from-indigo-500 via-purple-500 to-slate-500 shadow-xl">
                       <div className="w-full h-full rounded-full overflow-hidden bg-slate-900 relative">
-                        <img
-                          src={profileImage || "https://picsum.photos/200"}
+                        <Image
+                          width={100}
+                          height={100}
+                          src={profileImage || defaultAvatar}
                           alt="Profile"
                           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                         />

@@ -47,7 +47,7 @@ const ChangePassword: React.FC = () => {
       if (response?.success) {
         toast.success("Password updated successfully.");
         storageEmailLocalStorage(email, "remove");
-        router.push("/");
+        router.push("/auth/login");
       }
     } catch (error) {
       console.error(error);
@@ -226,7 +226,7 @@ const ChangePassword: React.FC = () => {
                           />
                         </>
                       ) : (
-                        "Reset Password"
+                        "Change Password"
                       )}
                     </button>
                   </div>

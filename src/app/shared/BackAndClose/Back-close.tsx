@@ -1,6 +1,6 @@
 "use client";
 
-import { FaArrowLeft, FaTimes } from "react-icons/fa";
+import { FaTimes } from "react-icons/fa";
 import { useAppDispatch, useAppSelector } from "@/app/hooks/hooks";
 import { setCloseSidebar } from "@/app/redux/features/user-slice/message-user-slice";
 import { SquareChartGantt } from "lucide-react";
