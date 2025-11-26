@@ -12,15 +12,15 @@ import {
 import { authApi } from "@/app/redux/features/authApi/authApi";
 import { friendApi } from "@/app/redux/features/friends/friendApi";
 import onlineReducer from "@/app/redux/features/user-slice/message-user-slice";
-import friendsReducer from "@/app/redux/features/friend-slice/friend-slice";
+import { updateSecurity } from "./features/update-profile/update-profile";
 
 export const store = configureStore({
   reducer: {
     user: onlineReducer,
-    friends: friendsReducer,
 
     [friendApi.reducerPath]: friendApi.reducer,
     [authApi.reducerPath]: authApi.reducer,
+    [updateSecurity.reducerPath]: updateSecurity.reducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
@@ -29,7 +29,8 @@ export const store = configureStore({
       },
     })
       .concat(friendApi.middleware)
-      .concat(authApi.middleware),
+      .concat(authApi.middleware)
+      .concat(updateSecurity.middleware),
 });
 
 export const persistor = persistStore(store);

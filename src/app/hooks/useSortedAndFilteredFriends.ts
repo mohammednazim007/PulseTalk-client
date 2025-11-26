@@ -1,6 +1,6 @@
 // app/hooks/useSortedAndFilteredFriends.ts
 
-import { User } from "@/app/types/auth";
+import { IUser } from "@/app/types/userType";
 import { useMemo } from "react";
 
 /**
@@ -11,7 +11,7 @@ import { useMemo } from "react";
  * @param onlineUserIds - An array of IDs for users currently online.
  */
 export const useSortedAndFilteredFriends = (
-  friends: User[] | undefined,
+  friends: IUser[] | undefined,
   searchTerm: string,
   onlineUserIds: string[]
 ) => {

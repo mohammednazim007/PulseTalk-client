@@ -1,7 +1,7 @@
 // src/app/redux/features/friends/friendApi.ts
-import { IResponse } from "@/app/types/auth";
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { baseQueryWithAuth } from "../../base-query/baseQueryWithAuth";
+import { IResponse } from "@/app/types/responseType";
 
 export const friendApi = createApi({
   reducerPath: "friendApi",

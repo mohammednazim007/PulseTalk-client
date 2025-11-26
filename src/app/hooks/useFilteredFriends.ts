@@ -1,8 +1,8 @@
-import { User } from "@/app/types/auth";
+import { IUser } from "@/app/types/userType";
 import { useMemo } from "react";
 
 export const useFilteredFriends = (
-  friends: User[] | undefined,
+  friends: IUser[] | undefined,
   searchTerm: string
 ) => {
   // Use useMemo to recalculate ONLY when friends or searchTerm changes

@@ -1,10 +1,17 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
-import { ILoginResponse, IResponse, SignUpData, User } from "@/app/types/auth";
-import { SignInFormData } from "@/app/lib/schemas/authSchemas";
 import { baseQueryWithAuth } from "../../base-query/baseQueryWithAuth";
+import { IUser } from "@/app/types/userType";
+import {
+  ILoginResponse,
+  IResponse,
+  ISendOtpRequest,
+  ISendOtpResponse,
+} from "@/app/types/responseType";
+import { ISignInData } from "@/app/types/formType";
+import { IOTPResponse } from "@/app/types/auth";
 
 interface CurrentUser {
-  user: User;
+  user: IUser;
 }
 
 export const authApi = createApi({
@@ -18,18 +25,8 @@ export const authApi = createApi({
       providesTags: ["Auth", "User"],
     }),
 
-    //** Update user profile */
-    updateProfile: builder.mutation<IResponse, FormData>({
-      query: (formData) => ({
-        url: "/user/profile",
-        method: "POST",
-        body: formData,
-      }),
-      invalidatesTags: ["Auth", "User"],
-    }),
-
     //** Register user */
-    registerUser: builder.mutation<IResponse, SignUpData>({
+    registerUser: builder.mutation<IResponse, ISignInData>({
       query: (formData) => ({
         url: "/user/register",
         method: "POST",
@@ -39,7 +36,7 @@ export const authApi = createApi({
     }),
 
     //** Login user */
-    login: builder.mutation<ILoginResponse, SignInFormData>({
+    login: builder.mutation<ILoginResponse, ISignInData>({
       query: (body) => ({
         url: "/user/login",
         method: "POST",
@@ -58,7 +55,7 @@ export const authApi = createApi({
     }),
 
     //** Send OTP for password reset */
-    sendOtp: builder.mutation<IResponse, { email: string }>({
+    sendOtp: builder.mutation<ISendOtpResponse, ISendOtpRequest>({
       query: (body) => ({
         url: "/auth/send-otp",
         method: "POST",
@@ -67,26 +64,19 @@ export const authApi = createApi({
       invalidatesTags: ["Auth"],
     }),
 
-    // ** Verify OTP for password reset */
-    verifyOtp: builder.mutation<IResponse, { email: string; otpCode: string }>({
-      query: (body) => ({
-        url: "/auth/verify-otp",
-        method: "POST",
-        body,
-      }),
-      invalidatesTags: ["Auth"],
-    }),
-
-    // ** Set new password */
-    setNewPassword: builder.mutation<
-      IResponse,
-      { email: string; newPassword: string }
+    // ** Verify OTP  */
+    verifyOtp: builder.mutation<
+      IOTPResponse,
+      { email: string; otpCode: string }
     >({
-      query: (body) => ({
-        url: "/auth/change-password",
-        method: "PUT",
-        body,
-      }),
+      query: (body) => {
+        console.log("body", body);
+        return {
+          url: "/auth/verify-otp",
+          method: "POST",
+          body,
+        };
+      },
       invalidatesTags: ["Auth"],
     }),
   }),
@@ -97,8 +87,6 @@ export const {
   useRegisterUserMutation,
   useLoginMutation,
   useLogoutMutation,
-  useUpdateProfileMutation,
   useSendOtpMutation,
   useVerifyOtpMutation,
-  useSetNewPasswordMutation,
 } = authApi;

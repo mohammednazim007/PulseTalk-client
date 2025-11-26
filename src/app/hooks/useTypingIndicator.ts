@@ -1,10 +1,10 @@
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { User } from "../types/auth";
+import { IUser } from "../types/userType";
 import { getSocket } from "../socket-io/socket-io";
 
 export const useTypingIndicator = (
   currentUserId: string | undefined,
-  activeUser: User | null
+  activeUser: IUser | null
 ): [boolean, Dispatch<SetStateAction<boolean>>] => {
   const [isTyping, setIsTyping] = useState(false);
 

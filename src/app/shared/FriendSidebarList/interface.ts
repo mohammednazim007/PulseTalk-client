@@ -1,14 +1,14 @@
-import { User } from "@/app/types/auth";
+import { IUser } from "@/app/types/userType";
 
 export interface FriendListProps {
-  friends: User[];
+  friends: IUser[];
   onlineUsers: string[];
-  onClick: (friend: User) => void; // ← fixed: should accept a User
+  onClick: (friend: IUser) => void; // ← fixed: should accept a User
 }
 
 export interface FriendListItemProps {
-  friend: User;
+  friend: IUser;
   isOnline: boolean;
   isSelected: boolean;
-  onClick: (friend: User) => void;
+  onClick: (friend: IUser) => void;
 }

@@ -1,4 +1,4 @@
-import { User } from "@/app/types/auth";
+import { IUser } from "@/app/types/userType";
 
 export interface IChatMessage {
   _id?: string;
@@ -11,8 +11,9 @@ export interface IChatMessage {
 
 export interface OnlineState {
   onlineUsers: string[];
-  activeUser: User | null;
+  activeUser: IUser | null;
   chat: IChatMessage[];
   loading: boolean;
   error: string | null;
+  closeSidebar: boolean;
 }

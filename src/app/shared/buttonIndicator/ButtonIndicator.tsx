@@ -1,55 +1,93 @@
-"use client";
+// "use client";
+// import { motion } from "motion/react";
+
+// interface ButtonIndicatorProps {
+//   width?: number;
+//   height?: number;
+//   text?: string;
+// }
+
+// const COLORS = ["#ECF4E8", "#6E8CFB", "#9ECFD4"];
+
+// const ButtonIndicator: React.FC<ButtonIndicatorProps> = ({
+//   width = 15,
+//   height = 15,
+//   text,
+// }) => {
+//   return (
+//     <div className="flex items-center gap-2 text-xs px-2 py-1 justify-center">
+//       {text && (
+//         <span className="text-sm font-medium text-slate-200">{text}</span>
+//       )}
+//       {COLORS.map((color, i) => (
+//         <motion.span
+//           key={i}
+//           className="rounded-full inline-block"
+//           style={{
+//             width,
+//             height,
+//             backgroundColor: color,
+//             filter: "var(--indicator-brightness, brightness(1))",
+//           }}
+//           animate={{
+//             opacity: [0.4, 1, 0.4],
+//             scale: [1, 1.25, 1],
+//           }}
+//           transition={{
+//             duration: 1,
+//             repeat: Infinity,
+//             delay: i * 0.4,
+//             ease: "easeInOut",
+//           }}
+//         />
+//       ))}
+
+//       <style jsx global>{`
+//         :root {
+//           --indicator-brightness: brightness(1);
+//         }
+//         .dark {
+//           --indicator-brightness: brightness(0.8);
+//         }
+//       `}</style>
+//     </div>
+//   );
+// };
+
+// export default ButtonIndicator;
+
+import React from "react";
 import { motion } from "motion/react";
 
 interface ButtonIndicatorProps {
   width?: number;
   height?: number;
-  text?: string;
+  className?: string;
 }
 
-const COLORS = ["#ECF4E8", "#6E8CFB", "#9ECFD4"];
-
 const ButtonIndicator: React.FC<ButtonIndicatorProps> = ({
-  width = 15,
-  height = 15,
-  text,
+  width = 5,
+  height = 5,
+  className,
 }) => {
   return (
-    <div className="flex items-center gap-2 text-xs px-2 py-1 justify-center">
-      {text && (
-        <span className="text-sm font-medium text-slate-200">{text}</span>
-      )}
-      {COLORS.map((color, i) => (
-        <motion.span
+    <div className={`flex items-center justify-center gap-1 ${className}`}>
+      {[0, 1, 2].map((i) => (
+        <motion.div
           key={i}
-          className="rounded-full inline-block"
-          style={{
-            width,
-            height,
-            backgroundColor: color,
-            filter: "var(--indicator-brightness, brightness(1))",
-          }}
+          className={`bg-white rounded-full `}
+          style={{ width, height }}
           animate={{
-            opacity: [0.4, 1, 0.4],
-            scale: [1, 1.25, 1],
+            y: ["0%", "-50%", "0%"],
+            opacity: [0.5, 1, 0.5],
           }}
           transition={{
-            duration: 1,
+            duration: 0.6,
             repeat: Infinity,
-            delay: i * 0.4,
-            ease: "easeInOut",
+            delay: i * 0.2,
           }}
         />
       ))}
-
-      <style jsx global>{`
-        :root {
-          --indicator-brightness: brightness(1);
-        }
-        .dark {
-          --indicator-brightness: brightness(0.8);
-        }
-      `}</style>
     </div>
   );
 };

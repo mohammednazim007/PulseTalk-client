@@ -1,117 +1,167 @@
 "use client";
 import React from "react";
-import { useForm, SubmitHandler } from "react-hook-form";
-import storageEmailLocalStorage from "@/app/utility/storeEmail";
+import { Formik, Form, Field } from "formik";
+import { motion, AnimatePresence } from "motion/react";
+
+import { FaEnvelope, FaKey, FaExclamationCircle } from "react-icons/fa";
 import { useSendOtpMutation } from "@/app/redux/features/authApi/authApi";
 import { useRouter } from "next/navigation";
+import { resetEmailValidation } from "@/app/lib/validation/reset-password";
 import ButtonIndicator from "@/app/shared/buttonIndicator/ButtonIndicator";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { ResetSchema } from "@/app/lib/schemas/resetPasswordSchema";
-
-// Define the shape of the form data
-type ResetFields = {
-  email: string;
-};
+import { IResetPassword } from "@/app/types/formType";
+import BackButton from "@/app/shared/BackButton/BackButton";
+import storageEmailLocalStorage from "@/app/utility/storeEmail";
+import { CustomRTKError } from "@/app/redux/features/update-profile/types";
+import toast from "react-hot-toast";
 
 const ResetPassword: React.FC = () => {
   const [sendOtp, { isLoading }] = useSendOtpMutation();
-  // const [rootError, setRootError] = useState<string | null>(null);
   const router = useRouter();
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-    setError,
-  } = useForm<ResetFields>({
-    resolver: zodResolver(ResetSchema),
-    mode: "onSubmit",
-  });
-
-  //** Handle form submission to send OTP for password reset
-  const onSubmit: SubmitHandler<ResetFields> = async (data) => {
+  const handleSubmit = async (values: IResetPassword) => {
     try {
       const email = localStorage.getItem("resetEmail");
-      if (!email) storageEmailLocalStorage(data.email, "add");
+      if (!email) storageEmailLocalStorage(values.email, "add");
 
-      // Send OTP for password reset
-      const response = await sendOtp({ email: data.email }).unwrap();
+      const response = await sendOtp({
+        email: values.email,
+      }).unwrap();
+
       if (!response.success)
         throw new Error(response.message || "Failed to send OTP");
 
       router.push("/auth/verify-otp");
-    } catch (err: unknown) {
-      const apiError = err as { data?: { message?: string } };
-      setError("root", {
-        message: apiError.data?.message || "Reset password failed",
-      });
+    } catch (error) {
+      const apiError = error as CustomRTKError;
+
+      const errorMessage =
+        apiError?.data?.message || "An unknown error occurred.";
+      toast.error(errorMessage);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#0f172a] text-white p-4">
-      <div className="bg-slate-800 p-8 rounded-xl shadow-2xl w-full max-w-md">
-        <h2 className="text-3xl font-bold mb-6 text-center text-slate-100">
-          Reset Password
-        </h2>
+    <div className="min-h-screen flex items-center justify-center p-4 font-sans">
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+        className="w-full max-w-md"
+      >
+        {/* Back Button */}
+        <BackButton />
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          <p className="text-sm text-center text-slate-400">
-            {
-              "Enter your email address and we'll send you a link or code to reset your password."
-            }
-          </p>
-          {/* Error Alert */}
-          {errors.root && (
-            <div className="bg-red-500/10 border border-red-500/20 p-3 rounded-lg text-red-400 text-sm mb-4">
-              {errors.root.message}
-            </div>
-          )}
-          <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-slate-300 mb-1"
-            >
-              Email Address
-            </label>
-            <input
-              type="email"
-              id="email"
-              {...register("email")}
-              required
-              disabled={isLoading}
-              placeholder="you@example.com"
-              className={`w-full px-4 py-2 rounded-lg bg-slate-700 text-white placeholder-slate-400 focus:outline-none transition-colors duration-150 ease-in-out
-    ${
-      errors.email
-        ? "border-2 border-red-500"
-        : "border-2 border-slate-600 focus:border-slate-600"
-    }`}
-            />
+        <div className="bg-slate-900/80 backdrop-blur-xl border border-slate-800/60 p-8 md:p-10 rounded-3xl shadow-2xl relative overflow-hidden">
+          {/* Decorative gradients */}
+          <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2 pointer-events-none" />
+          <div className="absolute bottom-0 left-0 w-48 h-48 bg-purple-500/10 rounded-full blur-3xl translate-y-1/2 -translate-x-1/2 pointer-events-none" />
 
-            {/* Display RHF error message */}
-            {errors.email && (
-              <p className="mt-1 text-xs text-red-400">
-                {errors.email.message}
+          <div className="relative z-10">
+            <div className="flex flex-col items-center text-center mb-8">
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{
+                  type: "spring",
+                  stiffness: 260,
+                  damping: 20,
+                  delay: 0.1,
+                }}
+                className="w-16 h-16 bg-indigo-600/20 rounded-2xl flex items-center justify-center mb-6 text-indigo-400 border border-indigo-500/20 shadow-lg shadow-indigo-500/10"
+              >
+                <FaKey className="w-7 h-7" />
+              </motion.div>
+
+              <h2 className="text-xl font-bold text-white mb-3 tracking-tight">
+                Reset Password
+              </h2>
+              <p className="text-slate-400 leading-relaxed max-w-[90%]">
+                {`Enter the email associated with your account and we'll send you
+                a code to reset your password.`}
               </p>
-            )}
-          </div>
+            </div>
 
-          <button
-            type="submit"
-            disabled={isLoading}
-            className={`w-full py-2 px-4 rounded-lg font-semibold transition duration-200 ease-in-out bg-lime-500 text-slate-900 hover:bg-lime-600 disabled:bg-slate-600 disabled:text-slate-400 disabled:cursor-not-allowed ${
-              isLoading ? "cursor-not-allowed " : ""
-            }`}
-          >
-            {isLoading ? (
-              <ButtonIndicator width={11} height={11} />
-            ) : (
-              "Send OTP"
-            )}
-          </button>
-        </form>
-      </div>
+            <Formik
+              initialValues={{ email: "" }}
+              validationSchema={resetEmailValidation}
+              onSubmit={handleSubmit}
+            >
+              {({ isSubmitting, errors, touched }) => (
+                <Form className="space-y-6">
+                  <div>
+                    <label
+                      htmlFor="email"
+                      className="block text-sm font-medium text-slate-300 mb-2 ml-1"
+                    >
+                      Email Address
+                    </label>
+                    <div className="relative group">
+                      <FaEnvelope
+                        className={`absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 transition-colors ${
+                          errors.email && touched.email
+                            ? "text-red-400"
+                            : "text-slate-500 group-focus-within:text-indigo-400"
+                        }`}
+                      />
+                      <Field
+                        type="email"
+                        id="email"
+                        name="email"
+                        disabled={isLoading || isSubmitting}
+                        placeholder="you@example.com"
+                        className={`w-full pl-11 pr-4 py-2.5 rounded-xl bg-slate-950/50 text-white placeholder-slate-500 outline-none border transition-all duration-200
+                          ${
+                            errors.email && touched.email
+                              ? "border-red-500/50 focus:border-red-500 focus:ring-4 focus:ring-red-500/10"
+                              : "border-slate-800 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10"
+                          }`}
+                      />
+                    </div>
+
+                    {/* Inline Error Message */}
+                    <AnimatePresence>
+                      {errors.email && touched.email && (
+                        <motion.div
+                          initial={{ opacity: 0, height: 0, y: -5 }}
+                          animate={{ opacity: 1, height: "auto", y: 0 }}
+                          exit={{ opacity: 0, height: 0 }}
+                          className="flex items-center gap-2 mt-2 text-red-400 text-xs font-medium pl-1"
+                        >
+                          <FaExclamationCircle />
+                          {errors.email}
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+
+                  <motion.button
+                    type="submit"
+                    disabled={isLoading || isSubmitting}
+                    className={`w-full py-1.5 rounded-xl font-semibold text-white shadow-lg transition-all flex items-center justify-center gap-2
+                      ${
+                        isLoading || isSubmitting
+                          ? "bg-slate-800 text-slate-500 cursor-not-allowed shadow-none"
+                          : "bg-indigo-600 hover:bg-indigo-500 shadow-indigo-500/25"
+                      }`}
+                  >
+                    {isLoading || isSubmitting ? (
+                      <>
+                        <ButtonIndicator
+                          width={15}
+                          height={15}
+                          className="py-1.5"
+                        />
+                      </>
+                    ) : (
+                      "Send Reset Code"
+                    )}
+                  </motion.button>
+                </Form>
+              )}
+            </Formik>
+          </div>
+        </div>
+      </motion.div>
     </div>
   );
 };
