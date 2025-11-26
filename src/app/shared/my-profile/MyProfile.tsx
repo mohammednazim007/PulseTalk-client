@@ -13,15 +13,13 @@ import {
 import { motion } from "motion/react";
 import { Formik, Form, FormikHelpers } from "formik";
 import toast from "react-hot-toast";
-import {
-  useCurrentUserQuery,
-  useUpdateProfileMutation,
-} from "@/app/redux/features/authApi/authApi";
+import { useCurrentUserQuery } from "@/app/redux/features/authApi/authApi";
 import { FileInfoState, IMyProfile } from "./types";
 import { FormInput, FormTextArea } from "./FormComponent";
 import ButtonIndicator from "../buttonIndicator/ButtonIndicator";
 import { ProfileValidation } from "./validation";
 import CloseSidebar from "../BackAndClose/Back-close";
+import { useUpdateProfileMutation } from "@/app/redux/features/update-profile/update-profile";
 
 // --- Constants ---
 const MAX_FILE_SIZE = 3 * 1024 * 1024; // 3MB
@@ -214,10 +212,10 @@ const MyProfile = () => {
                       className="items-center gap-2 px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-medium rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {isLoading || isSubmitting ? (
-                        <>
+                        <div className="flex items-center gap-2">
                           <span>Saving</span>{" "}
                           <ButtonIndicator width={10} height={10} />
-                        </>
+                        </div>
                       ) : (
                         "Save Changes"
                       )}

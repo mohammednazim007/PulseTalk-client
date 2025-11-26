@@ -12,62 +12,49 @@ import {
   EyeOff,
   CheckCircle2,
 } from "lucide-react";
-import { SecurityFormValues, UserProfile } from "./types";
-import Toggle from "./Toggle";
+import { SecurityFormValues } from "./types";
 import DeviceHistory from "./DeviceHistory";
 import { containerVariants, itemVariants } from "./animation";
 import DangerZone from "./DangerZone";
 import ButtonIndicator from "../buttonIndicator/ButtonIndicator";
 import { SecuritySchema } from "./validation";
+import { useCurrentUserQuery } from "@/app/redux/features/authApi/authApi";
+import { useUpdateSecurityMutation } from "@/app/redux/features/update-profile/update-profile";
 import Security_2FA from "./Security_2FA";
-
-// --- Mock Data ---
-const MOCK_USER: UserProfile = {
-  id: "u-123",
-  name: "Alex Doe",
-  email: "alex.doe@example.com",
-  phone: "+1 (555) 123-4567",
-  avatarUrl: "https://picsum.photos/200",
-  twoFactorEnabled: false,
-};
 
 const ProfileSecurity: React.FC = () => {
   const [showCurrentPass, setShowCurrentPass] = useState(false);
   const [showNewPass, setShowNewPass] = useState(false);
   const [showConfirmPass, setShowConfirmPass] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
 
+  const { data: currentUser } = useCurrentUserQuery();
+  const [updateSecurity, { isLoading }] = useUpdateSecurityMutation();
+
+  const { refetch } = useCurrentUserQuery();
+
+  // ** initialValues
   const initialValues: SecurityFormValues = {
-    phone: MOCK_USER.phone,
+    phone: currentUser?.user.phone ?? "",
     currentPassword: "",
     newPassword: "",
     confirmPassword: "",
-    twoFactorEnabled: false,
+    twoFactorEnabled: currentUser?.user.twoFactorEnabled,
   };
+  console.log("ini", initialValues);
 
   // ** handle Security Form Submit
   const handleSubmit = async (
     values: SecurityFormValues,
-    { setSubmitting, resetForm }: FormikHelpers<SecurityFormValues>
+    { resetForm }: FormikHelpers<SecurityFormValues>
   ) => {
-    // Simulate API call
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    console.log("Submitting values:", values);
-    setIsSuccess(true);
-    setSubmitting(false);
-
-    // Clear password fields after success but keep phone/2fa
-    resetForm({
-      values: {
-        ...values,
-        currentPassword: "",
-        newPassword: "",
-        confirmPassword: "",
-        twoFactorEnabled: values.twoFactorEnabled,
-      },
-    });
-
-    setTimeout(() => setIsSuccess(false), 3000);
+    try {
+      console.log("value ", values);
+      const response = await updateSecurity(values);
+      console.log(response);
+      resetForm();
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -90,23 +77,15 @@ const ProfileSecurity: React.FC = () => {
               your account stays secure.
             </p>
           </div>
-          {isSuccess && (
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="px-4 py-2 bg-green-500/10 border border-green-500/30 text-green-400 rounded-lg flex items-center gap-2 text-sm font-medium"
-            >
-              <CheckCircle2 size={16} /> Changes saved successfully
-            </motion.div>
-          )}
         </div>
 
         <Formik
           initialValues={initialValues}
           validationSchema={SecuritySchema}
           onSubmit={handleSubmit}
+          enableReinitialize
         >
-          {({ isSubmitting, values, setFieldValue }) => (
+          {({ isSubmitting }) => (
             <Form className="space-y-8">
               {/* Contact Information Card */}
               <motion.section
@@ -127,7 +106,7 @@ const ProfileSecurity: React.FC = () => {
                       <input
                         type="email"
                         readOnly
-                        value={MOCK_USER.email}
+                        value={currentUser?.user.email ?? ""}
                         className="w-full pl-11 pr-4 py-3 bg-slate-950/50 border border-slate-800 rounded-xl text-slate-400 cursor-not-allowed outline-none focus:border-indigo-500/50 transition-all font-mono text-sm"
                       />
                       <div className="absolute right-3 top-1/2 -translate-y-1/2 text-xs bg-slate-800 text-slate-400 px-2 py-0.5 rounded">

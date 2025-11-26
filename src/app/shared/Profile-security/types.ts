@@ -1,18 +1,9 @@
-export interface UserProfile {
-  id: string;
-  email: string;
-  phone: string;
-  avatarUrl: string;
-  name: string;
-  twoFactorEnabled: boolean;
-}
-
 export interface SecurityFormValues {
-  phone: string;
+  phone?: string;
   currentPassword: string;
   newPassword: string;
   confirmPassword: string;
-  twoFactorEnabled: boolean;
+  twoFactorEnabled?: boolean;
 }
 
 export interface SessionDevice {

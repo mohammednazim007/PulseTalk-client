@@ -1,7 +1,10 @@
 import * as Yup from "yup";
+const phoneRegex = /^(?:\+?88)?01[3-9]\d{8}$/;
 
 export const SecuritySchema = Yup.object().shape({
-  phone: Yup.string().required("Phone number is required"),
+  phone: Yup.string()
+    .required("Phone number is required")
+    .matches(phoneRegex, "Invalid phone number"),
   currentPassword: Yup.string(),
   newPassword: Yup.string()
     .min(8, "Password must be at least 8 characters")
@@ -20,5 +23,5 @@ export const SecuritySchema = Yup.object().shape({
       is: (val: string) => val && val.length > 0,
       then: (schema) => schema.required("Confirm your new password"),
     }),
-  twoFactorEnabled: Yup.boolean(),
+  twoFactorEnabled: Yup.boolean().optional(),
 });

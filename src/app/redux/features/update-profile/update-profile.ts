@@ -3,7 +3,7 @@ import { baseQueryWithAuth } from "../../base-query/baseQueryWithAuth";
 import { IResponse } from "@/app/types/responseType";
 import { SecurityFormValues } from "@/app/shared/Profile-security/types";
 
-const updateProfile = createApi({
+export const updateSecurity = createApi({
   reducerPath: "updateProfile",
   baseQuery: baseQueryWithAuth,
   tagTypes: ["UpdateProfile", "Auth", "User"],
@@ -34,8 +34,8 @@ const updateProfile = createApi({
     // ** Update profile security (2FA, etc.)
     updateSecurity: builder.mutation<IResponse, SecurityFormValues>({
       query: (data) => ({
-        url: "/user/security",
-        method: "POST",
+        url: "/profile/security",
+        method: "PUT",
         body: data,
       }),
       invalidatesTags: ["Auth", "User"],
@@ -47,4 +47,4 @@ export const {
   useUpdateProfileMutation,
   useSetNewPasswordMutation,
   useUpdateSecurityMutation,
-} = updateProfile;
+} = updateSecurity;
