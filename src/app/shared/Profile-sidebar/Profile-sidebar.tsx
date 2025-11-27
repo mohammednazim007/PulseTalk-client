@@ -1,24 +1,29 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo } from "react";
+import { useRouter, usePathname } from "next/navigation";
 import Image from "next/image";
 import avatar from "@/app/assets/profile.png";
 import { useCurrentUserQuery } from "@/app/redux/features/authApi/authApi";
 import SignOutButton from "../signOut/Sign-out";
 import NavButton from "./NavButton";
-import { useRouter } from "next/navigation";
 import { navItems, TabType } from "./navItems";
 
 const ProfileSidebar = () => {
-  const [activeTab, setActiveTab] = useState<TabType>("my-profile");
+  const pathname = usePathname();
   const { data: currentUser } = useCurrentUserQuery();
   const router = useRouter();
 
-  // ** Handle navigation click **
-  const handleNavClick = (tab: TabType) => {
-    setActiveTab(tab);
-    router.push(`/profile/${tab}`);
-  };
+  // **2. Derive activeTab from the pathname**
+  const activeTab = useMemo(() => {
+    const pathSegments = pathname.split("/");
+    const lastSegment = pathSegments[pathSegments.length - 1];
+    const defaultTab: TabType = "my-profile";
+
+    const isValidTab = navItems.some((item) => item.key === lastSegment);
+
+    return isValidTab ? (lastSegment as TabType) : defaultTab;
+  }, [pathname]);
 
   return (
     <div className="relative w-72 md:w-80 bg-slate-800 text-slate-100 border-r border-slate-700 flex flex-col h-full">
@@ -69,7 +74,7 @@ const ProfileSidebar = () => {
           <NavButton
             key={item.key}
             active={activeTab === item.key}
-            onClick={() => handleNavClick(item.key)}
+            onClick={() => router.push(`/profile/${item.key}`)}
             icon={item.icon}
             label={item.label}
           />
