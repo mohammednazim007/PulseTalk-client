@@ -23,6 +23,7 @@ import { useUpdateProfileMutation } from "@/app/redux/features/update-profile/up
 import { CustomRTKError } from "@/app/redux/features/update-profile/types";
 import Image from "next/image";
 import defaultAvatar from "@/app/assets/profile.png";
+import SubmitButton from "../SubmitButton/SubmitButton";
 
 // --- Constants ---
 const MAX_FILE_SIZE = 3 * 1024 * 1024; // 3MB
@@ -115,7 +116,6 @@ const MyProfile = () => {
 
       if (response.success === true) {
         toast.success("Profile updated successfully!");
-        resetForm({ values });
       }
     } catch (error) {
       const apiError = error as CustomRTKError;
@@ -214,22 +214,11 @@ const MyProfile = () => {
                   </div>
 
                   {/* Desktop Save Button (Sticky) */}
-                  {/* Submit Button Section */}
                   <div className=" justify-end pt-4 hidden md:flex">
-                    <button
-                      type="submit"
-                      disabled={isLoading || !!fileInfo.error}
-                      className="items-center gap-2 px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-medium rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      {isLoading || isSubmitting ? (
-                        <div className="flex items-center gap-2">
-                          <span>Saving</span>{" "}
-                          <ButtonIndicator width={10} height={10} />
-                        </div>
-                      ) : (
-                        "Save Changes"
-                      )}
-                    </button>
+                    <SubmitButton
+                      isSubmitting={isSubmitting}
+                      isLoading={isLoading}
+                    />
                   </div>
                 </div>
               </div>
@@ -322,20 +311,10 @@ const MyProfile = () => {
 
               {/* Mobile Save Button (Sticky Bottom) */}
               <div className="md:hidden sticky bottom-0 left-0 right-0 p-4 bg-slate-900/90 backdrop-blur-md border-t border-slate-800 z-20 flex justify-end">
-                <button
-                  type="submit"
-                  disabled={isLoading || !!fileInfo.error}
-                  className="flex items-center gap-2 px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-medium rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {isLoading || isSubmitting ? (
-                    <>
-                      <span>Saving</span>{" "}
-                      <ButtonIndicator width={10} height={10} />
-                    </>
-                  ) : (
-                    "Save Changes"
-                  )}
-                </button>
+                <SubmitButton
+                  isSubmitting={isSubmitting}
+                  isLoading={isLoading}
+                />
               </div>
             </div>
           </Form>

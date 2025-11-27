@@ -16,6 +16,7 @@ import Security_2FA from "./Security_2FA";
 import toast from "react-hot-toast";
 import { CustomRTKError } from "@/app/redux/features/update-profile/types";
 import timeAgo from "@/app/utility/timeAgo";
+import SubmitButton from "../SubmitButton/SubmitButton";
 
 const ProfileSecurity: React.FC = () => {
   const [showCurrentPass, setShowCurrentPass] = useState(false);
@@ -45,6 +46,7 @@ const ProfileSecurity: React.FC = () => {
       const errorMessage =
         apiError?.data?.message || "An unknown error occurred.";
       toast.error(errorMessage);
+      console.log(error);
     }
   };
 
@@ -277,24 +279,10 @@ const ProfileSecurity: React.FC = () => {
                     </span>
                   </div>
                   <div className="flex gap-3">
-                    <button
-                      type="submit"
-                      disabled={isSubmitting}
-                      className={`flex items-center gap-2 px-6 py-2.5 rounded-lg font-medium text-white shadow-lg shadow-indigo-500/20 transition-all ${
-                        isSubmitting
-                          ? "bg-indigo-700 cursor-wait"
-                          : "bg-indigo-600 hover:bg-indigo-500 hover:-translate-y-0.5 active:translate-y-0"
-                      }`}
-                    >
-                      {isSubmitting || isLoading ? (
-                        <>
-                          <span>Saving</span>{" "}
-                          <ButtonIndicator width={10} height={10} />
-                        </>
-                      ) : (
-                        <>Save Changes</>
-                      )}
-                    </button>
+                    <SubmitButton
+                      isSubmitting={isSubmitting}
+                      isLoading={isLoading}
+                    />
                   </div>
                 </div>
               </motion.div>
