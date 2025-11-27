@@ -1,8 +1,8 @@
 "use client";
 import React from "react";
 import { RefreshCcw, AlertTriangle, Home } from "lucide-react";
-import Link from "next/link";
 import { motion } from "motion/react";
+import { useRouter } from "next/navigation";
 
 interface GlobalErrorProps {
   error: Error;
@@ -10,6 +10,8 @@ interface GlobalErrorProps {
 }
 
 const NotFound: React.FC<GlobalErrorProps> = ({ reset }) => {
+  const router = useRouter();
+
   return (
     <div className="min-h-screen w-full flex flex-col items-center justify-center bg-black text-white p-6 relative overflow-hidden">
       {/* Background Noise Texture */}
@@ -76,14 +78,13 @@ const NotFound: React.FC<GlobalErrorProps> = ({ reset }) => {
             <RefreshCcw size={18} />
             <span>Try Again</span>
           </button>
-          <Link
-            href="/"
-            onClick={reset}
+          <button
+            onClick={() => router.back()}
             className="flex items-center justify-center gap-2 px-8 py-3 bg-gray-900 hover:bg-gray-800 border border-gray-800 text-gray-300 rounded-lg font-medium transition-all active:scale-95"
           >
             <Home size={18} />
             <span>Return Safe Zone</span>
-          </Link>
+          </button>
         </div>
       </div>
     </div>
