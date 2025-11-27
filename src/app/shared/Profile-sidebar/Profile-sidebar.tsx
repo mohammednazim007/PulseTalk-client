@@ -8,6 +8,7 @@ import { useCurrentUserQuery } from "@/app/redux/features/authApi/authApi";
 import SignOutButton from "../signOut/Sign-out";
 import NavButton from "./NavButton";
 import { navItems, TabType } from "./navItems";
+import OnlineIndicator from "../OnlineIndicatior/OnelineIndicator";
 
 const ProfileSidebar = () => {
   const pathname = usePathname();
@@ -46,9 +47,7 @@ const ProfileSidebar = () => {
             </div>
 
             {/* Status Dot */}
-            <div className="absolute bottom-1 right-1 w-5 h-5 bg-slate-900 rounded-full flex items-center justify-center">
-              <div className="w-3 h-3 bg-emerald-500 rounded-full border border-slate-900 shadow-[0_0_8px_rgba(16,185,129,0.6)]"></div>
-            </div>
+            <OnlineIndicator className="absolute bottom-1 right-1 w-4 h-4" />
           </div>
 
           <div className="text-center">

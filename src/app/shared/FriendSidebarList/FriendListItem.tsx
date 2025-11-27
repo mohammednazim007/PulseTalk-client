@@ -3,6 +3,7 @@
 import React, { memo } from "react";
 import Image from "next/image";
 import { FriendListItemProps } from "./interface";
+import OnlineIndicator from "../OnlineIndicatior/OnelineIndicator";
 
 const FriendListItem = ({
   friend,
@@ -55,10 +56,7 @@ const FriendListItem = ({
 
         {/* Online Indicator with Pulse Effect */}
         {isOnline && (
-          <span className="absolute bottom-0.5 right-0.5 flex h-3 w-3">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500 border-2 border-slate-950"></span>
-          </span>
+          <OnlineIndicator className="bottom-0.5 right-0.5 h-3 w-3" />
         )}
         {!isOnline && (
           <span className="absolute bottom-0.5 right-0.5 w-3 h-3 bg-slate-500 border-2 border-slate-950 rounded-full"></span>
