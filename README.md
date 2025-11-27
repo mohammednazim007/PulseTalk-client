@@ -1,6 +1,6 @@
 <img width="1392" height="633" alt="messenger" src="https://github.com/user-attachments/assets/0c41b179-ab0d-460e-bbe6-a691454242c9" />
 
-# 💖 Real-Time Dating App Client (Frontend)
+# 💖 Real-Time PulseTalk App Client (Frontend)
 
 A modern, production-ready, real-time chat client built with Next.js 15. This application delivers a polished, Messenger-like user experience, focusing on instant message delivery, real-time presence, secure session management, and a highly responsive UI.
 

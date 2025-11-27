@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Dating App",
+  title: "PulseTalk",
   description: "A real-time dating application ",
 };
 
