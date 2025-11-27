@@ -194,8 +194,8 @@ const SignInPage = () => {
                   >
                     {isLoading ? (
                       <ButtonIndicator
-                        width={16}
-                        height={16}
+                        width={14}
+                        height={14}
                         className="py-1.5"
                       />
                     ) : (

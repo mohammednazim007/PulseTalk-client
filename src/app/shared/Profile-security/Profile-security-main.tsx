@@ -15,6 +15,7 @@ import { useUpdateSecurityMutation } from "@/app/redux/features/update-profile/u
 import Security_2FA from "./Security_2FA";
 import toast from "react-hot-toast";
 import { CustomRTKError } from "@/app/redux/features/update-profile/types";
+import timeAgo from "@/app/utility/timeAgo";
 
 const ProfileSecurity: React.FC = () => {
   const [showCurrentPass, setShowCurrentPass] = useState(false);
@@ -144,9 +145,16 @@ const ProfileSecurity: React.FC = () => {
                     </p>
                   </div>
                   <div className="px-3 py-1 bg-indigo-500/10 border border-indigo-500/20 rounded-full">
-                    <span className="text-xs font-medium text-indigo-300">
-                      Last changed 3 months ago
-                    </span>
+                    {currentUser?.user.lastPasswordChange ? (
+                      <span className="text-xs font-medium text-indigo-300">
+                        Last changed{" "}
+                        {timeAgo(`${currentUser?.user.lastPasswordChange}`)}
+                      </span>
+                    ) : (
+                      <span className="text-xs font-medium text-indigo-300">
+                        Never changed
+                      </span>
+                    )}
                   </div>
                 </div>
 
