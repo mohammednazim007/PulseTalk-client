@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "motion/react";
 import ProfileSidebar from "@/app/shared/Profile-sidebar/Profile-sidebar";
 import { useAppDispatch, useAppSelector } from "@/app/hooks/hooks";
 import { setCloseSidebar } from "@/app/redux/features/user-slice/message-user-slice";
+import CloseSidebar from "@/app/shared/CloseSidebar/CloseSidebar";
 
 const ProfileLayout = ({ children }: { children: React.ReactNode }) => {
   const isSidebarOpen = useAppSelector((state) => state.user.closeSidebar);
@@ -43,7 +44,14 @@ const ProfileLayout = ({ children }: { children: React.ReactNode }) => {
       </AnimatePresence>
 
       {/* Main Page Content */}
-      <div className="w-full overflow-y-auto">{children}</div>
+      <div className="relative w-full overflow-y-auto">
+        {/* Close Sidebar Button and Back Button */}
+        <div className="fixed top-3 right-9 z-50 md:hidden">
+          <CloseSidebar />
+        </div>
+
+        {children}
+      </div>
     </div>
   );
 };

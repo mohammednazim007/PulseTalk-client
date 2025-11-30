@@ -190,13 +190,13 @@ const SignInPage = () => {
                   <button
                     type="submit"
                     disabled={isLoading}
-                    className="w-full py-2.5 px-4 rounded-lg text-sm font-semibold bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm hover:shadow-md transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full py-2 px-4 rounded-lg text-sm font-semibold bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm hover:shadow-md transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {isLoading ? (
                       <ButtonIndicator
-                        width={16}
-                        height={16}
-                        className="py-1.5"
+                        width={12}
+                        height={12}
+                        className="py-1"
                       />
                     ) : (
                       "Sign in"

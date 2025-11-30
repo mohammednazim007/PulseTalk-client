@@ -11,18 +11,17 @@ import {
   FaCamera,
 } from "react-icons/fa";
 import { motion } from "motion/react";
-import { Formik, Form, FormikHelpers } from "formik";
+import { Formik, Form } from "formik";
 import toast from "react-hot-toast";
 import { useCurrentUserQuery } from "@/app/redux/features/authApi/authApi";
 import { FileInfoState, IMyProfile } from "./types";
 import { FormInput, FormTextArea } from "./FormComponent";
-import ButtonIndicator from "../buttonIndicator/ButtonIndicator";
 import { ProfileValidation } from "./validation";
-import CloseSidebar from "../BackAndClose/Back-close";
 import { useUpdateProfileMutation } from "@/app/redux/features/update-profile/update-profile";
 import { CustomRTKError } from "@/app/redux/features/update-profile/types";
 import Image from "next/image";
 import defaultAvatar from "@/app/assets/profile.png";
+import SubmitButton from "../SubmitButton/SubmitButton";
 
 // --- Constants ---
 const MAX_FILE_SIZE = 3 * 1024 * 1024; // 3MB
@@ -87,10 +86,7 @@ const MyProfile = () => {
     toast.success("Image selected successfully");
   };
 
-  const handleSubmit = async (
-    values: IMyProfile,
-    { resetForm }: FormikHelpers<IMyProfile>
-  ) => {
+  const handleSubmit = async (values: IMyProfile) => {
     if (fileInfo.error) {
       toast.error("Please fix image errors before saving.");
       return;
@@ -115,7 +111,6 @@ const MyProfile = () => {
 
       if (response.success === true) {
         toast.success("Profile updated successfully!");
-        resetForm({ values });
       }
     } catch (error) {
       const apiError = error as CustomRTKError;
@@ -143,11 +138,8 @@ const MyProfile = () => {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="w-full relative"
+      className="relative w-full max-w-4xl mx-auto p-4 md:p-6 lg:p-8"
     >
-      <div className="absolute top-1 right-2 z-50">
-        <CloseSidebar />
-      </div>
       <Formik
         initialValues={initialValues}
         validationSchema={ProfileValidation}
@@ -156,9 +148,9 @@ const MyProfile = () => {
       >
         {({ isSubmitting }) => (
           <Form className="relative">
-            <div className="bg-slate-800/40 backdrop-blur-xl border border-slate-700/50 rounded-3xl shadow-2xl overflow-hidden max-w-5xl mx-auto">
+            <div className=" shadow-2xl overflow-hidden max-w-5xl mx-auto">
               {/* Header Section */}
-              <div className="px-6 md:px-10 pt-10 pb-8 relative">
+              <div className="px-6 md:px-10 pb-8 relative">
                 <div className="flex flex-col md:flex-row items-center md:items-end gap-6 md:gap-8">
                   {/* Avatar Upload */}
                   <div className="relative group shrink-0">
@@ -214,22 +206,11 @@ const MyProfile = () => {
                   </div>
 
                   {/* Desktop Save Button (Sticky) */}
-                  {/* Submit Button Section */}
                   <div className=" justify-end pt-4 hidden md:flex">
-                    <button
-                      type="submit"
-                      disabled={isLoading || !!fileInfo.error}
-                      className="items-center gap-2 px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-medium rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      {isLoading || isSubmitting ? (
-                        <div className="flex items-center gap-2">
-                          <span>Saving</span>{" "}
-                          <ButtonIndicator width={10} height={10} />
-                        </div>
-                      ) : (
-                        "Save Changes"
-                      )}
-                    </button>
+                    <SubmitButton
+                      isSubmitting={isSubmitting}
+                      isLoading={isLoading}
+                    />
                   </div>
                 </div>
               </div>
@@ -322,20 +303,10 @@ const MyProfile = () => {
 
               {/* Mobile Save Button (Sticky Bottom) */}
               <div className="md:hidden sticky bottom-0 left-0 right-0 p-4 bg-slate-900/90 backdrop-blur-md border-t border-slate-800 z-20 flex justify-end">
-                <button
-                  type="submit"
-                  disabled={isLoading || !!fileInfo.error}
-                  className="flex items-center gap-2 px-6 py-2.5 bg-indigo-600 hover:bg-indigo-500 text-white font-medium rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {isLoading || isSubmitting ? (
-                    <>
-                      <span>Saving</span>{" "}
-                      <ButtonIndicator width={10} height={10} />
-                    </>
-                  ) : (
-                    "Save Changes"
-                  )}
-                </button>
+                <SubmitButton
+                  isSubmitting={isSubmitting}
+                  isLoading={isLoading}
+                />
               </div>
             </div>
           </Form>

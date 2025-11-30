@@ -31,8 +31,6 @@ const UserProfile = ({ currentUser, isTimeAvailable }: UserProfileProps) => {
 
         <p
           className={`text-xs ${
-            // If time is available (isTimeAvailable is true), use gray.
-            // If time is NOT available (isTimeAvailable is false), use blue/primary color.
             isTimeAvailable ? "text-gray-400" : "text-blue-400 font-medium"
           }`}
         >

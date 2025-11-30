@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Dating App",
+  title: "PulseTalk",
   description: "A real-time dating application ",
 };
 
@@ -32,12 +32,13 @@ export default function RootLayout({
         <Providers>
           {children}
           <Toaster
-            position="top-right"
+            position="bottom-right"
             toastOptions={{
               style: {
                 background: "#1e293b",
                 color: "#fff",
                 border: "1px solid #334155",
+                fontSize: "14px",
               },
             }}
           />

@@ -1,22 +1,53 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { useRouter, usePathname } from "next/navigation";
 import Image from "next/image";
 import avatar from "@/app/assets/profile.png";
 import { useCurrentUserQuery } from "@/app/redux/features/authApi/authApi";
 import SignOutButton from "../signOut/Sign-out";
 import NavButton from "./NavButton";
-import { useRouter } from "next/navigation";
 import { navItems, TabType } from "./navItems";
+import OnlineIndicator from "../OnlineIndicatior/OnelineIndicator";
+import { useAppDispatch, useAppSelector } from "@/app/hooks/hooks";
+import { setCloseSidebar } from "@/app/redux/features/user-slice/message-user-slice";
 
 const ProfileSidebar = () => {
-  const [activeTab, setActiveTab] = useState<TabType>("my-profile");
+  const [isMobile, setIsMobile] = useState(false);
+  const pathname = usePathname();
   const { data: currentUser } = useCurrentUserQuery();
   const router = useRouter();
 
-  // ** Handle navigation click **
-  const handleNavClick = (tab: TabType) => {
-    setActiveTab(tab);
+  const isSidebarOpen = useAppSelector((state) => state.user.closeSidebar);
+  const dispatch = useAppDispatch();
+
+  // **1. Detect mobile device**
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(max-width: 768px)");
+    setIsMobile(mediaQuery.matches);
+
+    const handleChange = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+
+    mediaQuery.addEventListener("change", handleChange);
+    return () => mediaQuery.removeEventListener("change", handleChange);
+  }, []);
+
+  // **2. Derive activeTab from the pathname**
+  const activeTab = useMemo(() => {
+    const pathSegments = pathname.split("/");
+    const lastSegment = pathSegments[pathSegments.length - 1];
+    const defaultTab: TabType = "my-profile";
+
+    const isValidTab = navItems.some((item) => item.key === lastSegment);
+
+    return isValidTab ? (lastSegment as TabType) : defaultTab;
+  }, [pathname]);
+
+  // **4. Handle navigation and close sidebar**
+  const handleNavigate = (tab: TabType) => {
+    if (isMobile) {
+      dispatch(setCloseSidebar(!isSidebarOpen));
+    }
     router.push(`/profile/${tab}`);
   };
 
@@ -41,9 +72,7 @@ const ProfileSidebar = () => {
             </div>
 
             {/* Status Dot */}
-            <div className="absolute bottom-1 right-1 w-5 h-5 bg-slate-900 rounded-full flex items-center justify-center">
-              <div className="w-3 h-3 bg-emerald-500 rounded-full border border-slate-900 shadow-[0_0_8px_rgba(16,185,129,0.6)]"></div>
-            </div>
+            <OnlineIndicator className="absolute bottom-1 right-1 w-4 h-4" />
           </div>
 
           <div className="text-center">
@@ -69,7 +98,7 @@ const ProfileSidebar = () => {
           <NavButton
             key={item.key}
             active={activeTab === item.key}
-            onClick={() => handleNavClick(item.key)}
+            onClick={() => handleNavigate(item.key)}
             icon={item.icon}
             label={item.label}
           />

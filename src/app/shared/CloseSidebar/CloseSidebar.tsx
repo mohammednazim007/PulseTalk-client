@@ -16,12 +16,9 @@ const CloseSidebar = () => {
   return (
     <button
       onClick={toggleSidebar}
-      className="
-        md:hidden
-        absolute top-3 right-3 z-50 
-        p-2 rounded-lg 
+      className="w-9 h-9 rounded-lg 
         bg-slate-700 hover:bg-slate-600 
-        transition
+        transition flex items-center justify-center
       "
     >
       {isSidebarOpen ? <FaTimes size={16} /> : <SquareChartGantt size={16} />}
