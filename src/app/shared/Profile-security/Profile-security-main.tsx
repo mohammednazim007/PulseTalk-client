@@ -8,7 +8,6 @@ import { SecurityFormValues } from "./types";
 import DeviceHistory from "./DeviceHistory";
 import { containerVariants, itemVariants } from "./animation";
 import DangerZone from "./DangerZone";
-import ButtonIndicator from "../buttonIndicator/ButtonIndicator";
 import { SecuritySchema } from "./validation";
 import { useCurrentUserQuery } from "@/app/redux/features/authApi/authApi";
 import { useUpdateSecurityMutation } from "@/app/redux/features/update-profile/update-profile";

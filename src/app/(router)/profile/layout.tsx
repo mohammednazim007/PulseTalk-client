@@ -6,7 +6,6 @@ import ProfileSidebar from "@/app/shared/Profile-sidebar/Profile-sidebar";
 import { useAppDispatch, useAppSelector } from "@/app/hooks/hooks";
 import { setCloseSidebar } from "@/app/redux/features/user-slice/message-user-slice";
 import CloseSidebar from "@/app/shared/CloseSidebar/CloseSidebar";
-import BackButton from "@/app/shared/BackButton/BackButton";
 
 const ProfileLayout = ({ children }: { children: React.ReactNode }) => {
   const isSidebarOpen = useAppSelector((state) => state.user.closeSidebar);

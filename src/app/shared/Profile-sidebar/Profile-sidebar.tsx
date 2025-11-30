@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import Image from "next/image";
 import avatar from "@/app/assets/profile.png";
@@ -13,13 +13,24 @@ import { useAppDispatch, useAppSelector } from "@/app/hooks/hooks";
 import { setCloseSidebar } from "@/app/redux/features/user-slice/message-user-slice";
 
 const ProfileSidebar = () => {
+  const [isMobile, setIsMobile] = useState(false);
   const pathname = usePathname();
   const { data: currentUser } = useCurrentUserQuery();
   const router = useRouter();
 
   const isSidebarOpen = useAppSelector((state) => state.user.closeSidebar);
   const dispatch = useAppDispatch();
-  const isMobile = window.matchMedia("(max-width: 768px)").matches;
+
+  // **1. Detect mobile device**
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(max-width: 768px)");
+    setIsMobile(mediaQuery.matches);
+
+    const handleChange = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+
+    mediaQuery.addEventListener("change", handleChange);
+    return () => mediaQuery.removeEventListener("change", handleChange);
+  }, []);
 
   // **2. Derive activeTab from the pathname**
   const activeTab = useMemo(() => {
