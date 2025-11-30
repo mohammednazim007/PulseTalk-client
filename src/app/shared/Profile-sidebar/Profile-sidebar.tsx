@@ -9,11 +9,16 @@ import SignOutButton from "../signOut/Sign-out";
 import NavButton from "./NavButton";
 import { navItems, TabType } from "./navItems";
 import OnlineIndicator from "../OnlineIndicatior/OnelineIndicator";
+import { useAppDispatch, useAppSelector } from "@/app/hooks/hooks";
+import { setCloseSidebar } from "@/app/redux/features/user-slice/message-user-slice";
 
 const ProfileSidebar = () => {
   const pathname = usePathname();
   const { data: currentUser } = useCurrentUserQuery();
   const router = useRouter();
+
+  const isSidebarOpen = useAppSelector((state) => state.user.closeSidebar);
+  const dispatch = useAppDispatch();
 
   // **2. Derive activeTab from the pathname**
   const activeTab = useMemo(() => {
@@ -25,6 +30,12 @@ const ProfileSidebar = () => {
 
     return isValidTab ? (lastSegment as TabType) : defaultTab;
   }, [pathname]);
+
+  // **4. Handle navigation and close sidebar**
+  const handleNavigate = (tab: TabType) => {
+    dispatch(setCloseSidebar(!isSidebarOpen));
+    router.push(`/profile/${tab}`);
+  };
 
   return (
     <div className="relative w-72 md:w-80 bg-slate-800 text-slate-100 border-r border-slate-700 flex flex-col h-full">
@@ -73,7 +84,7 @@ const ProfileSidebar = () => {
           <NavButton
             key={item.key}
             active={activeTab === item.key}
-            onClick={() => router.push(`/profile/${item.key}`)}
+            onClick={() => handleNavigate(item.key)}
             icon={item.icon}
             label={item.label}
           />
