@@ -100,41 +100,4 @@ Ensure your backend is reachable via `NEXT_PUBLIC_BACKEND_URL` and your Socket.I
 🔹 `pnpm start` → start production server
 🔹 `pnpm lint` → run ESLint with Next.js config
 
-## Authentication
 
-🔹 Middleware enforces protected routes via cookie tokens (`src/middleware.ts:1`).
-🔹 Auth API and automatic refresh handled via RTK Query base query (`src/app/redux/base-query/baseQueryWithReauth.ts`).
-🔹 Forms use `react-hook-form` or `Formik` with `Zod`/`Yup` schemas (`src/app/lib/schemas/authSchemas.ts`).
-
-Flow
-
-🔹 Sign up (`src/app/(router)/auth/signup/page.tsx:1`)
-🔹 Verify OTP (`src/app/(router)/auth/verify-otp/page.tsx:1`, `src/app/components/ui/VerifyOTP.tsx:1`)
-🔹 Sign in (`src/app/(router)/auth/signin/page.tsx:1`)
-🔹 Reset/change password (`src/app/(router)/auth/reset-password/page.tsx:1`, `src/app/(router)/auth/change-password/page.tsx:1`)
-
-## State Management
-
-🔹 Central store configured under `src/app/redux/store.ts`.
-🔹 Features include auth API, friend APIs/slices, and message/user slices.
-🔹 Persisted state via `redux-persist` where appropriate.
-
-Messaging
-
-🔹 Fetch history via `fetchChatHistory` (`src/app/utility/fetchChatHistory.ts:1`).
-🔹 Send text/media via `sendMessage` (`src/app/utility/sendMessage.ts:1`).
-
-## Build & Deploy
-
-```bash
-pnpm build
-pnpm start
-```
-
-Deploy behind HTTPS and ensure cookies are scoped correctly for your domain.
-
-🔹 Set env vars for your production endpoints.
-
-## License
-
-MIT (or as defined by the repository owner).
