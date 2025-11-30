@@ -19,6 +19,7 @@ const ProfileSidebar = () => {
 
   const isSidebarOpen = useAppSelector((state) => state.user.closeSidebar);
   const dispatch = useAppDispatch();
+  const isMobile = window.matchMedia("(max-width: 768px)").matches;
 
   // **2. Derive activeTab from the pathname**
   const activeTab = useMemo(() => {
@@ -33,7 +34,9 @@ const ProfileSidebar = () => {
 
   // **4. Handle navigation and close sidebar**
   const handleNavigate = (tab: TabType) => {
-    dispatch(setCloseSidebar(!isSidebarOpen));
+    if (isMobile) {
+      dispatch(setCloseSidebar(!isSidebarOpen));
+    }
     router.push(`/profile/${tab}`);
   };
 
