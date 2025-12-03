@@ -134,28 +134,29 @@ const ResetPassword: React.FC = () => {
                     </AnimatePresence>
                   </div>
 
-                  <motion.button
+                  <button
                     type="submit"
                     disabled={isLoading || isSubmitting}
-                    className={`w-full py-1.5 rounded-xl font-semibold text-white shadow-lg transition-all flex items-center justify-center gap-2
+                    className={`w-full py-1.5 rounded-xl font-semibold text-white shadow-lg transition-all flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-500 shadow-indigo-500/25
                       ${
                         isLoading || isSubmitting
-                          ? "bg-slate-800 text-slate-500 cursor-not-allowed shadow-none"
-                          : "bg-indigo-600 hover:bg-indigo-500 shadow-indigo-500/25"
+                          ? "cursor-not-allowed shadow-none"
+                          : ""
                       }`}
                   >
                     {isLoading || isSubmitting ? (
                       <>
+                        <span>Sending</span>
                         <ButtonIndicator
-                          width={15}
-                          height={15}
+                          width={11}
+                          height={11}
                           className="py-1.5"
                         />
                       </>
                     ) : (
                       "Send Reset Code"
                     )}
-                  </motion.button>
+                  </button>
                 </Form>
               )}
             </Formik>
