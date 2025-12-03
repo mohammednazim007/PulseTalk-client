@@ -7,12 +7,12 @@ import { FaEnvelope, FaKey, FaExclamationCircle } from "react-icons/fa";
 import { useSendOtpMutation } from "@/app/redux/features/authApi/authApi";
 import { useRouter } from "next/navigation";
 import { resetEmailValidation } from "@/app/lib/validation/reset-password";
-import ButtonIndicator from "@/app/shared/buttonIndicator/ButtonIndicator";
 import { IResetPassword } from "@/app/types/formType";
 import BackButton from "@/app/shared/BackButton/BackButton";
 import storageEmailLocalStorage from "@/app/utility/storeEmail";
 import { CustomRTKError } from "@/app/redux/features/update-profile/types";
 import toast from "react-hot-toast";
+import SubmitButton from "@/app/shared/SubmitButton/SubmitButton";
 
 const ResetPassword: React.FC = () => {
   const [sendOtp, { isLoading }] = useSendOtpMutation();
@@ -134,29 +134,15 @@ const ResetPassword: React.FC = () => {
                     </AnimatePresence>
                   </div>
 
-                  <button
-                    type="submit"
-                    disabled={isLoading || isSubmitting}
-                    className={`w-full py-1.5 rounded-xl font-semibold text-white shadow-lg transition-all flex items-center justify-center gap-2 bg-indigo-600 hover:bg-indigo-500 shadow-indigo-500/25
-                      ${
-                        isLoading || isSubmitting
-                          ? "cursor-not-allowed shadow-none"
-                          : ""
-                      }`}
-                  >
-                    {isLoading || isSubmitting ? (
-                      <>
-                        <span>Sending</span>
-                        <ButtonIndicator
-                          width={11}
-                          height={11}
-                          className="py-1.5"
-                        />
-                      </>
-                    ) : (
-                      "Send Reset Code"
-                    )}
-                  </button>
+                  <SubmitButton
+                    isLoading={isLoading}
+                    isSubmitting={isSubmitting}
+                    LoadingText="Sending"
+                    title="Send Reset Code"
+                    indicatorWidth={11}
+                    indicatorHeight={11}
+                    className="w-full"
+                  />
                 </Form>
               )}
             </Formik>
