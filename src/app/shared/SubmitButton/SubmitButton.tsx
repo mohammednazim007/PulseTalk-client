@@ -58,8 +58,8 @@
 import ButtonIndicator from "../buttonIndicator/ButtonIndicator";
 
 interface SubmitButtonProps {
-  isLoading: boolean;
-  isSubmitting: boolean;
+  isLoading?: boolean;
+  isSubmitting?: boolean;
   isDisabled?: boolean;
   LoadingText?: string;
   title?: string;

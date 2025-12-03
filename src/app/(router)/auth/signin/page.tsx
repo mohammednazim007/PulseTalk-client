@@ -9,10 +9,10 @@ import { Formik, Form, Field, ErrorMessage, FormikHelpers } from "formik";
 import Cookies from "js-cookie";
 
 import { useLoginMutation } from "@/app/redux/features/authApi/authApi";
-import ButtonIndicator from "@/app/shared/buttonIndicator/ButtonIndicator";
 import BackgroundGradient from "@/app/shared/BackgroundGradient/BackgroundGradient";
 import { signInValidation } from "@/app/lib/validation/form-validation";
 import { ISignInData } from "@/app/types/formType";
+import SubmitButton from "@/app/shared/SubmitButton/SubmitButton";
 
 const SignInPage = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -187,21 +187,14 @@ const SignInPage = () => {
                   </div>
 
                   {/* Submit */}
-                  <button
-                    type="submit"
-                    disabled={isLoading}
+                  <SubmitButton
+                    isLoading={isLoading}
+                    LoadingText="Signing"
+                    title="Sign in"
+                    indicatorWidth={11}
+                    indicatorHeight={11}
                     className="w-full py-2 px-4 rounded-lg text-sm font-semibold bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm hover:shadow-md transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                  >
-                    {isLoading ? (
-                      <ButtonIndicator
-                        width={12}
-                        height={12}
-                        className="py-1"
-                      />
-                    ) : (
-                      "Sign in"
-                    )}
-                  </button>
+                  />
                 </Form>
               )}
             </Formik>
