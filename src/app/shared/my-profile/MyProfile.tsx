@@ -25,7 +25,13 @@ import SubmitButton from "../SubmitButton/SubmitButton";
 
 // --- Constants ---
 const MAX_FILE_SIZE = 3 * 1024 * 1024; // 3MB
-const ALLOWED_FILE_TYPES = ["image/png", "image/jpeg", "image/svg+xml"];
+const ALLOWED_FILE_TYPES = [
+  "image/png",
+  "image/jpeg",
+  "image/svg+xml",
+  "image/jpg",
+  "image/webp",
+];
 
 const MyProfile = () => {
   // State
@@ -95,10 +101,10 @@ const MyProfile = () => {
     try {
       const formData = new FormData();
 
-      // Append fields
-      Object.keys(values).forEach((key) => {
-        const val = values[key as keyof IMyProfile];
-        if (val !== null && key !== "avatar") {
+      (Object.keys(values) as (keyof IMyProfile)[]).forEach((key) => {
+        const val = values[key];
+
+        if (key !== "avatar" && val !== null) {
           formData.append(key, val);
         }
       });
@@ -208,8 +214,12 @@ const MyProfile = () => {
                   {/* Desktop Save Button (Sticky) */}
                   <div className=" justify-end pt-4 hidden md:flex">
                     <SubmitButton
-                      isSubmitting={isSubmitting}
+                      title="Save Changes"
+                      LoadingText="Saving"
+                      indicatorWidth={11}
+                      indicatorHeight={11}
                       isLoading={isLoading}
+                      isSubmitting={isSubmitting}
                     />
                   </div>
                 </div>
@@ -236,7 +246,7 @@ const MyProfile = () => {
                       />
                       <FormInput
                         name="role"
-                        label="Job Title"
+                        label="Job Role"
                         placeholder="e.g. Software Engineer"
                         icon={FaBriefcase}
                       />
