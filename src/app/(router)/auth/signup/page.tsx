@@ -8,10 +8,10 @@ import { Mail, Lock, User, Eye, EyeOff, CheckCircle2 } from "lucide-react";
 import { Formik, Form, Field, ErrorMessage, FormikHelpers } from "formik";
 
 import { useRegisterUserMutation } from "@/app/redux/features/authApi/authApi";
-import ButtonIndicator from "@/app/shared/buttonIndicator/ButtonIndicator";
 import BackgroundGradient from "@/app/shared/BackgroundGradient/BackgroundGradient";
 import { ISignUpData } from "@/app/types/formType";
 import { signUpValidation } from "@/app/lib/validation/form-validation";
+import SubmitButton from "@/app/shared/SubmitButton/SubmitButton";
 
 const SignUpPage = () => {
   const [show, setShow] = useState<Record<keyof ISignUpData, boolean>>({
@@ -202,17 +202,14 @@ const SignUpPage = () => {
                     </span>
                   </label>
 
-                  <button
-                    type="submit"
-                    disabled={isLoading}
-                    className="w-full py-2 px-4 rounded-lg text-sm font-semibold bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm hover:shadow-md transition-all disabled:opacity-50"
-                  >
-                    {isLoading ? (
-                      <ButtonIndicator width={10} height={10} />
-                    ) : (
-                      "Create account"
-                    )}
-                  </button>
+                  <SubmitButton
+                    isLoading={isLoading}
+                    LoadingText="Creating account"
+                    title="Create account"
+                    indicatorWidth={11}
+                    indicatorHeight={11}
+                    className="w-full py-2 px-4 rounded-lg text-sm font-semibold bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm hover:shadow-md transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  />
                 </Form>
               )}
             </Formik>

@@ -13,11 +13,11 @@ import {
 } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 import { IPasswordData } from "@/app/types/formType";
-import ButtonIndicator from "@/app/shared/buttonIndicator/ButtonIndicator";
 import { resetPasswordValidation } from "@/app/lib/validation/reset-password";
 import storageEmailLocalStorage from "@/app/utility/storeEmail";
 import BackButton from "@/app/shared/BackButton/BackButton";
 import { useSetNewPasswordMutation } from "@/app/redux/features/update-profile/update-profile";
+import SubmitButton from "@/app/shared/SubmitButton/SubmitButton";
 
 const ChangePassword: React.FC = () => {
   const [setNewPassword, { isLoading }] = useSetNewPasswordMutation();
@@ -206,30 +206,16 @@ const ChangePassword: React.FC = () => {
                     </AnimatePresence>
                   </div>
 
-                  <div className="pt-2">
-                    <button
-                      type="submit"
-                      disabled={isSubmitting || isLoading}
-                      className={`w-full py-1.5 rounded-xl font-semibold text-white shadow-lg transition-all flex items-center justify-center gap-2
-                        ${
-                          isLoading || isSubmitting
-                            ? "bg-slate-800 text-slate-500 cursor-not-allowed shadow-none"
-                            : "bg-indigo-600 hover:bg-indigo-500 shadow-indigo-500/25"
-                        }`}
-                    >
-                      {isLoading ? (
-                        <>
-                          <ButtonIndicator
-                            width={15}
-                            height={15}
-                            className="py-1.5"
-                          />
-                        </>
-                      ) : (
-                        "Change Password"
-                      )}
-                    </button>
-                  </div>
+                  <SubmitButton
+                    isLoading={isLoading}
+                    isSubmitting={isSubmitting}
+                    isDisabled={isSubmitting || isLoading}
+                    LoadingText="Saving"
+                    title="Change Password"
+                    indicatorWidth={11}
+                    indicatorHeight={11}
+                    className="pt-2 w-full"
+                  />
                 </Form>
               )}
             </Formik>

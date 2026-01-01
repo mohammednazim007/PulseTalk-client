@@ -19,6 +19,7 @@ import { useRouter } from "next/navigation";
 import { useOtpTimer } from "@/app/hooks/useOtpTimer";
 import ErrorMessage from "@/app/shared/ErrorMessage/ErrorMessage";
 import OtpInput from "@/app/shared/OtpInput/OtpInput";
+import SubmitButton from "@/app/shared/SubmitButton/SubmitButton";
 
 const VerifyOTP: FC = () => {
   const OTP_LENGTH = 6;
@@ -169,19 +170,16 @@ const VerifyOTP: FC = () => {
               ))}
             </div>
 
-            <button
+            <SubmitButton
+              title="Verify now"
+              LoadingText="Verifying"
+              indicatorWidth={7}
+              indicatorHeight={7}
+              isLoading={isResending}
+              isSubmitting={isVerifying}
+              isDisabled={otp.some((d) => !d)} // 🔥 only disables — no loading
               onClick={handleVerify}
-              disabled={isVerifying || otp.some((d) => !d)}
-              className="w-full py-1.5 rounded-xl font-bold text-white bg-indigo-600 hover:bg-indigo-500 disabled:bg-slate-800 disabled:text-slate-500 disabled:cursor-not-allowed transition-all shadow-lg shadow-indigo-500/25 disabled:shadow-none flex items-center justify-center gap-2"
-            >
-              {isVerifying ? (
-                <>
-                  <ButtonIndicator width={15} height={15} className="py-1.5" />
-                </>
-              ) : (
-                "Verify now"
-              )}
-            </button>
+            />
 
             <div className="mt-8 text-center">
               <p className="text-sm text-slate-500 font-medium">
